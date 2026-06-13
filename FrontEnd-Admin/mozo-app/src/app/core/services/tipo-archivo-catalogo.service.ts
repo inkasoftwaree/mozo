@@ -1,5 +1,5 @@
 // src/app/core/services/tipo-archivo-catalogo.service.ts
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, inject, isDevMode, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { TipoGeneralService } from '@app/modules/maestro/services/tipo-general.service';
 import { TipoGeneralModel } from '@app/shared/models/maestro/tipo-general.model';
@@ -66,7 +66,7 @@ export class TipoArchivoCatalogoService {
     try {
       sessionStorage.setItem(STORAGE_KEYS.TIPO_ARCHIVO_CATALOGO, JSON.stringify(tipos));
     } catch (e) {
-      console.warn('No se pudo guardar catálogo en sessionStorage:', e);
+      if (isDevMode()) console.warn('No se pudo guardar catálogo en sessionStorage:', e);
     }
   }
 
@@ -96,7 +96,7 @@ export class TipoArchivoCatalogoService {
       this._cargado.set(true);
       this.escribirStorage(catalogo); // persiste
     } catch (error) {
-      console.error('Error cargando catálogo de tipos de archivo:', error);
+      if (isDevMode()) console.error('Error cargando catálogo de tipos de archivo:', error);
     }
   }
 
@@ -121,7 +121,7 @@ export class TipoArchivoCatalogoService {
   private mapearTipo(t: TipoGeneralModel): TipoArchivoCatalogo | null {
     const config = this.parsearValor(t.valor);
     if (!config) {
-      console.warn(`Tipo ${t.coTipo} sin configuración válida`);
+      if (isDevMode()) console.warn(`Tipo ${t.coTipo} sin configuración válida`);
       return null;
     }
 
@@ -141,7 +141,7 @@ export class TipoArchivoCatalogoService {
       if (typeof valor === 'string') return JSON.parse(valor) as TipoArchivoConfigJson;
       return null;
     } catch (e) {
-      console.error('Error parseando valor:', valor, e);
+      if (isDevMode()) console.error('Error parseando valor:', valor, e);
       return null;
     }
   }
@@ -193,7 +193,7 @@ export class TipoArchivoCatalogoService {
   ): ArchivoUploaderConfig | null {
     const tipo = this.getByCodigo(coTipo);
     if (!tipo) {
-      console.warn(`Tipo de archivo ${coTipo} no encontrado en catálogo`);
+      if (isDevMode()) console.warn(`Tipo de archivo ${coTipo} no encontrado en catálogo`);
       return null;
     }
 

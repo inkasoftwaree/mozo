@@ -1,8 +1,5 @@
-// src/app/core/services/image-compression.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import imageCompression, { Options } from 'browser-image-compression';
-
-// ===== INTERFACES =====
 
 export interface EstandarImagen {
   maxWidth: number;
@@ -16,21 +13,18 @@ export const ESTANDAR_IMAGEN: {
   thumbnail: EstandarImagen;
   preview: EstandarImagen;
 } = {
-  // Para upload final al servidor
   upload: {
     maxWidth: 2560,
     maxSizeMB: 1,
     quality: 0.85,
     formato: 'webp'
   },
-  // Para thumbnails de listados
   thumbnail: {
     maxWidth: 200,
     maxSizeMB: 0.05,
     quality: 0.75,
     formato: 'webp'
   },
-  // Para preview en formularios
   preview: {
     maxWidth: 800,
     maxSizeMB: 0.3,
@@ -55,8 +49,6 @@ export interface DimensionesImagen {
 @Injectable({ providedIn: 'root' })
 export class ImageCompressionService {
 
-  // ===== CONSTANTES =====
-
   readonly LIMITES = {
     maxBytes: 20 * 1024 * 1024,
     maxAncho: 8000,
@@ -76,50 +68,27 @@ export class ImageCompressionService {
     '.bmp', '.gif', '.heic', '.heif'
   ];
 
-  // ===== DETECCIÓN DE TIPO =====
-
-  /**
-   * Verifica si un archivo es imagen
-   */
   esImagen(file: File): boolean {
     return this.imageMimes.includes(file.type.toLowerCase()) ||
            /\.(jpe?g|png|webp|bmp|gif|heic|heif)$/i.test(file.name);
   }
 
-  /**
-   * Verifica si una extensión corresponde a imagen
-   */
   esExtensionImagen(extension: string): boolean {
     const ext = extension.startsWith('.') ? extension : `.${extension}`;
     return this.imageExtensions.includes(ext.toLowerCase());
   }
 
-  /**
-   * Obtiene la extensión de un archivo
-   */
   getExtension(filename: string): string {
     const idx = filename.lastIndexOf('.');
     return idx >= 0 ? filename.substring(idx).toLowerCase() : '';
   }
 
-  /**
-   * Obtiene el nombre sin extensión
-   */
   getNombreSinExtension(filename: string): string {
     return filename.replace(/\.[^/.]+$/, '');
   }
 
-  // ===== VALIDACIÓN =====
-
-  /**
-   * Valida con política permisiva: errores solo si es imposible procesar
-   */
   async validar(file: File): Promise<ValidacionImagen> {
-    const r: ValidacionImagen = {
-      valido: true,
-      errores: [],
-      advertencias: []
-    };
+    const r: ValidacionImagen = { valido: true, errores: [], advertencias: [] };
 
     if (!this.esImagen(file)) {
       r.errores.push('No es una imagen válida');
@@ -149,7 +118,6 @@ export class ImageCompressionService {
         r.errores.push(`Resolución máxima ${this.LIMITES.maxAncho}x${this.LIMITES.maxAlto}px`);
         r.valido = false;
       }
-
       if (file.size > 5 * 1024 * 1024) {
         r.advertencias.push(`Pesa ${this.fmt(file.size)}, se comprimirá`);
       }
@@ -163,9 +131,6 @@ export class ImageCompressionService {
     return r;
   }
 
-  /**
-   * Validación con dimensiones personalizadas
-   */
   async validarConOpciones(file: File, opciones?: {
     minWidth?: number;
     minHeight?: number;
@@ -173,11 +138,7 @@ export class ImageCompressionService {
     maxHeight?: number;
     maxBytes?: number;
   }): Promise<ValidacionImagen> {
-    const r: ValidacionImagen = {
-      valido: true,
-      errores: [],
-      advertencias: []
-    };
+    const r: ValidacionImagen = { valido: true, errores: [], advertencias: [] };
 
     if (!this.esImagen(file)) {
       r.errores.push('No es una imagen válida');
@@ -216,35 +177,20 @@ export class ImageCompressionService {
     return r;
   }
 
-  // ===== COMPRESIÓN =====
-
-  /**
-   * Comprime imagen para upload (maxWidth: 2560, calidad 85%, WebP)
-   */
   async comprimirParaUpload(file: File): Promise<File> {
     return this.comprimirConEstandar(file, ESTANDAR_IMAGEN.upload);
   }
 
-  /**
-   * Comprime imagen para thumbnail (maxWidth: 200)
-   */
   async comprimirParaThumbnail(file: File): Promise<File> {
     return this.comprimirConEstandar(file, ESTANDAR_IMAGEN.thumbnail);
   }
 
-  /**
-   * Comprime imagen para preview (maxWidth: 800)
-   */
   async comprimirParaPreview(file: File): Promise<File> {
     return this.comprimirConEstandar(file, ESTANDAR_IMAGEN.preview);
   }
 
-  /**
-   * Comprime con configuración específica
-   */
   async comprimirConEstandar(file: File, est: EstandarImagen): Promise<File> {
     const fileType = `image/${est.formato === 'jpeg' ? 'jpeg' : est.formato}`;
-
     const options: Options = {
       maxSizeMB: est.maxSizeMB,
       maxWidthOrHeight: est.maxWidth,
@@ -259,16 +205,11 @@ export class ImageCompressionService {
       const nuevoNombre = this.cambiarExtension(file.name, ext);
       return new File([blob], nuevoNombre, { type: fileType });
     } catch (error) {
-      console.error('Error comprimiendo imagen:', error);
+      if (isDevMode()) console.error('Error comprimiendo imagen:', error);
       throw new Error('No se pudo comprimir la imagen');
     }
   }
 
-  // ===== DIMENSIONES =====
-
-  /**
-   * Obtiene las dimensiones de una imagen
-   */
   async getDimensiones(blob: Blob): Promise<DimensionesImagen> {
     return new Promise((resolve, reject) => {
       const url = URL.createObjectURL(blob);
@@ -285,12 +226,6 @@ export class ImageCompressionService {
     });
   }
 
-  // ===== PREVIEW =====
-
-  /**
-   * Genera preview en base64 (data URL)
-   * Útil para mostrar mientras se sube
-   */
   async generarPreview(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -300,44 +235,27 @@ export class ImageCompressionService {
     });
   }
 
-  /**
-   * Genera preview optimizado (comprime primero para que pese menos)
-   */
   async generarPreviewOptimizado(file: File): Promise<string> {
     if (!this.esImagen(file)) {
       return this.generarPreview(file);
     }
-
     try {
-      // Comprimir antes de generar preview
       const comprimido = await this.comprimirParaPreview(file);
       return this.generarPreview(comprimido);
     } catch {
-      // Si falla la compresión, usar el original
       return this.generarPreview(file);
     }
   }
 
-  // ===== UTILIDADES =====
-
-  /**
-   * Cambia la extensión de un archivo
-   */
   cambiarExtension(nombre: string, ext: string): string {
     const extLimpia = ext.startsWith('.') ? ext.substring(1) : ext;
     return nombre.replace(/\.[^/.]+$/, '') + '.' + extLimpia;
   }
 
-  /**
-   * Convierte File a Blob
-   */
   fileToBlob(file: File): Blob {
     return new Blob([file], { type: file.type });
   }
 
-  /**
-   * Convierte data URL (base64) a File
-   */
   dataUrlToFile(dataUrl: string, filename: string): File {
     const arr = dataUrl.split(',');
     const mime = arr[0].match(/:(.*?);/)?.[1] ?? 'image/png';
@@ -350,14 +268,9 @@ export class ImageCompressionService {
     return new File([u8arr], filename, { type: mime });
   }
 
-  /**
-   * Formatea bytes a unidad legible
-   */
   formatearBytes(bytes: number): string {
     return this.fmt(bytes);
   }
-
-  // ===== HELPERS PRIVADOS =====
 
   private fmt(bytes: number): string {
     if (bytes < 1024) return `${bytes} B`;

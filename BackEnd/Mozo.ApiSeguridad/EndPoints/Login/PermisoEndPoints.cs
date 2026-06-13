@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Mozo.ApiSeguridad.Helper;
 using Mozo.ApiSeguridad.HelperWeb.Exceptions;
 using Mozo.HelperWeb.Token;
 using Mozo.LoginBusiness;
 using Mozo.Model.Seguridad;
 using Mozo.Model.Seguridad.Auth;
-
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 namespace Mozo.Api.Login;
 
 ///<summary>
@@ -36,58 +34,27 @@ public static partial class PermisoEndPoints
             .WithResponses<GlobalCredencialModel>(StatusCodes.Status200OK)
             .WithDescription("Verifica si el login es válido");
 
-        g.MapPost("/renew", LoginRenew)
-            .WithResponses<GlobalCredencialModel>(StatusCodes.Status200OK)
-            .WithDescription("Renueva el token");
 
         g.MapPatch("/language", UpdateLanguageAsync)
             .WithResponses<GlobalCredencialModel>(StatusCodes.Status200OK)
             .WithDescription("Actualiza el idioma del app");
 
 
-        g.MapGet("/.well-known/jwks.json",
-            (IConfiguration configuration) =>
-            {
-                string publicKeyPath = configuration["JwtBearerTokenSettings:PublicKeyPath"]!;
-                string publicKeyPem = File.ReadAllText(publicKeyPath);
-
-                RSA rsa = RSA.Create();
-                rsa.ImportFromPem(publicKeyPem);
-
-                RSAParameters p = rsa.ExportParameters(false);
-
-                return Results.Ok(new
-                {
-                    keys = new[]
-                    {
-                        new
-                        {
-                            kty = "RSA",
-                            use = "sig",
-                            alg = "RS256",
-                            kid = "key-2026-01",
-                            n = Base64UrlEncoder.Encode(p.Modulus),
-                            e = Base64UrlEncoder.Encode(p.Exponent)
-                        }
-                    }
-                });
-            }).AllowAnonymous(); 
-            return g;
-        }
+        return g;
+    }
 }
 public static partial class PermisoEndPoints
 {
     private static async Task<IResult>
         LoginAsync(
             [FromBody] PermisoFilterDto f,
-            IJwtService jwtService,           
+            IJwtService jwtService,
             IPermisoBusiness IPermiso,
             IIngresoBusiness IIngreso,
             ILoggerFactory loggerFactory
         )
     {
-        var logger = loggerFactory.CreateLogger("Mozo.Api.Login");
-
+        ILogger logger = loggerFactory.CreateLogger("Mozo.Api.Login");
 
         if (f == null)
             throw new ArgumentNullException(nameof(f));
@@ -99,111 +66,31 @@ public static partial class PermisoEndPoints
             throw new ValidationException("NoClave", "La contraseña es requerida");
 
 
-        GlobalCredencialModel globalCredencial = new();
 
-        string? noTokenRefresh;
 
         PermisoModel? permiso = await IPermiso.SelByUserAsync(f);
         if (permiso == null)
         {
-
-
             logger.LogWarning(
-           "[SECURITY] LOGIN_FAILED | Usuario: {Usuario} | IP: {IP}",
-           f.NoUsuario, f.NoIp);
+               "[SECURITY] LOGIN_FAILED | Usuario: {Usuario} | IP: {IP}",
+               f.NoUsuario, f.NoIp);
 
-            throw new NotFoundException("Usuario o contraseña incorrectos");
+            throw new UnauthorizedException("Usuario o contraseña incorrectos");
         }
 
+        string noTokenRefresh = jwtService.GenerateRefreshToken();
 
-
-        noTokenRefresh = jwtService.GenerateRefreshToken();
-
-        IngresoModel? ingreso = new()
+        IngresoModel ingreso = new()
         {
             CoEmpresa = permiso.CoEmpresa,
             CoPersona = permiso.CoPersona,
             CoPermiso = permiso.CoPermiso,
             NoRefreshToken = noTokenRefresh,
-            NoIp = f.NoIp,
+            NoUserAgent = jwtService.GetUserAgent(), //NoUserAgent = httpContext.Request.Headers.UserAgent.ToString()
+            NoIp = jwtService.GetUserIp(),
+            FeRefreshTokenExpire = jwtService.GetRefreshTokenExpiration()
         };
         ingreso.CoIngreso = await IIngreso.InsertAsync(ingreso);
-        noTokenRefresh = string.Concat(ingreso.CoEmpresa, "-", noTokenRefresh, "-", ingreso.CoIngreso);
-
-        CredencialModel credential = new()
-        {
-            CoEmpresa = permiso.CoEmpresa,
-            CoPersona = permiso.CoPersona,
-            CoPermiso = permiso.CoPermiso,
-            NoUsuario = permiso.NoUsuario,
-            NoNombreCompleto = permiso.NoNombreCompleto,
-            CoIngreso = ingreso.CoIngreso
-        };
-
-        string token =
-          jwtService.GenerateToken(credential);
-
-
-        globalCredencial.Credencial = credential;
-        globalCredencial.NoToken = token;
-        globalCredencial.NoTokenRefresh = noTokenRefresh;
-
-
-        logger.LogInformation(
-     "[SECURITY] LOGIN_SUCCESS | Usuario: {Usuario} | Empresa: {CoEmpresa} | IP: {IP}",
-     permiso.NoUsuario, permiso.CoEmpresa, f.NoIp);
-
-        return Results.Ok(globalCredencial);
-    }
-
-    private static async Task<IResult>
-        LoginRenew(
-            [FromBody] IngresoFilterDto f,
-              IJwtService jwtService,
-            IPermisoBusiness IPermiso,
-            IIngresoBusiness IIngreso
-        )
-    {
-        if (f == null || f.NoRefreshToken == null)
-            throw new ArgumentNullException(nameof(f.NoRefreshToken), "Falta el token refresh");
-
-        string[] tokenRefresh = f.NoRefreshToken.Split("-");
-
-        if (tokenRefresh.Length != 3)
-            throw new ValidationException("NoRefreshToken", "Formato de token refresh inválido");
-
-        int? coEmpresa = int.Parse(tokenRefresh[0]);
-        int? coIngreso = int.Parse(tokenRefresh[2]);
-
-        IngresoModel? ingreso = await IIngreso.SelByIdAsync(new() { CoIngreso = coIngreso });
-        if (ingreso == null)
-            throw new UnauthorizedException("Token refresh no válido");
-
-        await IIngreso.UpdateCloseTokenAsync(new() { CoEmpresa = ingreso.CoEmpresa, CoPermiso = ingreso.CoPermiso, NoRefreshTokenPrevious = f.NoRefreshToken });
-
-        GlobalCredencialModel globalCredencial = new();
-
-        string? noTokenRefresh;
-
-        PermisoModel? permiso = await IPermiso.SelByIdAsync(new() { CoEmpresa = ingreso.CoEmpresa, CoPermiso = ingreso.CoPermiso });
-
-        if (permiso == null)
-            throw new NotFoundException("Usuario no encontrado");
-
-
-        noTokenRefresh = jwtService.GenerateRefreshToken();
-        noTokenRefresh = string.Concat(ingreso.CoEmpresa, "-", noTokenRefresh, "-", ingreso.CoIngreso);
-
-        ingreso = new()
-        {
-            CoEmpresa = permiso.CoEmpresa,
-            CoPersona = permiso.CoPersona,
-            CoPermiso = permiso.CoPermiso,
-            NoRefreshToken = noTokenRefresh,
-            NoIp = ingreso.NoIp,
-        };
-        ingreso.CoIngreso = await IIngreso.InsertAsync(ingreso);
-
 
         CredencialModel credential = new()
         {
@@ -217,9 +104,20 @@ public static partial class PermisoEndPoints
 
         string token = jwtService.GenerateToken(credential);
 
-        globalCredencial.Credencial = credential;
-        globalCredencial.NoToken = token;
-        globalCredencial.NoTokenRefresh = noTokenRefresh;
+        GlobalCredencialModel globalCredencial = new()
+        {
+            Credencial = credential,
+            NoToken = token,
+            NoTokenRefresh = noTokenRefresh
+        };
+
+        logger.LogInformation(
+         "[SECURITY] LOGIN_SUCCESS | Usuario: {Usuario} | Empresa: {CoEmpresa} | Ingreso: {CoIngreso} | IP: {IP} | Agent: {Agent}",
+             permiso.NoUsuario,
+             permiso.CoEmpresa,
+             ingreso.CoIngreso,
+             ingreso.NoIp,
+             ingreso.NoUserAgent);
 
         return Results.Ok(globalCredencial);
     }
@@ -229,47 +127,46 @@ public static partial class PermisoEndPoints
         ClaimsPrincipal user, HttpContext httpContext
        )
     {
-        GlobalCredencialModel globalCredencial = new();
-        //ClaimsPrincipal user = httpContext.User;
 
-        if (!user.Identity?.IsAuthenticated ?? true)
+
+        if (user.Identity?.IsAuthenticated != true)
             throw new UnauthorizedException("No autorizado");
 
-        var coEmpresa = user.Claims.FirstOrDefault(c => c.Type == "CoEmpresa")?.Value;
-        var coPersona = user.Claims.FirstOrDefault(c => c.Type == "CoPersona")?.Value;
-        var coPermiso = user.Claims.FirstOrDefault(c => c.Type == "CoPermiso")?.Value;
-        var coIngreso = user.Claims.FirstOrDefault(c => c.Type == "CoIngreso")?.Value;
-        var noUsuario = user.Claims.FirstOrDefault(c => c.Type == "NoUsuario")?.Value;
+        string? coEmpresa = user.FindFirst("CoEmpresa")?.Value;
+        string? coPersona = user.FindFirst("CoPersona")?.Value;
+        string? coPermiso = user.FindFirst("CoPermiso")?.Value;
+        string? coIngreso = user.FindFirst("CoIngreso")?.Value;
+        string? noUsuario = user.FindFirst("NoUsuario")?.Value;
+        string? noUsuario2 = user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
 
         if (string.IsNullOrEmpty(coEmpresa) || string.IsNullOrEmpty(coPersona) ||
           string.IsNullOrEmpty(coPermiso))
             throw new UnauthorizedException("Claims inválidos");
 
-        string token = httpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+        // string token = httpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
 
-
-        CredencialModel credential = new()
+        GlobalCredencialModel globalCredencial = new()
         {
-            CoEmpresa = int.Parse(coEmpresa!),
-            CoPersona = int.Parse(coPersona!),
-            CoPermiso = int.Parse(coPermiso!),
-            NoUsuario = noUsuario,
-            CoIngreso = int.Parse(coIngreso!)
+            Credencial = new()
+            {
+                CoEmpresa = int.Parse(coEmpresa!),
+                CoPersona = int.Parse(coPersona!),
+                CoPermiso = int.Parse(coPermiso!),
+                NoUsuario = noUsuario,
+                CoIngreso = int.Parse(coIngreso!)
+            }
         };
-
-        globalCredencial.Credencial = credential;
-        globalCredencial.NoToken = token;
-
 
         return Results.Ok(globalCredencial);
     }
 
+
+
     static async Task<IResult>
         UpdateLanguageAsync(
         PermisoModel m,
-        IPermisoBusiness IPermiso,
-        UserClaims user
+        IPermisoBusiness IPermiso
         )
     {
         if (m is null)

@@ -28,6 +28,7 @@ export const API_ROUTES = {
   },
   login: {
     permiso: '/login/permiso',
+    ingreso: '/login/ingreso',
     menu: '/login/menu'
   }
 };

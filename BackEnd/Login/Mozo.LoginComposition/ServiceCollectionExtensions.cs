@@ -3,17 +3,12 @@
 using Mozo.LoginBusiness;
 using Mozo.LoginData;
 
-using Npgsql;
-
-using System.Data;
 namespace Mozo.LoginComposition;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection LoginComposition(this IServiceCollection services, string connectionString)
+    public static IServiceCollection LoginComposition(this IServiceCollection services)
     {
-        services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString));
-        // Registrar DAL y BL
         services.AddScoped<IEmpresaData, EmpresaData>();
         services.AddScoped<IEmpresaBusiness, EmpresaBusiness>();
 

@@ -3,17 +3,12 @@
 using Mozo.CatalogoBusiness;
 using Mozo.CatalogoData;
 
-using Npgsql;
-
-using System.Data;
 namespace Mozo.CatalogoComposition;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection CatalogoComposition(this IServiceCollection services, string connectionString)
+    public static IServiceCollection CatalogoComposition(this IServiceCollection services)
     {
-        services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString));
-        // Registrar DAL y BL
         services.AddScoped<IAtributoData, AtributoData>();
         services.AddScoped<IAtributoBusiness, AtributoBusiness>();
 

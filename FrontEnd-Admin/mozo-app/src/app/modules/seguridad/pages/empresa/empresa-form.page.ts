@@ -1,5 +1,4 @@
-import { Component, computed, inject, signal, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, Injector, signal, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ModalService } from '@app/shared/services/modal.service';
@@ -8,7 +7,6 @@ import { FormFieldControl } from "@app/shared/components/form-field/form-field.c
 import { ButtonControl } from "@app/shared/components/button/button.control";
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
 import { FormModalBase } from '@app/shared/components/form/form-modal-base';
-import { ModalPayload } from '@app/shared/models/controls/modal-control.model';
 import { EmpresaService } from '../../services/empresa.service';
 import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 import { DocumentoIdentidadService } from '@app/modules/maestro/services/documento-identidad.service';
@@ -29,8 +27,9 @@ import { FileSingleComponent } from "@app/shared/components/archivo-uploader/fil
 @Component({
   selector: 'mz-empresa-form-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonControl, FormFieldControl, EmpresaModuloFormPage, RedSocialFormPage, FileSingleComponent],
-  templateUrl: './empresa-form.page.html'
+  imports: [ReactiveFormsModule, ButtonControl, FormFieldControl, EmpresaModuloFormPage, RedSocialFormPage, FileSingleComponent],
+  templateUrl: './empresa-form.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmpresaFormPage extends FormModalBase<EmpresaModel> {
   private readonly empresaService = inject(EmpresaService);
@@ -43,18 +42,28 @@ export class EmpresaFormPage extends FormModalBase<EmpresaModel> {
   protected readonly MSG_FIELD_FORM = MSG_FIELD_FORM;
   protected readonly TIPO_MAESTRO = TIPO_MAESTRO;
 
-  readonly activeTab = signal<number>(0); // ← tab activo por defecto
+  private readonly injector = inject(Injector);
+  private readonly firstInputRef = viewChild<ElementRef<HTMLInputElement>>('firstInput');
+
+  readonly activeTab = signal<number>(0);
+
+  constructor() {
+    super();
+    effect(() => {
+      const payload = this.data();
+      this.activeTab.set(1);
+      this.clearForm();
+      if (!payload) return;
+      if (this.action() === 'update') this.selById(payload.model!);
+      afterNextRender(() => this.firstInputRef()?.nativeElement.focus(), { injector: this.injector });
+    });
+  }
 
 
   documentosIndentidades = toSignal(this.documentoIdentidadService.selAllActive(), { initialValue: [] });
   paises = toSignal(this.paisService.selAllActive(), { initialValue: [] });
   readonly selectedPais = signal<PaisModel | null>(null);
 
-  //@ViewChild('empresaModuloFormPage', { static: false }) empresaModuloFormPage!: EmpresaModuloFormPage;
-
-  //ngAfterViewInit(): void {
-  // console.log('empresaModuloFormPage:', this.empresaModuloFormPage); // ← verificar que se detecta
-  //}
 
   onPaisChange(event: Event): void {
     const coPais = Number((event.target as HTMLSelectElement).value);
@@ -79,17 +88,6 @@ export class EmpresaFormPage extends FormModalBase<EmpresaModel> {
 
 
 
-  override set data(payload: ModalPayload<EmpresaModel> | null) {
-    this.activeTab.set(1); //
-    this.clearForm();
-    super.data = payload;
-    if (!payload) return;
-    const model = payload.model;
-    if (this.action() === 'insert') {
-    } else if (this.action() === 'update') {
-      this.selById(model!);
-    }
-  }
 
   form = buildForm(this.fb, [
     { name: 'noEmpresa', validators: [...V.required, ...V.maxLength(150)] },
@@ -108,7 +106,6 @@ export class EmpresaFormPage extends FormModalBase<EmpresaModel> {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: c => {
-          // this.se
           this.selectedPais.set(
             this.paises().find(m => m.coPais === c.coPais) ?? null
           );
@@ -124,8 +121,7 @@ export class EmpresaFormPage extends FormModalBase<EmpresaModel> {
     this.form.markAllAsTouched();
 
     if (this.form.invalid) return;
-    const raw = this.form.getRawValue();
-    const request = this.buildRequest(raw);
+    const request = this.buildRequest();
 
     const observable$ = this.action() === 'insert'
       ? this.empresaService.insert(request)
@@ -140,43 +136,27 @@ export class EmpresaFormPage extends FormModalBase<EmpresaModel> {
             request.coEmpresa = response;
           }
 
-          // Recargar el registro completo para actualizar la vista
           this.selById(request);
-
-          // Cambiar a modo edición
-          if (this.data) {
-            this.data = {
-              ...this.data,
-              model: request,
-              metaData: {
-                action: 'update'
-              },
-            };
-          }
-          //else {
-            // En update, también recargar para reflejar cambios
-            //this.selById(request);
-          //}
-
           this.handleSuccess('Empresa guardada exitosamente', request);
           //this.modalService.close();
         }
       });
   }
 
-  private buildRequest(raw: any): EmpresaModel {
+  private buildRequest(): EmpresaModel {
+    const raw = this.form.getRawValue();
     return {
       coEmpresa: this.model()?.coEmpresa,
-      noEmpresa: raw.noEmpresa,
-      noEmpresaCorto: raw.noEmpresaCorto,
-      noMision: raw.noMision,
-      noVision: raw.noVision,
-      txQuienSoy: raw.txQuienSoy,
-      noSeo: raw.noSeo,
-      coPais: raw.coPais,
-      coDocumentoIdentidad: raw.coDocumentoIdentidad,
-      nuDocumentoFiscal: raw.nuDocumentoFiscal,
-      coMoneda: raw.coMoneda,
+      noEmpresa: raw['noEmpresa'],
+      noEmpresaCorto: raw['noEmpresaCorto'],
+      noMision: raw['noMision'],
+      noVision: raw['noVision'],
+      txQuienSoy: raw['txQuienSoy'],
+      noSeo: raw['noSeo'],
+      coPais: raw['coPais'],
+      coDocumentoIdentidad: raw['coDocumentoIdentidad'],
+      nuDocumentoFiscal: raw['nuDocumentoFiscal'],
+      coMoneda: raw['coMoneda'],
     };
   }
 
@@ -205,20 +185,11 @@ export class EmpresaFormPage extends FormModalBase<EmpresaModel> {
     };
   });
 
-  onLogoCargado(archivo: ArchivoModel) {
-    console.log('Logo subido:', archivo);
-  }
-
-  onLogoReemplazado(archivo: ArchivoModel) {
-    console.log('Logo reemplazado:', archivo);
-  }
-
-  onLogoEliminado(coArchivo: number) {
-    console.log('Logo eliminado, ID:', coArchivo);
-  }
-
-  onError(mensaje: string) {
-    console.error('Error:', mensaje);
+  onLogoCargado(_archivo: ArchivoModel): void { }
+  onLogoReemplazado(_archivo: ArchivoModel): void { }
+  onLogoEliminado(_coArchivo: number): void { }
+  onError(mensaje: string): void {
+    this.toastr.error(mensaje, 'Error al cargar archivo');
   }
 
 

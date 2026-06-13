@@ -21,5 +21,5 @@ public class PaginaBusiness : IPaginaBusiness
         IEnumerable<PaginaModel> r = await _data.SelAllPaginaAsync(c);
         return r.OrderBy(x => x.NuOrden);
     }
-  
+
 }

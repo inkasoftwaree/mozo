@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { OptionService } from '@app/core/services/option.service';
 import { NgIcon } from "@ng-icons/core";
@@ -9,6 +9,7 @@ import { NgIcon } from "@ng-icons/core";
   standalone: true,
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
   private optionService = inject(OptionService);

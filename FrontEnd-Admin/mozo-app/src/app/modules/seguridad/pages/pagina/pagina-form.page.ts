@@ -1,5 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { afterNextRender, ChangeDetectionStrategy, Component, effect, ElementRef, inject, Injector, signal, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalService } from '@app/shared/services/modal.service';
@@ -8,7 +7,6 @@ import { FormFieldControl } from "@app/shared/components/form-field/form-field.c
 import { ButtonControl } from "@app/shared/components/button/button.control";
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
 import { FormModalBase } from '@app/shared/components/form/form-modal-base';
-import { ModalPayload } from '@app/shared/models/controls/modal-control.model';
 import { PaginaModel } from '@app/shared/models/seguridad/pagina.model';
 import { PaginaService } from '../../services/pagina.service';
 import { ModuloModel } from '@app/shared/models/seguridad/modulo.model';
@@ -17,28 +15,32 @@ import { MenuModel } from '@app/shared/models/seguridad/menu.model';
 @Component({
   selector: 'mz-pagina-form-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonControl, FormFieldControl],
-  templateUrl: './pagina-form.page.html'
+  imports: [ReactiveFormsModule, ButtonControl, FormFieldControl],
+  templateUrl: './pagina-form.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginaFormPage extends FormModalBase<PaginaModel> {
   private readonly paginaService = inject(PaginaService);
   public readonly modalService = inject(ModalService);
   protected readonly MenuControlTypeEnum = MenuControlTypeEnum;
 
+  private readonly injector = inject(Injector);
+  private readonly firstInputRef = viewChild<ElementRef<HTMLInputElement>>('firstInput');
+
   readonly modulo = signal<ModuloModel | null>(null);
   readonly menu = signal<MenuModel | null>(null);
 
-  override set data(payload: ModalPayload<PaginaModel> | null) {
-    this.clearForm();
-    super.data = payload;
-    if (!payload) return;
-    this.modulo.set(this.getRelation<ModuloModel>('modulo')!);
-    this.menu.set(this.getRelation<MenuModel>('menu')!);
-    const model = payload.model;
-    if (this.action() === 'insert') {
-    } else if (this.action() === 'update') {
-      this.selById(model!);
-    }
+  constructor() {
+    super();
+    effect(() => {
+      const payload = this.data();
+      this.clearForm();
+      if (!payload) return;
+      this.modulo.set(this.getRelation<ModuloModel>('modulo'));
+      this.menu.set(this.getRelation<MenuModel>('menu'));
+      if (this.action() === 'update') this.selById(payload.model!);
+      afterNextRender(() => this.firstInputRef()?.nativeElement.focus(), { injector: this.injector });
+    });
   }
 
   form = buildForm(this.fb, [
@@ -51,7 +53,6 @@ export class PaginaFormPage extends FormModalBase<PaginaModel> {
   ]);
 
   private selById(c: PaginaModel): void {
-    console.log(c);
     this.paginaService.selById(c)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -66,8 +67,7 @@ export class PaginaFormPage extends FormModalBase<PaginaModel> {
     this.form.markAllAsTouched();
 
     if (this.form.invalid) return;
-    const raw = this.form.getRawValue();
-    const request = this.buildRequest(raw);
+    const request = this.buildRequest();
 
     request.coModulo = this.modulo()?.coModulo;
     request.coArea = this.menu()?.coModulo;
@@ -82,7 +82,7 @@ export class PaginaFormPage extends FormModalBase<PaginaModel> {
       .subscribe({
         next: (response) => {
           if (this.action() === 'insert') {
-            request.coModulo = response;
+            request.coPagina = response;
           }
           this.handleSuccess('Página guardado exitosamente', request);
           this.modalService.close();
@@ -90,13 +90,14 @@ export class PaginaFormPage extends FormModalBase<PaginaModel> {
       });
   }
 
-  private buildRequest(raw: any): PaginaModel {
+  private buildRequest(): PaginaModel {
+    const raw = this.form.getRawValue();
     return {
       coPagina: this.model()?.coPagina,
-      nuOrden: raw.nuOrden,
-      noOpcion: raw.noOpcion,
-      noControlador: raw.noControlador,
-      noAccion: raw.noAccion,
+      nuOrden: raw['nuOrden'],
+      noOpcion: raw['noOpcion'],
+      noControlador: raw['noControlador'],
+      noAccion: raw['noAccion'],
       coTipoPagina: 1
     };
   }

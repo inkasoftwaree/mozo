@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Mozo.Model.Seguridad.Auth;
 using System.Security.Cryptography;
 
 namespace Mozo.HelperWeb.Token;
 
 
-public sealed class JwtKeyProvider 
+public sealed class JwtKeyProvider
 {
     public RsaSecurityKey PrivateKey { get; }
     public RsaSecurityKey PublicKey { get; }

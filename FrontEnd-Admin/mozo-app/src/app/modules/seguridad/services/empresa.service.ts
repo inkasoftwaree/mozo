@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { cleanParams } from '@app/core/global/params.helper';
 import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 import { PagedResult } from '@app/shared/models/base.model';

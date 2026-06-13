@@ -3,18 +3,12 @@
 using Mozo.SeguridadBusiness;
 using Mozo.SeguridadData;
 
-using Npgsql;
-
-using System.Data;
-
 namespace Mozo.SeguridadComposition;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection SeguridadComposition(this IServiceCollection services, string connectionString)
+    public static IServiceCollection SeguridadComposition(this IServiceCollection services)
     {
-        services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString));
-        // Registrar DAL y BL
         services.AddScoped<IEmpresaData, EmpresaData>();
         services.AddScoped<IEmpresaBusiness, EmpresaBusiness>();
 

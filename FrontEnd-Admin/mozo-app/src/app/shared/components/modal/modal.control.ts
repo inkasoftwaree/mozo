@@ -1,9 +1,6 @@
-import { NgClass } from '@angular/common';
-import { Component, Input, HostListener, OnInit, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
-import { ModalControlModel } from '@app/shared/models/controls/modal-control.model';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ModalControlModel, ModalPayload, ModalSize } from '@app/shared/models/controls/modal-control.model';
 import { ModalService } from '@app/shared/services/modal.service';
-
-type ModalSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xl2' | 'xl3' | 'xl4' | 'xl5' | 'xl6' | 'xl7' | 'full';
 
 const MODAL_SIZES: Record<ModalSize, string> = {
   xs: 'max-w-xs', sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-xl',
@@ -14,51 +11,31 @@ const MODAL_SIZES: Record<ModalSize, string> = {
 @Component({
   selector: 'mz-modal-control',
   standalone: true,
-  imports: [NgClass],
+  imports: [],
   templateUrl: './modal.control.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ModalControl<T = any> implements OnInit {
-  @Input() name!: string;
+export class ModalControl<T = any> {
+  name = input.required<string>();
 
   private readonly modalService = inject(ModalService);
 
-  protected readonly currentModal$ = signal<string | null>(null);
-  protected readonly title$ = signal<string>('Ventana');
-  protected readonly size$ = signal<ModalSize>('md');
-  //public readonly data$ = signal<T | null>(null);
-  public readonly data$ = signal<any>(null);
+  private readonly activeModal = computed<ModalControlModel | null>(() => {
+    const modal = this.modalService.state();
+    return modal?.modalName === this.name() ? modal : null;
+  });
 
-  protected readonly modalWidthClass = computed(() => MODAL_SIZES[this.size$()]);
-  protected readonly isOpen = computed(() => this.currentModal$() === this.name);
+  protected readonly isOpen = computed(() => this.activeModal() !== null);
+  protected readonly title$ = computed(() => this.activeModal()?.title ?? 'Ventana');
+  protected readonly modalWidthClass = computed(() =>
+    MODAL_SIZES[(this.activeModal()?.size ?? 'md') as ModalSize]
+  );
 
-  ngOnInit(): void {
-    this.modalService.modalState$.subscribe((modal: ModalControlModel<T> | null) => {
-      if (!modal) {
-        this.currentModal$.set(null);
-        this.data$.set(null);
-        return;
-      }
-
-      this.currentModal$.set(modal.modalName);
-
-      if (modal.modalName === this.name) {
-        this.title$.set(modal.title);
-        this.size$.set(modal.size ?? 'md');
-        this.data$.set(modal.data ?? null);       // ✅ Nuevo
-      }
-    });
-  }
+  public readonly data$ = computed<ModalPayload<T> | null>(() =>
+    (this.activeModal()?.data as ModalPayload<T>) ?? null
+  );
 
   close(): void {
     this.modalService.close();
   }
-/*
-  @HostListener('document:keydown.escape')
-  onEsc(): void {
-    if (this.isOpen()) {
-      this.close();
-    }
-  }
-    */
 }

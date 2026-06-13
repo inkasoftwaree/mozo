@@ -1,5 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { afterNextRender, ChangeDetectionStrategy, Component, effect, ElementRef, inject, Injector, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModuloService } from '@moduleSeguridad/services/modulo.service';
@@ -10,28 +9,31 @@ import { FormFieldControl } from "@app/shared/components/form-field/form-field.c
 import { ButtonControl } from "@app/shared/components/button/button.control";
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
 import { FormModalBase } from '@app/shared/components/form/form-modal-base';
-import { ModalPayload } from '@app/shared/models/controls/modal-control.model';
 
 @Component({
   selector: 'mz-modulo-form-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonControl, FormFieldControl],
-  templateUrl: './modulo-form.page.html'
+  imports: [ReactiveFormsModule, ButtonControl, FormFieldControl],
+  templateUrl: './modulo-form.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModuloFormPage extends FormModalBase<ModuloModel> {
   private readonly moduloService = inject(ModuloService);
   public readonly modalService = inject(ModalService);
   protected readonly MenuControlTypeEnum = MenuControlTypeEnum;
 
-  override set data(payload: ModalPayload<ModuloModel> | null) {
-    this.clearForm();
-    super.data = payload;
-    if (!payload) return;
-    const model = payload.model;
-    if (this.action() === 'insert') {
-    } else if (this.action() === 'update') {
-      this.selById(model!);
-    }
+  private readonly injector = inject(Injector);
+  private readonly firstInputRef = viewChild<ElementRef<HTMLInputElement>>('firstInput');
+
+  constructor() {
+    super();
+    effect(() => {
+      const payload = this.data();
+      this.clearForm();
+      if (!payload) return;
+      if (this.action() === 'update') this.selById(payload.model!);
+      afterNextRender(() => this.firstInputRef()?.nativeElement.focus(), { injector: this.injector });
+    });
   }
 
   form = buildForm(this.fb, [
@@ -59,8 +61,7 @@ export class ModuloFormPage extends FormModalBase<ModuloModel> {
     this.form.markAllAsTouched();
 
     if (this.form.invalid) return;
-    const raw = this.form.getRawValue();
-    const request = this.buildRequest(raw);
+    const request = this.buildRequest();
 
     const observable$ = this.action() === 'insert'
       ? this.moduloService.insert(request)
@@ -79,15 +80,16 @@ export class ModuloFormPage extends FormModalBase<ModuloModel> {
       });
   }
 
-  private buildRequest(raw: any): ModuloModel {
+  private buildRequest(): ModuloModel {
+    const raw = this.form.getRawValue();
     return {
       coModulo: this.model()?.coModulo,
-      noModulo: raw.noModulo ?? '',
-      noModuloDescripcion: raw.noModuloDescripcion ?? '',
-      noArea: raw.noArea ?? '',
-      nuOrden: raw.nuOrden ?? 0,
-      flArea: raw.flArea == true ? 1 : 0,
-      noIcono: raw.noIcono ?? ''
+      noModulo: raw['noModulo'] ?? '',
+      noModuloDescripcion: raw['noModuloDescripcion'] ?? '',
+      noArea: raw['noArea'] ?? '',
+      nuOrden: raw['nuOrden'] ?? 0,
+      flArea: raw['flArea'] == true ? 1 : 0,
+      noIcono: raw['noIcono'] ?? ''
     };
   }
 

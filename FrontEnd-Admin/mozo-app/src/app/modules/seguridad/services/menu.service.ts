@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { cleanParams } from '@app/core/global/params.helper';
 import { MenuModel } from '@app/shared/models/seguridad/menu.model';
 import { UrlApiService } from '@app/core/services/url-api.service';
@@ -19,11 +18,7 @@ export class MenuService {
   selArbol(c: MenuModel): Observable<MenuModel[]> {
     return this.http.get<MenuModel[]>(`${this.baseUrl}/arbol`, { params: cleanParams(c) });
   }
-  /*
-    selAllActive(): Observable<MenuModel[]> {
-      return this.http.get<MenuModel[]>(`${BASE_URL}/active`);
-    }
-      */
+
   selById(c: MenuModel): Observable<MenuModel> {
     return this.http.get<MenuModel>(`${this.baseUrl}/byid`, { params: cleanParams(c) });
   }

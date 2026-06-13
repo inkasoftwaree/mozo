@@ -14,7 +14,7 @@ public interface IModuloBusiness
     Task<IEnumerable<ModuloModel>> SelAllActiveAreaAsync();
     Task<IEnumerable<ModuloModel>> SelAllActiveForEmpresaAsync();
 
-    
+
     Task<ModuloModel?> SelByIdAsync(ModuloFilterDto c);
 }
 public class ModuloBusiness : IModuloBusiness

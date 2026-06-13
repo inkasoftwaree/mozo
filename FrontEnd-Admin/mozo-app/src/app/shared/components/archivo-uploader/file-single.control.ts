@@ -1,19 +1,20 @@
 // src/app/shared/components/archivo-single/archivo-single.component.ts
 import {
+  ChangeDetectionStrategy,
   Component,
+  DestroyRef,
+  computed,
+  effect,
   inject,
   input,
   output,
   signal,
-  computed,
-  effect,
-  ChangeDetectionStrategy
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArchivoService } from '@app/modules/maestro/services/archivo.service';
 import { ArchivoSingleConfig } from './file-single-config.model';
 import { ArchivoFilterDto, ArchivoModel } from '@app/shared/models/maestro/archivo.model';
-import { ImageCompressionService } from '@app/core/services/image-compression.service ';
+import { ImageCompressionService } from '@app/core/services/image-compression.service';
 import { environment } from 'src/environments/environment';
 import { ConfirmService } from '@app/shared/services/confirm.service';
 
@@ -23,13 +24,14 @@ type EstadoControl = 'vacio' | 'cargando' | 'subiendo' | 'reemplazando' | 'compl
 @Component({
   selector: 'mz-file-single',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './file-single.control.html',
   styleUrl: './file-single.control.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FileSingleComponent {
   private readonly confirmService = inject(ConfirmService);
+  private readonly destroyRef = inject(DestroyRef);
   dragOver = signal(false);
   // ===== Inputs =====
   config = input.required<ArchivoSingleConfig>();
@@ -117,16 +119,18 @@ export class FileSingleComponent {
       nuOrden: 1  // archivo único siempre tiene orden 1
     };
 
-    this.archivoService.selMetaDataByUk(filter).subscribe({
-      next: arch => {
-        this.archivo.set(arch);
-        this.estado.set('completo');
-      },
-      error: () => {
-        this.archivo.set(null);
-        this.estado.set('vacio');
-      }
-    });
+    this.archivoService.selMetaDataByUk(filter)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: arch => {
+          this.archivo.set(arch);
+          this.estado.set('completo');
+        },
+        error: () => {
+          this.archivo.set(null);
+          this.estado.set('vacio');
+        }
+      });
   }
 
   // ===== Selección de archivo =====
@@ -182,7 +186,7 @@ export class FileSingleComponent {
       coEntidad: cfg.coEntidad,
       coTipo: cfg.coTipo,
       flGaleria : 0,
-    }).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ev => {
         this.progreso.set(ev.progreso);
         if (ev.completado && ev.archivo) {
@@ -225,7 +229,7 @@ export class FileSingleComponent {
       coEntidad: cfg.coEntidad,
       coTipo: cfg.coTipo,
       flGaleria: 0
-    }).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ev => {
         this.progreso.set(ev.progreso);
         if (ev.completado && ev.archivo) {
@@ -260,7 +264,7 @@ export class FileSingleComponent {
       flEmpresaNotKey: cfg.flEmpresaNotKey,
       coEmpresa: cfg.coEmpresa,
       coArchivo: arch.coArchivo
-    }).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.archivo.set(null);
         this.previewLocal.set('');

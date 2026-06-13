@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from "@angular/router";
-import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { ModalService } from '@sharedServices/modal.service';
 import { AuthService } from '@app/core/services/auth.service';
 import { NgIcon } from "@ng-icons/core";
@@ -13,17 +13,19 @@ import { PermisoModel } from '@app/shared/models/seguridad/permiso.model';
   standalone: true,
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
-  imports: [RouterOutlet, AsyncPipe, NgIcon, LoginPage, ModalControl]
+  imports: [RouterOutlet, RouterLink, NgIcon, LoginPage, ModalControl],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
 
-  private auth = inject(AuthService);
-  private modalService = inject(ModalService);
-  private router = inject(Router);
+  private readonly auth = inject(AuthService);
+  private readonly modalService = inject(ModalService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
-  user$ = this.auth.user$;
+  readonly user = this.auth.user;
 
-  openLogin() {
+  openLogin(): void {
     const login: PermisoModel = {
       coPermiso: 0,
       coPersona: 0,
@@ -35,20 +37,17 @@ export class NavbarComponent {
       modalName: 'login-page',
       title: 'Login',
       size: 'sm',
-      data: {
-        model: login!
-      }
+      data: { model: login }
     });
-
-    setTimeout(() => {
-      const input = document.querySelector<HTMLInputElement>('input[formControlName="noUsuario"]');
-      input?.focus();
-    }, 200);
   }
 
-  logout() {
-    this.auth.logout();
-    this.router.navigate(['/logout'], { replaceUrl: true }); // reemplaza el historial
+  logout(): void {
+    this.auth.logout()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.router.navigate(['/logout'], { replaceUrl: true }),
+        error: () => this.router.navigate(['/logout'], { replaceUrl: true })
+      });
   }
 
 }

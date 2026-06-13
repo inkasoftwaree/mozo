@@ -1,5 +1,4 @@
-using FluentValidation;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -11,6 +10,8 @@ using Mozo.ApiSeguridad.Helper;
 using Mozo.ApiSeguridad.Helper.Exceptions;
 using Mozo.CatalogoComposition;
 using Mozo.Helper.Global;
+using Npgsql;
+using System.Data;
 using Mozo.Helper.Services;
 using Mozo.Helper.Services.Storage;
 using Mozo.HelperWeb.Token;
@@ -18,6 +19,7 @@ using Mozo.LoginComposition;
 
 using Mozo.MaestroComposition;
 using Mozo.SeguridadComposition;
+using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
@@ -77,36 +79,20 @@ Directory.CreateDirectory(storage["FolderResource"]!);
 Directory.CreateDirectory(storage["FolderTemporary"]!);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+
+builder.Services.AddOpenApi(options =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    options.AddDocumentTransformer((doc, context, ct) =>
     {
-        Version = "v1",
-        Title = "Sistema Mozo API",
-        Description = "Este es un web api para trabajar con los datos de la empresa",
-        Contact = new OpenApiContact
+        doc.Info = new OpenApiInfo
         {
-            Email = "jabregu@jne.gob.pe",
-            Name = "Inkasoftware",
-            //Url = new Uri("https://portal.jne.gob.pe/portal")
-        },
-        License = new OpenApiLicense
-        {
-            Name = "MIT",
-            //Url = new Uri("https://portal.jne.gob.pe/portal")
-        }
+            Title = "Sistema Mozo API",
+            Version = "v1"
+        };
+        return Task.CompletedTask;
     });
 
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Ingresa el token JWT"
-    });
-
-    c.OperationFilter<AuthorizationFilterSwagger>();
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
 
@@ -115,19 +101,33 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
 
-//Register.Connection(builder.Configuration);
+builder.Services.AddScoped<Authentication>();
 
-builder.Services.AddAuthentication().AddJwtBearer();
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(opt =>
+    {
+        opt.TokenValidationParameters =
+            JwtService.TokenParametro(builder.Configuration);
+
+        opt.EventsType = typeof(Authentication);
+    });
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
 builder.Services.AddCustomProblemDetails();
 
-builder.Services.AddScoped<Authentication>();
+builder.Services.AddOutputCache(options =>
+{
+    // Datos de catálogo sin parámetros — misma respuesta para todos los usuarios
+    options.AddPolicy("StaticLookup", p =>
+        p.Expire(TimeSpan.FromHours(1)));
 
-builder.Services.AddOutputCache(); // Para las consultas que no cambian mucho
+    // Datos de catálogo con filtros en query string — una entrada por combinación de parámetros
+    options.AddPolicy("LookupByQuery", p =>
+        p.Expire(TimeSpan.FromHours(1))
+         .SetVaryByQuery("*"));
+});
 
 
 
@@ -159,17 +159,17 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 
 
 string connectionString = builder.Configuration.GetSection("ConnectionStrings").GetSection("WebLog").Value!;
+builder.Services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString));
 
-//builder.Services.AddScoped<PersonaBusiness>(x => new(connectionString));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IClaimsService, ClaimsService>();
 builder.Services.AddScoped<UserContextService>();
 builder.Services.AddScoped<UserContext>();
 // Solo agrego negocio, no DAL directamente
-builder.Services.SeguridadComposition(connectionString);
-builder.Services.MaestroComposition(connectionString);
-builder.Services.LoginComposition(connectionString);
-builder.Services.CatalogoComposition(connectionString);
+builder.Services.SeguridadComposition();
+builder.Services.MaestroComposition();
+builder.Services.LoginComposition();
+builder.Services.CatalogoComposition();
 
 
 
@@ -198,9 +198,6 @@ builder.Services.Configure<FormOptions>(opts =>
 // ===== Servicios =====
 builder.Services.AddScoped<IImageProcessor, ImageProcessor>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
-
-
-
 
 
 #endregion
@@ -234,66 +231,37 @@ if (Directory.Exists(storageOpts.FolderDocument))
 
 
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-   app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
+    app.MapOpenApi();           // expone el JSON en /openapi/v1.json
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "Sistema Mozo API";
+    });
 }
-app.UseSwagger();
-app.UseSwaggerUI();
+
+
+
 app.UseExceptionHandler();
 app.UseStatusCodePages();
-app.UseCors();
-
-
 app.UseOutputCache();
+
+
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.UseAntiforgery();
 #endregion
 
-
-//app.MapWithAutoTag("/catalogo/atributo", typeof(Mozo.Api.Catalogo.AtributoEndPoints), g => Mozo.Api.Catalogo.AtributoEndPoints.MapAtributo(g));
-//app.MapWithAutoTag("/catalogo/producto-atributo", typeof(Mozo.Api.Catalogo.ProductoAtributoEndPoints), g => Mozo.Api.Catalogo.ProductoAtributoEndPoints.MapProductoAtributo(g));
-//app.MapWithAutoTag("/catalogo/producto", typeof(Mozo.Api.Catalogo.ProductoEndPoints), g => Mozo.Api.Catalogo.ProductoEndPoints.MapProducto(g));
-
-/*
-app.MapWithAutoTag("/catalogo/producto-impuesto", typeof(Mozo.Api.Catalogo.ProductoImpuestoEndPoints), g => Mozo.Api.Catalogo.ProductoImpuestoEndPoints.MapProductoImpuesto(g));
-
-app.MapWithAutoTag("/catalogo/producto-precio", typeof(Mozo.Api.Catalogo.ProductoPrecioEndPoints), g => Mozo.Api.Catalogo.ProductoPrecioEndPoints.MapProductoPrecio(g));
-app.MapWithAutoTag("/catalogo/producto-stock", typeof(Mozo.Api.Catalogo.ProductoStockEndPoints), g => Mozo.Api.Catalogo.ProductoStockEndPoints.MapProductoStock(g));
-
-
-
-
-app.MapWithAutoTag("/seguridad/modulo-usuario", typeof(Mozo.Api.Seguridad.ModuloUsuarioEndPoints), g => Mozo.Api.Seguridad.ModuloUsuarioEndPoints.MapModuloUsuario(g));
-
-app.MapWithAutoTag("/seguridad/permiso", typeof(Mozo.Api.Seguridad.PermisoEndPoints), g => Mozo.Api.Seguridad.PermisoEndPoints.MapPermiso(g));
-
-
-app.MapWithAutoTag("/login/empresa", typeof(Mozo.Api.Login.EmpresaEndPoints), g => Mozo.Api.Login.EmpresaEndPoints.MapEmpresa(g));
-app.MapWithAutoTag("/login/ingreso", typeof(Mozo.Api.Login.IngresoEndPoints), g => Mozo.Api.Login.IngresoEndPoints.MapIngreso(g));
-
-app.MapWithAutoTag("/login/modulo", typeof(Mozo.Api.Login.ModuloEndPoints), g => Mozo.Api.Login.ModuloEndPoints.MapModulo(g));
-app.MapWithAutoTag("/login/modulo-usuario", typeof(Mozo.Api.Login.ModuloUsuarioEndPoints), g => Mozo.Api.Login.ModuloUsuarioEndPoints.MapModuloUsuario(g));
-app.MapWithAutoTag("/login/redirect", typeof(Mozo.Api.Login.RedirectEndPoints), g => Mozo.Api.Login.RedirectEndPoints.MapRedirect(g));
-
-
-app.MapWithAutoTag("/maestro/persona", typeof(Mozo.Api.Maestro.PersonaEndPoints), g => Mozo.Api.Maestro.PersonaEndPoints.MapPersona(g));
-
-app.MapWithAutoTag("/maestro/tipo-particular", typeof(Mozo.Api.Maestro.TipoParticularEndPoints), g => Mozo.Api.Maestro.TipoParticularEndPoints.MapTipo(g));
-
-app.MapWithAutoTag("/maestro/persona-tipo", typeof(Mozo.Api.Maestro.PersonaTipoEndPoints), g => Mozo.Api.Maestro.PersonaTipoEndPoints.MapPersonaTipo(g));
-
-*/
-
-//app.MapWithAutoTag("/maestro/ubigeo", typeof(Mozo.Api.Maestro.UbigeoEndPoints), g => Mozo.Api.Maestro.UbigeoEndPoints.MapUbigeo(g));
 
 app.MapWithAutoTag("/maestro/tipo-particular", typeof(Mozo.Api.Maestro.TipoParticularEndPoints), g => Mozo.Api.Maestro.TipoParticularEndPoints.MapTipoParticular(g));
 
 app.MapWithAutoTag("/login/permiso", typeof(Mozo.Api.Login.PermisoEndPoints), g => Mozo.Api.Login.PermisoEndPoints.MapPermiso(g));
+app.MapWithAutoTag("/login/ingreso", typeof(Mozo.Api.Login.IngresoEndPoints), g => Mozo.Api.Login.IngresoEndPoints.MapIngreso(g));
 
+app.MapWithAutoTag("/.well-known", typeof(Mozo.Api.Login.JwksEndPoints), g => Mozo.Api.Login.JwksEndPoints.MapJwks(g));
 
 app.MapWithAutoTag("/login/menu", typeof(Mozo.Api.Login.MenuEndPoints), g => Mozo.Api.Login.MenuEndPoints.MapMenu(g));
 
@@ -312,6 +280,27 @@ app.MapWithAutoTag("/seguridad/pagina", typeof(Mozo.Api.Seguridad.PaginaEndPoint
 app.MapWithAutoTag("/seguridad/perfil-pagina", typeof(Mozo.Api.Seguridad.PerfilPaginaEndPoints), g => Mozo.Api.Seguridad.PerfilPaginaEndPoints.MapPerfilPagina(g));
 app.MapWithAutoTag("/seguridad/empresa", typeof(Mozo.Api.Seguridad.EmpresaEndPoints), g => Mozo.Api.Seguridad.EmpresaEndPoints.MapEmpresa(g));
 app.MapWithAutoTag("/seguridad/empresa-modulo", typeof(Mozo.Api.Seguridad.EmpresaModuloEndPoints), g => Mozo.Api.Seguridad.EmpresaModuloEndPoints.MapEmpresaModulo(g));
+
+// --- Rutas pendientes de activar ---
+//app.MapWithAutoTag("/seguridad/modulo-usuario", typeof(Mozo.Api.Seguridad.ModuloUsuarioEndPoints), g => Mozo.Api.Seguridad.ModuloUsuarioEndPoints.MapModuloUsuario(g));
+//app.MapWithAutoTag("/seguridad/permiso", typeof(Mozo.Api.Seguridad.PermisoEndPoints), g => Mozo.Api.Seguridad.PermisoEndPoints.MapPermiso(g));
+
+//app.MapWithAutoTag("/login/empresa", typeof(Mozo.Api.Login.EmpresaEndPoints), g => Mozo.Api.Login.EmpresaEndPoints.MapEmpresa(g));
+//app.MapWithAutoTag("/login/modulo", typeof(Mozo.Api.Login.ModuloEndPoints), g => Mozo.Api.Login.ModuloEndPoints.MapModulo(g));
+//app.MapWithAutoTag("/login/modulo-usuario", typeof(Mozo.Api.Login.ModuloUsuarioEndPoints), g => Mozo.Api.Login.ModuloUsuarioEndPoints.MapModuloUsuario(g));
+//app.MapWithAutoTag("/login/redirect", typeof(Mozo.Api.Login.RedirectEndPoints), g => Mozo.Api.Login.RedirectEndPoints.MapRedirect(g));
+
+//app.MapWithAutoTag("/maestro/persona", typeof(Mozo.Api.Maestro.PersonaEndPoints), g => Mozo.Api.Maestro.PersonaEndPoints.MapPersona(g));
+//app.MapWithAutoTag("/maestro/persona-tipo", typeof(Mozo.Api.Maestro.PersonaTipoEndPoints), g => Mozo.Api.Maestro.PersonaTipoEndPoints.MapPersonaTipo(g));
+//app.MapWithAutoTag("/maestro/ubigeo", typeof(Mozo.Api.Maestro.UbigeoEndPoints), g => Mozo.Api.Maestro.UbigeoEndPoints.MapUbigeo(g));
+
+//app.MapWithAutoTag("/catalogo/atributo", typeof(Mozo.Api.Catalogo.AtributoEndPoints), g => Mozo.Api.Catalogo.AtributoEndPoints.MapAtributo(g));
+//app.MapWithAutoTag("/catalogo/producto-atributo", typeof(Mozo.Api.Catalogo.ProductoAtributoEndPoints), g => Mozo.Api.Catalogo.ProductoAtributoEndPoints.MapProductoAtributo(g));
+//app.MapWithAutoTag("/catalogo/producto", typeof(Mozo.Api.Catalogo.ProductoEndPoints), g => Mozo.Api.Catalogo.ProductoEndPoints.MapProducto(g));
+//app.MapWithAutoTag("/catalogo/producto-impuesto", typeof(Mozo.Api.Catalogo.ProductoImpuestoEndPoints), g => Mozo.Api.Catalogo.ProductoImpuestoEndPoints.MapProductoImpuesto(g));
+//app.MapWithAutoTag("/catalogo/producto-precio", typeof(Mozo.Api.Catalogo.ProductoPrecioEndPoints), g => Mozo.Api.Catalogo.ProductoPrecioEndPoints.MapProductoPrecio(g));
+//app.MapWithAutoTag("/catalogo/producto-stock", typeof(Mozo.Api.Catalogo.ProductoStockEndPoints), g => Mozo.Api.Catalogo.ProductoStockEndPoints.MapProductoStock(g));
+// --- Fin rutas pendientes ---
 
 
 app.MapGet("/debug-storage", (IOptions<StorageOptions> opts) =>

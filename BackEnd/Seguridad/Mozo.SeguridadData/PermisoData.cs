@@ -64,7 +64,7 @@ public partial class PermisoData : IPermisoData
         pr.Add2("NoClave", c.NoClave, DbType.String);
         pr.Add2("CoUsuMod", _user.CoPersona, DbType.Int32);
 
-        string sql = $@"CALL {_schema}.usp_perfil_update(
+        string sql = $@"CALL {_schema}.usp_permiso_update(
             @CoEmpresa,
             @CoPermiso,
             @CoPersona,
@@ -79,7 +79,7 @@ public partial class PermisoData : IPermisoData
         DynamicParameters pr = new();
         pr.Add2("CoEmpresa", _user.CoEmpresa, DbType.Int32);
         pr.Add2("CoPermiso", c.CoPermiso, DbType.Int32);
-        pr.Add2("NoClaveNuevo", c.NoUsuario, DbType.String);
+        pr.Add2("NoClaveNuevo", c.NoClave, DbType.String);
         pr.Add2("CoUsuMod", _user.CoPersona, DbType.Int32);
 
         string sql = $"CALL {_schema}.usp_permiso_update_clave(@CoEmpresa,@CoPermiso,@NoClaveNuevo,@CoUsuMod)";
@@ -101,9 +101,9 @@ public partial class PermisoData : IPermisoData
     {
         DynamicParameters pr = new();
         pr.Add2("CoEmpresa", _user.CoEmpresa, DbType.Int32);
-        pr.Add2("CoPersona", c.CoPermiso, DbType.Int32);
+        pr.Add2("CoPermiso", c.CoPermiso, DbType.Int32);
 
-        string sql = $"SELECT * FROM {_schema}.fn_permiso_sel_by_id(@CoEmpresa,@CoPersona)";
+        string sql = $"SELECT * FROM {_schema}.fn_permiso_sel_by_id(@CoEmpresa,@CoPermiso)";
         return await _connection.QueryFirstOrDefaultAsync<PermisoModel>(sql, pr);
     }
 

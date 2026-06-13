@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { MainComponent } from "./layout/main/main.component";
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { MainComponent } from './layout/main/main.component';
 import { LoadingService } from './core/services/loading.service';
 
 @Component({
@@ -7,9 +7,9 @@ import { LoadingService } from './core/services/loading.service';
   standalone: true,
   imports: [MainComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  protected readonly title = signal('mozo-app');
-   loadingService = inject(LoadingService); // 👈 agrega esto
+  protected readonly loadingService = inject(LoadingService);
 }

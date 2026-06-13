@@ -1,6 +1,5 @@
-import { Component, DestroyRef, inject, Input, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // ← FormsModule para ngModel
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
 import { RedSocialService } from '@moduleMaestro/services/red-social.service';
@@ -21,8 +20,9 @@ type Seccion = { coTipo: number; noTipo: string };
 @Component({
   selector: 'mz-red-social-form-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonControl],
-  templateUrl: './red-social-form.page.html'
+  imports: [FormsModule, ButtonControl],
+  templateUrl: './red-social-form.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RedSocialFormPage {
 
@@ -35,16 +35,13 @@ export class RedSocialFormPage {
   protected readonly MenuControlTypeEnum = MenuControlTypeEnum;
   readonly empresa = signal<EmpresaModel | null>(null);
   readonly persona = signal<PersonaModel | null>(null);
-  readonly items = signal<RedSocialRow[]>([]); // ← lista unificada
-  readonly editandoId = signal<number | null>(null); // coRedSocial o _tempId
-  //readonly etiquetas = signal<any[]>([]);
-  //readonly tiposUrl = signal<any[]>([]);
+  readonly items = signal<RedSocialRow[]>([]);
+  readonly editandoId = signal<number | null>(null);
 
-  etiquetas = toSignal(this.tipoGeneralService.selAllActive({ coGrupo: TIPO_MAESTRO.general.etiquetaRedSocial.grupo }), { initialValue: [] });
-  tiposUrl = toSignal(this.tipoGeneralService.selAllActive({ coGrupo: TIPO_MAESTRO.general.urlRedSocial.grupo }), { initialValue: [] });
+  readonly etiquetas = toSignal(this.tipoGeneralService.selAllActive({ coGrupo: TIPO_MAESTRO.general.etiquetaRedSocial.grupo }), { initialValue: [] });
+  readonly tiposUrl = toSignal(this.tipoGeneralService.selAllActive({ coGrupo: TIPO_MAESTRO.general.urlRedSocial.grupo }), { initialValue: [] });
 
-
-  private tempIdCounter = -1; // IDs negativos para filas nuevas
+  private tempIdCounter = -1;
 
   readonly secciones: Seccion[] = [
     { coTipo: TIPO_MAESTRO.general.redSocial.items.telefonoMovil, noTipo: 'Teléfono móvil' },
@@ -53,15 +50,20 @@ export class RedSocialFormPage {
     { coTipo: TIPO_MAESTRO.general.redSocial.items.redSocial, noTipo: 'Redes sociales' },
   ];
 
-  @Input() set data(entidad: any) {
-    this.empresa.set(null);
-    this.persona.set(null);
-    this.items.set([]);
-    this.editandoId.set(null);
-    if (!entidad) return;
-    if (this.isPersona(entidad)) this.persona.set(entidad);
-    else if (this.isEmpresa(entidad)) this.empresa.set(entidad);
-    this.selAll();
+  readonly data = input<EmpresaModel | PersonaModel | null>(null);
+
+  constructor() {
+    effect(() => {
+      const entidad = this.data();
+      this.empresa.set(null);
+      this.persona.set(null);
+      this.items.set([]);
+      this.editandoId.set(null);
+      if (!entidad) return;
+      if (this.isPersona(entidad)) this.persona.set(entidad);
+      else if (this.isEmpresa(entidad)) this.empresa.set(entidad);
+      this.selAll();
+    });
   }
 
   // ← filtrar items por tipo para el template
@@ -181,11 +183,11 @@ export class RedSocialFormPage {
     this.editandoId.set(null);
   }
 
-  private isEmpresa(e: any): e is EmpresaModel {
-    return e?.coEmpresa != null && e?.coPersona == null;
+  private isEmpresa(e: EmpresaModel | PersonaModel): e is EmpresaModel {
+    return e.coEmpresa != null && (e as PersonaModel).coPersona == null;
   }
 
-  private isPersona(e: any): e is PersonaModel {
-    return e?.coEmpresa != null && e?.coPersona != null;
+  private isPersona(e: EmpresaModel | PersonaModel): e is PersonaModel {
+    return e.coEmpresa != null && (e as PersonaModel).coPersona != null;
   }
 }

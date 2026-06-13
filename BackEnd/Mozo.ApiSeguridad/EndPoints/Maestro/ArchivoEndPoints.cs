@@ -121,7 +121,7 @@ public static partial class ArchivoEndPoints
         var file = form.Files.GetFile("file");
         if (file == null) return Results.BadRequest("No se recibió archivo");
 
-        var parametros = ParseUploadParams(form);      
+        var parametros = ParseUploadParams(form);
         parametros.CoArchivo = ParseInt(form["coArchivo"]) ?? 0;
 
         var archivo = await IArchivo.UpdateMetaDataAsync(parametros, file);

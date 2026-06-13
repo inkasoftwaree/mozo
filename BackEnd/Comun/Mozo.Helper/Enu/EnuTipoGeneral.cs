@@ -34,7 +34,7 @@ public static class EnuTipoGeneral
             {
                 public const int Minuta = 1;
             }
-            public static  class PredioAlquiler
+            public static class PredioAlquiler
             {
                 public const int Contrato = 2;
             }

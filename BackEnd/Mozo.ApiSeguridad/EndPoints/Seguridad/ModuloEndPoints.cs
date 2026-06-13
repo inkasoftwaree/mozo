@@ -51,9 +51,9 @@ public static partial class ModuloEndPoints
             .WithResponses<IEnumerable<ModuloModel>>(StatusCodes.Status200OK)
             .WithDescription("Obtener todos los Módulo activos");
 
-    //    g.MapGet("/active-for-empresa", SelAllActiveForEmpresaAsync)
-    //.WithResponses<IEnumerable<ModuloModel>>(StatusCodes.Status200OK)
-    //.WithDescription("Obtener todos los Módulo activos para seleccionar en la empresa");
+        //    g.MapGet("/active-for-empresa", SelAllActiveForEmpresaAsync)
+        //.WithResponses<IEnumerable<ModuloModel>>(StatusCodes.Status200OK)
+        //.WithDescription("Obtener todos los Módulo activos para seleccionar en la empresa");
 
         //
 
@@ -149,14 +149,14 @@ public partial class ModuloEndPoints
         return Results.Ok(r);
     }
 
-//    private static async Task<IResult>
-//    SelAllActiveForEmpresaAsync(
-//        IModuloBusiness IModulo
-//)
-//    {
-//        IEnumerable<ModuloModel> r = await IModulo.SelAllActiveForEmpresaAsync();
-//        return Results.Ok(r);
-//    }
+    //    private static async Task<IResult>
+    //    SelAllActiveForEmpresaAsync(
+    //        IModuloBusiness IModulo
+    //)
+    //    {
+    //        IEnumerable<ModuloModel> r = await IModulo.SelAllActiveForEmpresaAsync();
+    //        return Results.Ok(r);
+    //    }
 
     private static async Task<IResult>
         SelAllActiveAreaAsync(

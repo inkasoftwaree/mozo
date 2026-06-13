@@ -37,7 +37,7 @@ public partial class PerfilPaginaData : IPerfilPaginaData
         DynamicParameters pr = new();
         pr.Add2("CoModulo", c.CoModulo, DbType.Int32);
         pr.Add2("CoPerfil", c.CoPerfil, DbType.Int32);
-        pr.Add2("CoPagina", c.CoPagina, DbType.Int32);      
+        pr.Add2("CoPagina", c.CoPagina, DbType.Int32);
         pr.Add2("CoMenu", c.CoMenu, DbType.Int32);
         pr.Add2("CoUsuCre", _user.CoPersona, DbType.Int32);
 

@@ -18,12 +18,12 @@ public partial class PaginaModel : BaseModel //<PaginaModel>
     public int? CoModulo { get; set; }
     public int? CoTipoPagina { get; set; }
     public int? CoPagina { get; set; }
-    public int? CoMenu { get; set; }    
+    public int? CoMenu { get; set; }
     public int? CoArea { get; set; }
     public string? NoControlador { get; set; }
     public string? NoAccion { get; set; }
     public string? NoOpcion { get; set; }
-    public int? NuOrden { get; set; }    
+    public int? NuOrden { get; set; }
 }
 public partial class PaginaModel
 {
@@ -38,7 +38,7 @@ public partial class PaginaModel
         }
     }
 
- 
+
 
     public int? CoPersona { get; set; }
     public string? NoArea { get; set; }

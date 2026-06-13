@@ -1,12 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalService } from '@app/shared/services/modal.service';
 import { FormFieldControl } from "@app/shared/components/form-field/form-field.control";
 import { ButtonControl } from "@app/shared/components/button/button.control";
 import { FormModalBase } from '@app/shared/components/form/form-modal-base';
-import { ModalPayload } from '@app/shared/models/controls/modal-control.model';
 import { MenuModel } from '@app/shared/models/seguridad/menu.model';
 import { PerfilPaginaService } from '../../services/perfil-pagina.service';
 import { PerfilModel } from '@app/shared/models/seguridad/perfil.model';
@@ -28,20 +26,24 @@ type MenuFormValue = {
 @Component({
   selector: 'mz-perfil-pagina-form-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonControl],
-  templateUrl: './perfil-pagina-form.page.html'
+  imports: [ReactiveFormsModule, ButtonControl],
+  templateUrl: './perfil-pagina-form.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PerfilPaginaFormPage extends FormModalBase<PerfilModel> {
   private readonly perfilPaginaService = inject(PerfilPaginaService);
   public readonly modalService = inject(ModalService);
   readonly menus = signal<MenuModel[]>([]);
   protected readonly MenuControlTypeEnum = MenuControlTypeEnum;
-  override set data(payload: ModalPayload<PerfilModel> | null) {
-    this.clearForm();
-    super.data = payload;
-    if (!payload) return;
-    const model = payload.model;
-    this.selAll(model!);
+
+  constructor() {
+    super();
+    effect(() => {
+      const payload = this.data();
+      this.clearForm();
+      if (!payload) return;
+      this.selAll(payload.model!);
+    });
   }
 
   //form = buildForm(this.fb, []);
@@ -81,13 +83,9 @@ export class PerfilPaginaFormPage extends FormModalBase<PerfilModel> {
 
     perfil.PerfilPaginaLst = lista;
 
-    console.log('DATA A ENVIAR', perfil);
-
     this.perfilPaginaService.insert(perfil)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        console.log('Guardado correctamente');
-      });
+      .subscribe();
 
     this.handleSuccess('Se guardo exitosamente');
     this.modalService.close();

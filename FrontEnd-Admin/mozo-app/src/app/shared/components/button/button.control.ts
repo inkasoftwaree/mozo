@@ -1,5 +1,4 @@
-import { Component, computed, ElementRef, HostListener, inject, Input, input, output, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, computed, inject, input, output } from '@angular/core';
 import { NgIconComponent } from '@ng-icons/core';
 import { DEFAULT_MENU_BUTTONS } from '@app/core/global/constants';
 import { MenuControlTypeEnum, ButtonControlSizeEnum } from '@app/shared/enum/menu-control-type.enum';
@@ -10,7 +9,8 @@ import { MenuControlTypeEnum, ButtonControlSizeEnum } from '@app/shared/enum/men
 @Component({
   selector: 'mz-button-control',
   standalone: true,
-  imports: [CommonModule, NgIconComponent],
+  imports: [NgIconComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
       [type]="type()"

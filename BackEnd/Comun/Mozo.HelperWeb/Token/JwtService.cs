@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 using Mozo.Helper.Global;
@@ -14,23 +15,43 @@ public interface IJwtService
 {
     string GenerateToken(CredencialModel credential);
     string GenerateRefreshToken();
+    DateTime GetRefreshTokenExpiration();
+
+    string? GetUserIp();
+    string GetUserAgent();
 }
 public sealed class JwtService : IJwtService
 {
     private readonly JwtKeyProvider _keys;
     private readonly IConfiguration _configuration;
-
+    private readonly IHttpContextAccessor _httpContextAccessor;
     public JwtService(
         JwtKeyProvider keys,
+        IHttpContextAccessor httpContextAccessor,
         IConfiguration configuration)
     {
         _keys = keys;
         _configuration = configuration;
+        _httpContextAccessor = httpContextAccessor;
     }
+
+    public string? GetUserIp()
+        => _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+
+    public string GetUserAgent()
+    {
+        string userAgent = _httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString() ?? string.Empty;
+        return userAgent.Length > 100
+        ? userAgent[..99]
+        : userAgent;
+    }
+
+
+
     public string GenerateRefreshToken()
     {
-        Guid g = Guid.NewGuid();
-        return g.ToString("N");
+        return Convert.ToHexString(
+       RandomNumberGenerator.GetBytes(32));
     }
 
     public string GenerateToken(
@@ -92,7 +113,7 @@ public sealed class JwtService : IJwtService
                 expires: feExpiracion,
                 signingCredentials: signingCredentials
             );
-               
+
         string noToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
         return noToken;
@@ -110,8 +131,6 @@ public sealed class JwtService : IJwtService
 
     public static TokenValidationParameters TokenParametro(IConfiguration configuration)
     {
-        //byte[] SecretKey = Encoding.ASCII.GetBytes(configuration.GetSection("JwtBearerTokenSettings").GetSection("SecretKey").Value!);
-        //SymmetricSecurityKey securityKey = new SymmetricSecurityKey(SecretKey);
         string publicKeyPath = configuration["JwtBearerTokenSettings:PublicKeyPath"]!;
         string publicKeyPem = File.ReadAllText(publicKeyPath);
 
@@ -137,8 +156,12 @@ public sealed class JwtService : IJwtService
         };
     }
 
+    public DateTime GetRefreshTokenExpiration()
+    {
+        int days = _configuration.GetValue<int>("JwtBearerTokenSettings:RefreshTokenExpiryInDays");
+        return DateTime.UtcNow.AddDays(days);
+    }
 
-  
 
 
 }

@@ -1,7 +1,6 @@
 ﻿using Mozo.ApiSeguridad.HelperWeb.Exceptions;
 
 using Npgsql;
-using NpgsqlTypes;
 using System.Diagnostics;
 
 namespace Mozo.ApiSeguridad.Helper.Exceptions;
@@ -136,7 +135,7 @@ public static class ProblemDetailsExtensions
                 problemDetails.Extensions["timestamp"] = DateTime.UtcNow;
 
                 // Agregar trace ID
-              
+
                 if (!string.IsNullOrEmpty(traceId))
                 {
                     problemDetails.Extensions["traceId"] = traceId;

@@ -1,45 +1,55 @@
-<!-- Navbar -->
-<nav class="navbar w-full bg-base-300">
+<nav class="navbar app-navbar bg-base-100 px-2 sm:px-4 min-h-14">
 
-  <!-- IZQUIERDA -->
-  <div class="flex items-center">
-    <label for="my-drawer-4" aria-label="open sidebar" class="btn btn-square btn-ghost">
-      <ng-icon name="lucidePanelRightOpen" class="text-2xl text-primary" />
+  <!-- IZQUIERDA: hamburger (solo mobile) -->
+  <div class="flex items-center gap-2">
+    <label
+      for="my-drawer-4"
+      aria-label="Abrir menú lateral"
+      class="btn btn-sm btn-square btn-ghost lg:hidden">
+      <ng-icon name="lucidePanelRightOpen" class="text-xl text-primary" />
     </label>
-    <div class="px-4">Navbar Title</div>
   </div>
 
-
+  <!-- MODAL DE LOGIN -->
   <mz-modal-control name="login-page" #loginModal>
     <mz-login-page [data]="loginModal.data$()" />
   </mz-modal-control>
 
-
-  <div class="ml-auto flex gap-2">
-    @if(user$ | async; as user){
-    <div class="dropdown dropdown-end">
-      <div tabindex="0" class="btn btn-sm btn-ghost">
-        {{ user.noUsuario }}
+  <!-- DERECHA: usuario -->
+  <div class="flex items-center gap-1 ml-auto flex-shrink-0">
+    @if (user(); as u) {
+      <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-2 px-2">
+          <div class="avatar-initials">{{ u.noUsuario?.charAt(0) }}</div>
+          <span class="hidden sm:block text-sm font-medium max-w-28 truncate">{{ u.noUsuario }}</span>
+          <ng-icon name="lucideMoreVertical" class="text-base opacity-50" />
+        </div>
+        <ul
+          tabindex="0"
+          class="dropdown-content menu bg-base-100 border border-base-200 rounded-box
+                 w-48 p-1.5 shadow-lg mt-1 z-50">
+          <li class="menu-title px-3 py-1">
+            <span class="text-xs opacity-50 truncate">{{ u.noUsuario }}</span>
+          </li>
+          <li>
+            <a (click)="logout()" class="text-error gap-2">
+              <ng-icon name="lucideLogOut" class="text-base" />
+              Cerrar sesión
+            </a>
+          </li>
+        </ul>
       </div>
-
-      <ul tabindex="0" class="dropdown-content menu bg-base-200 rounded-box w-40 p-2 shadow">
-        <li><a (click)="logout()">Logout</a></li>
-      </ul>
-    </div>
-    }
-    @else {
-    <a (click)="openLogin()" class="btn btn-active">
-      Login
-    </a>
+    } @else {
+      <button (click)="openLogin()" class="btn btn-primary btn-sm gap-1.5">
+        <ng-icon name="lucideUser" class="text-base" />
+        <span class="hidden sm:block">Iniciar sesión</span>
+      </button>
     }
   </div>
 
-
-
-
 </nav>
 
-<!-- Page content here -->
-<div class="p-4">
+<!-- Contenido de la página -->
+<div class="p-3 sm:p-5">
   <router-outlet />
 </div>

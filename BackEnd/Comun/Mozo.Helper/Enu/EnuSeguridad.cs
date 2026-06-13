@@ -93,7 +93,7 @@ public static class EnuSeguridad
         private static readonly Func<int, string> GetApi = CoModulo => "api" + CoModulo;
         private static readonly Func<int, string> GetWeb = CoModulo => "web" + CoModulo;
 
-        public static  ModuloModel2 Maestro => GetModulo(-2);
+        public static ModuloModel2 Maestro => GetModulo(-2);
 
         public static ModuloModel2 Seguridad => GetModulo(-1);
 

@@ -29,7 +29,8 @@ public static partial class PaisEndPoints
 
         g.MapGet("/active", SelAllActiveAsync)
           .WithResponses<IEnumerable<PaisModel>>(StatusCodes.Status200OK)
-          .WithDescription("Obtener todos los Paises");
+          .WithDescription("Obtener todos los Paises")
+          .CacheOutput("StaticLookup");
 
         return g;
     }

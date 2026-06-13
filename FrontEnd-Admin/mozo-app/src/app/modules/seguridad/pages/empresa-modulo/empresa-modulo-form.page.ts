@@ -1,19 +1,17 @@
-import { Component, DestroyRef, inject, Input, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable } from 'rxjs';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
 import { EmpresaModuloService } from '../../services/empresa-modulo.service';
 import { EmpresaModuloModel } from '@app/shared/models/seguridad/empresa-modulo.model';
 import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
-import { ButtonControl } from "@app/shared/components/button/button.control";
+import { ButtonControl } from '@app/shared/components/button/button.control';
 import { ToastrService } from 'ngx-toastr';
 
 
 type ModuloFormValue = {
-  coEmpresaModulo?: number;
+  coEmpresaModulo: number | null;
   coModulo: number;
   flEstReg: boolean;
   isChanged: boolean;
@@ -23,18 +21,26 @@ type ModuloFormValue = {
 @Component({
   selector: 'mz-empresa-modulo-form-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonControl],
-  templateUrl: './empresa-modulo-form.page.html'
+  imports: [ReactiveFormsModule, ButtonControl],
+  templateUrl: './empresa-modulo-form.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmpresaModuloFormPage {
 
   private readonly toastr = inject(ToastrService);
   private readonly empresaModuloService = inject(EmpresaModuloService);
-  protected destroyRef = inject(DestroyRef);
-  protected fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
+  protected readonly fb = inject(FormBuilder);
   protected readonly MenuControlTypeEnum = MenuControlTypeEnum;
 
-  readonly empresa = signal<EmpresaModel>(null!);
+  // Emits before every form rebuild to cancel stale valueChanges subscriptions
+  private readonly formSubs$ = new Subject<void>();
+
+  // Trigger for HTTP load — switchMap cancels the previous in-flight request
+  private readonly loadTrigger$ = new Subject<EmpresaModuloModel>();
+
+  readonly data = input<EmpresaModel | null>(null);
+  readonly empresa = signal<EmpresaModel | null>(null);
   readonly empresaModulos = signal<EmpresaModuloModel[]>([]);
 
   form = this.fb.group({
@@ -45,104 +51,94 @@ export class EmpresaModuloFormPage {
     return this.form.get('modulos') as FormArray;
   }
 
-  @Input() set data(empresa: EmpresaModel | null) {
-    if (!empresa) return;
-    this.empresa.set(empresa);
-    this.selAll();
+  constructor() {
+    this.destroyRef.onDestroy(() => this.formSubs$.complete());
+
+    this.loadTrigger$.pipe(
+      switchMap(params => this.empresaModuloService.selSelectAndUnSelectAll(params)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((modulos: EmpresaModuloModel[]) => {
+      this.empresaModulos.set(modulos);
+      this.buildForm(modulos);
+    });
+
+    effect(() => {
+      const empresa = this.data();
+      if (!empresa) return;
+      this.empresa.set(empresa);
+      this.modulosArray.clear();
+      this.empresaModulos.set([]);
+      this.loadTrigger$.next({ coEmpresa: empresa.coEmpresa });
+    });
   }
-
-
-
-  private selAll() {
-    this.modulosArray.clear();
-    this.empresaModulos.set([]);
-    let empresaModulo: EmpresaModuloModel = { coEmpresa: this.empresa().coEmpresa }
-    this.empresaModuloService
-      .selSelectAndUnSelectAll(empresaModulo)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((r: EmpresaModuloModel[]) => {
-        this.empresaModulos.set(r);
-        this.buildForm(r);
-      });
-  }
-
-
 
   onSave(): void {
     const raw = this.form.getRawValue() as { modulos: ModuloFormValue[] };
     const changedIndexes: number[] = [];
 
-    const observables: Observable<any>[] = raw.modulos
+    const observables: Observable<number | void>[] = raw.modulos
       .filter((modulo, index) => {
-        if (modulo.isChanged) {
-          changedIndexes.push(index);
-          return true;
-        }
-        return false;
+        if (!modulo.isChanged) return false;
+        // No DB record + user left it unchecked → nothing to do
+        if (modulo.coEmpresaModulo == null && !modulo.flEstReg) return false;
+        // DB record exists + user left it checked → toggled and reverted
+        if (modulo.coEmpresaModulo != null && modulo.flEstReg) return false;
+        changedIndexes.push(index);
+        return true;
       })
       .map(modulo => {
-        const empresaModulo: EmpresaModuloModel = {
-          coEmpresa: this.empresa().coEmpresa,
-          coEmpresaModulo: modulo.coEmpresaModulo,
+        const payload: EmpresaModuloModel = {
+          coEmpresa: this.empresa()!.coEmpresa,
+          coEmpresaModulo: modulo.coEmpresaModulo ?? undefined,
           coModulo: modulo.coModulo,
-          flEstReg: modulo.flEstReg ? 1 : 0
+          flEstReg: modulo.flEstReg ? 1 : 0,
         };
-
-        // null = no existe en BD → insert, number = ya existe → update
-        return empresaModulo.coEmpresaModulo == null
-          ? this.empresaModuloService.insert(empresaModulo)
-          : this.empresaModuloService.deleteById(empresaModulo);
+        // No DB record → INSERT (user checked a new module)
+        // DB record exists → DELETE (user unchecked an existing module)
+        return modulo.coEmpresaModulo == null
+          ? this.empresaModuloService.insert(payload)
+          : this.empresaModuloService.deleteById(payload);
       });
 
     if (observables.length === 0) {
-      this.toastr.info('No se encontrarón cambios en Módulos para las Empresa', 'Información');
+      this.toastr.info('No se encontraron cambios en Módulos para la Empresa', 'Información');
       return;
     }
 
-    // Fire all requests in parallel and wait for all to complete
-    forkJoin([...observables])
+    forkJoin(observables)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          changedIndexes.forEach(index => {
-            this.modulosArray.at(index).get('isChanged')!
-              .setValue(false, { emitEvent: false });
-          });
-          this.toastr.success('Se guardaron ' + observables.length + ' cambios de los Módulos para las Empresa', 'Éxito');
+          changedIndexes.forEach(index =>
+            this.modulosArray.at(index).get('isChanged')?.setValue(false, { emitEvent: false })
+          );
+          this.toastr.success(
+            `Se guardaron ${observables.length} cambio(s) de Módulos para la Empresa`,
+            'Éxito'
+          );
         }
       });
   }
 
-
-
   private buildForm(modulos: EmpresaModuloModel[]): void {
-    // Clear previous controls before repopulating
+    // Cancel stale valueChanges subscriptions before clearing the array
+    this.formSubs$.next();
     this.modulosArray.clear();
 
     modulos.forEach(modulo => {
       const group = this.fb.group({
         coEmpresaModulo: [modulo.coEmpresaModulo ?? null],
         coModulo: [modulo.coModulo],
-        flEstReg: [modulo.flEstReg ?? false],
-        isChanged: [false]  // tracks whether this row was touched
+        flEstReg: [!!modulo.flEstReg],  // normalize API number (0/1) → boolean
+        isChanged: [false],
       });
 
-      // Mark isChanged when flEstReg checkbox is toggled
+      // Track checkbox changes — tied to formSubs$ so rebuild cancels old subscriptions
       group.get('flEstReg')!.valueChanges
-        .pipe(takeUntilDestroyed(this.destroyRef))
+        .pipe(takeUntil(this.formSubs$))
         .subscribe(() => group.get('isChanged')!.setValue(true, { emitEvent: false }));
 
       this.modulosArray.push(group);
     });
   }
-
-
-
-
-
-
-
-
-
-
 }

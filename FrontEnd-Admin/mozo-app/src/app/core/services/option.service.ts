@@ -18,8 +18,17 @@ export class OptionService {
 
   loadMenus() {
     const data = localStorage.getItem(STORAGE_KEYS.MENUS);
-    if (data) {
-      this.menusSignal.set(JSON.parse(data));
+    if (!data) return;
+
+    try {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) {
+        this.menusSignal.set(parsed as ModuloUsuarioModel[]);
+      } else {
+        this.clear();
+      }
+    } catch {
+      this.clear();
     }
   }
 

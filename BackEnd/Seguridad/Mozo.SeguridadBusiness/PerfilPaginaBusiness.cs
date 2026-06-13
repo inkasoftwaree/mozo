@@ -18,7 +18,7 @@ public class PerfilPaginaBusiness : IPerfilPaginaBusiness
     }
 
     public async Task<int> InsertAsync(PerfilPaginaModel c) => await _data.InsertAsync(c);
-    
+
     public async Task DeleteByModuloAndPerfilAsync(PerfilPaginaFilterDto c) => await _data.DeleteByModuloAndPerfilAsync(c);
     public async Task<IEnumerable<PerfilPaginaModel>> SelAllAsync(PerfilPaginaFilterDto c) => await _data.SelAllAsync(c);
 

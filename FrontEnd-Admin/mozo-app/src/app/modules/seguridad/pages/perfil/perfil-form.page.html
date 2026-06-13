@@ -6,7 +6,7 @@
     </mz-form-field-control>
 
     <mz-form-field-control label="Perfil" [errorMessage]="getError('noPerfil') ? 'El Perfil es obligatorio.' : null">
-      <input type="text" required maxlength="100" placeholder="Perfil" class="input w-full validator" formControlName="noPerfil" id="noPerfil" />
+      <input #firstInput type="text" required maxlength="100" placeholder="Perfil" class="input w-full validator" formControlName="noPerfil" id="noPerfil" />
     </mz-form-field-control>
 
     <div>

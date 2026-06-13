@@ -1,23 +1,15 @@
-import { NgClass } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { NgIcon, provideIcons } from "@ng-icons/core";
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideSquare, lucideSquareCheck } from '@ng-icons/lucide';
 
 @Component({
   selector: 'mz-state-control',
   standalone: true,
   templateUrl: './state.control.html',
-   providers: [
-    provideIcons({
-      lucideSquareCheck,
-      lucideSquare
-    })
-  ],
-  imports: [NgIcon]
+  providers: [provideIcons({ lucideSquareCheck, lucideSquare })],
+  imports: [NgIcon],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StateControl {
-
-  @Input() state!: number | null;
-
-
+  state = input<number | null>(null);
 }

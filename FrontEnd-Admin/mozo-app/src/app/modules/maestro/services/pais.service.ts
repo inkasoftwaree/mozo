@@ -1,12 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { PaisModel } from '@app/shared/models/maestro/pais.model';
 import { UrlApiService } from '@app/core/services/url-api.service';
 import { API_ROUTES } from '@app/core/global/constants';
-
-const BASE_URL = `${environment.baseUrl}/maestro/pais`;
 
 @Injectable({
   providedIn: 'root'

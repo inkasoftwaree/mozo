@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
-using System.Reflection;
-
 namespace Mozo.Helper.Global;
 
 public static partial class Glo
 {
-    
+
     private static readonly Dictionary<int, string[]> HttpStatusMap = new()
 {
     { 100, new[] { "100", "Continue", "continue" } },
@@ -87,7 +85,7 @@ public static partial class Glo
 
 
 
- 
+
 
 
 

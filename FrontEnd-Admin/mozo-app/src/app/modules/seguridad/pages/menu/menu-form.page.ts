@@ -1,5 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { afterNextRender, ChangeDetectionStrategy, Component, effect, ElementRef, inject, Injector, signal, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalService } from '@app/shared/services/modal.service';
@@ -8,7 +7,6 @@ import { FormFieldControl } from "@app/shared/components/form-field/form-field.c
 import { ButtonControl } from "@app/shared/components/button/button.control";
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
 import { FormModalBase } from '@app/shared/components/form/form-modal-base';
-import { ModalPayload } from '@app/shared/models/controls/modal-control.model';
 import { MenuModel } from '@app/shared/models/seguridad/menu.model';
 import { MenuService } from '../../services/menu.service';
 import { ModuloModel } from '@app/shared/models/seguridad/modulo.model';
@@ -16,26 +14,30 @@ import { ModuloModel } from '@app/shared/models/seguridad/modulo.model';
 @Component({
   selector: 'mz-menu-form-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonControl, FormFieldControl],
-  templateUrl: './menu-form.page.html'
+  imports: [ReactiveFormsModule, ButtonControl, FormFieldControl],
+  templateUrl: './menu-form.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuFormPage extends FormModalBase<MenuModel> {
   private readonly menuService = inject(MenuService);
   public readonly modalService = inject(ModalService);
   protected readonly MenuControlTypeEnum = MenuControlTypeEnum;
 
-   readonly modulo = signal<ModuloModel | null>(null);
+  private readonly injector = inject(Injector);
+  private readonly firstInputRef = viewChild<ElementRef<HTMLInputElement>>('firstInput');
 
-  override set data(payload: ModalPayload<MenuModel> | null) {
-    this.clearForm();
-    super.data = payload;
-    if (!payload) return;
-     this.modulo.set(this.getRelation<ModuloModel>('modulo')!);
-    const model = payload.model;
-    if (this.action() === 'insert') {
-    } else if (this.action() === 'update') {
-      this.selById(model!);
-    }
+  readonly modulo = signal<ModuloModel | null>(null);
+
+  constructor() {
+    super();
+    effect(() => {
+      const payload = this.data();
+      this.clearForm();
+      if (!payload) return;
+      this.modulo.set(this.getRelation<ModuloModel>('modulo'));
+      if (this.action() === 'update') this.selById(payload.model!);
+      afterNextRender(() => this.firstInputRef()?.nativeElement.focus(), { injector: this.injector });
+    });
   }
 
   form = buildForm(this.fb, [
@@ -58,8 +60,7 @@ export class MenuFormPage extends FormModalBase<MenuModel> {
     this.form.markAllAsTouched();
 
     if (this.form.invalid) return;
-    const raw = this.form.getRawValue();
-    const request = this.buildRequest(raw);
+    const request = this.buildRequest();
 
     request.coModulo = this.modulo()?.coModulo;
 
@@ -80,11 +81,12 @@ export class MenuFormPage extends FormModalBase<MenuModel> {
       });
   }
 
-  private buildRequest(raw: any): MenuModel {
+  private buildRequest(): MenuModel {
+    const raw = this.form.getRawValue();
     return {
       coMenu: this.model()?.coMenu,
-      noMenu: raw.noMenu,
-      nuOrden: raw.nuOrden
+      noMenu: raw['noMenu'],
+      nuOrden: raw['nuOrden']
     };
   }
 

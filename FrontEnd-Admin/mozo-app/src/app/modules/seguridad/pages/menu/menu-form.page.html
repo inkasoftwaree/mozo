@@ -6,7 +6,7 @@
     </mz-form-field-control>
 
     <mz-form-field-control label="Orden" [colSpan]="3" [errorMessage]="getError('nuOrden') ? 'El orden es obligatorio.' : null">
-      <input type="number" required maxlength="2" placeholder="Orden" class="input w-full validator" formControlName="nuOrden" id="nuOrden" />
+      <input #firstInput type="number" required maxlength="2" placeholder="Orden" class="input w-full validator" formControlName="nuOrden" id="nuOrden" />
     </mz-form-field-control>
 
     <mz-form-field-control label="Menú" [colSpan]="9" [errorMessage]="getError('noMenu') ? 'El Menú es obligatorio.' : null">

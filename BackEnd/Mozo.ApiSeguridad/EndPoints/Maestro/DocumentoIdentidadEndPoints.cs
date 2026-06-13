@@ -28,7 +28,8 @@ public static partial class DocumentoIdentidadEndPoints
 
         g.MapGet("/active", SelAllActiveAsync)
           .WithResponses<IEnumerable<DocumentoIdentidadModel>>(StatusCodes.Status200OK)
-          .WithDescription("Obtener todos los Documentos de Identidad");
+          .WithDescription("Obtener todos los Documentos de Identidad")
+          .CacheOutput("StaticLookup");
         return g;
     }
 

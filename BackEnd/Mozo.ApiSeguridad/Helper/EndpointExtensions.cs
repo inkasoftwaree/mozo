@@ -120,4 +120,25 @@ public static class EndpointExtensions
     {
         await cacheStore.EvictByTagAsync(CacheTag, default);
     }
+
+    /// <summary>
+    /// GetClientInfo, retorna IP y UserAgent
+    /// </summary>
+    public static (string? Ip, string UserAgent)
+    GetClientInfo(HttpContext context)
+    {
+        string? ip =
+            context.Request.Headers["CF-Connecting-IP"].FirstOrDefault() ??
+            context.Request.Headers["X-Forwarded-For"].FirstOrDefault()?.Split(',')[0].Trim() ??
+            context.Connection.RemoteIpAddress?.ToString();
+
+        string userAgent =
+            context.Request.Headers.UserAgent.ToString();
+
+        if (userAgent.Length > 100)
+            userAgent = userAgent[..100];
+
+        return (ip, userAgent);
+    }
+
 }

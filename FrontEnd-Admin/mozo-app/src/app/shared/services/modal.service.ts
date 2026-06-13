@@ -1,23 +1,16 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
 import { ModalControlModel } from '@shared/models/controls/modal-control.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ModalService {
 
-  private modalSubject = new Subject<ModalControlModel | null>();
-  modalState$ = this.modalSubject.asObservable();
+  readonly state = signal<ModalControlModel | null>(null);
 
-  open<T = any>(
-    config: ModalControlModel<T>
-  ): void {
-    this.modalSubject.next(config);
+  open<T = unknown>(config: ModalControlModel<T>): void {
+    this.state.set(config as ModalControlModel);
   }
 
-  close() {
-    this.modalSubject.next(null);
+  close(): void {
+    this.state.set(null);
   }
-
 }

@@ -40,7 +40,7 @@ public class ArchivoBusiness : IArchivoBusiness
        )
     {
         _data = data;
-        _storage = storage;       
+        _storage = storage;
         _imageProcessor = imageProcessor;
         _logger = logger;
     }

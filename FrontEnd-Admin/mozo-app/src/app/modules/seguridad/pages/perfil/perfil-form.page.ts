@@ -1,5 +1,4 @@
-import { Component, DestroyRef, EventEmitter, Input, Output, inject, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { afterNextRender, ChangeDetectionStrategy, Component, effect, ElementRef, inject, Injector, signal, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ModalService } from '@app/shared/services/modal.service';
@@ -11,13 +10,13 @@ import { PerfilService } from '@moduleSeguridad/services/perfil.service';
 import { PerfilModel } from '@app/shared/models/seguridad/perfil.model';
 import { ModuloModel } from '@app/shared/models/seguridad/modulo.model';
 import { FormModalBase } from '@app/shared/components/form/form-modal-base';
-import { ModalPayload } from '@app/shared/models/controls/modal-control.model';
 
 @Component({
   selector: 'mz-perfil-form-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ButtonControl, FormFieldControl],
-  templateUrl: './perfil-form.page.html'
+  imports: [ReactiveFormsModule, ButtonControl, FormFieldControl],
+  templateUrl: './perfil-form.page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PerfilFormPage extends FormModalBase<PerfilModel> {
 
@@ -25,24 +24,27 @@ export class PerfilFormPage extends FormModalBase<PerfilModel> {
   public readonly modalService = inject(ModalService);
   protected readonly MenuControlTypeEnum = MenuControlTypeEnum;
 
+  private readonly injector = inject(Injector);
+  private readonly firstInputRef = viewChild<ElementRef<HTMLInputElement>>('firstInput');
+
   readonly modulo = signal<ModuloModel | null>(null);
+
+  constructor() {
+    super();
+    effect(() => {
+      const payload = this.data();
+      this.clearForm();
+      if (!payload) return;
+      this.modulo.set(this.getRelation<ModuloModel>('modulo'));
+      if (this.action() === 'update') this.selById(payload.model!);
+      afterNextRender(() => this.firstInputRef()?.nativeElement.focus(), { injector: this.injector });
+    });
+  }
 
   form = buildForm(this.fb, [
     { name: 'noPerfil', validators: [...V.required, ...V.maxLength(100)] },
     { name: 'flDefault', value: 1 }
   ]);
-
-  override set data(payload: ModalPayload<PerfilModel> | null) {
-    this.clearForm();
-    super.data = payload;
-    if (!payload) return;
-    this.modulo.set(this.getRelation<ModuloModel>('modulo')!);
-    const model = payload.model;
-    if (this.action() === 'insert') {
-    } else if (this.action() === 'update') {
-      this.selById(model!);
-    }
-  }
 
   private selById(c: PerfilModel): void {
     this.perfilService.selById(c)
@@ -58,8 +60,7 @@ export class PerfilFormPage extends FormModalBase<PerfilModel> {
     this.form.markAllAsTouched();
 
     if (this.form.invalid) return;
-    const raw = this.getFormValue();
-    const request = this.buildRequest(raw);
+    const request = this.buildRequest();
 
     request.coModulo = this.modulo()?.coModulo;
 
@@ -80,12 +81,13 @@ export class PerfilFormPage extends FormModalBase<PerfilModel> {
       });
   }
 
-  private buildRequest(raw: any): PerfilModel {
+  private buildRequest(): PerfilModel {
+    const raw = this.form.getRawValue();
     return {
       coPerfil: this.model()?.coPerfil,
-      noPerfil: raw.noPerfil,
-      coModulo: raw.coModulo,
-      flDefault: raw.flDefault == true ? 1 : 0
+      noPerfil: raw['noPerfil'],
+      coModulo: raw['coModulo'],
+      flDefault: raw['flDefault'] == true ? 1 : 0
     };
   }
 

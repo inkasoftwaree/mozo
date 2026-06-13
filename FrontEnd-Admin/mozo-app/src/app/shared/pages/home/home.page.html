@@ -1,1 +1,125 @@
- <h3 class="font-bold">Bienvenido!</h3>
+<!-- Bienvenida -->
+<div class="mb-6">
+  <h1 class="text-2xl sm:text-3xl font-bold text-base-content">
+    Bienvenido@if(user(); as u){, <span class="text-primary">{{ u.noUsuario }}</span>}
+  </h1>
+  <p class="text-base-content/60 mt-1 text-sm sm:text-base">
+    Panel de administración Mozo — gestiona módulos, perfiles y configuración del sistema.
+  </p>
+</div>
+
+<!-- Tarjetas de acceso rápido -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+
+  <div class="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow">
+    <div class="card-body p-4 sm:p-5">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-base-content/50 mb-1">Seguridad</p>
+          <h2 class="text-lg font-bold">Módulos</h2>
+          <p class="text-sm text-base-content/60 mt-1">Gestión de módulos del sistema</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <ng-icon name="lucideShieldUser" class="text-xl text-primary" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow">
+    <div class="card-body p-4 sm:p-5">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-base-content/50 mb-1">Seguridad</p>
+          <h2 class="text-lg font-bold">Perfiles</h2>
+          <p class="text-sm text-base-content/60 mt-1">Roles y permisos de usuario</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center flex-shrink-0">
+          <ng-icon name="lucideUsers" class="text-xl text-secondary" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow">
+    <div class="card-body p-4 sm:p-5">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-base-content/50 mb-1">Seguridad</p>
+          <h2 class="text-lg font-bold">Empresas</h2>
+          <p class="text-sm text-base-content/60 mt-1">Configuración de empresas</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+          <ng-icon name="lucideBuilding2" class="text-xl text-accent" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow">
+    <div class="card-body p-4 sm:p-5">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-base-content/50 mb-1">Maestro</p>
+          <h2 class="text-lg font-bold">Catálogos</h2>
+          <p class="text-sm text-base-content/60 mt-1">Tablas maestras del sistema</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-info/10 flex items-center justify-center flex-shrink-0">
+          <ng-icon name="lucideDatabaseZap" class="text-xl text-info" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Info del sistema -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+  <div class="content-card">
+    <h3 class="font-semibold text-base mb-3 flex items-center gap-2">
+      <ng-icon name="lucideList" class="text-primary" />
+      Accesos rápidos
+    </h3>
+    <ul class="space-y-2 text-sm">
+      <li class="flex items-center gap-2 text-base-content/70 hover:text-base-content transition-colors">
+        <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+        Módulos del sistema
+      </li>
+      <li class="flex items-center gap-2 text-base-content/70 hover:text-base-content transition-colors">
+        <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+        Gestión de menús y páginas
+      </li>
+      <li class="flex items-center gap-2 text-base-content/70 hover:text-base-content transition-colors">
+        <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+        Perfiles y accesos
+      </li>
+      <li class="flex items-center gap-2 text-base-content/70 hover:text-base-content transition-colors">
+        <span class="w-1.5 h-1.5 rounded-full bg-info"></span>
+        Catálogos maestros
+      </li>
+    </ul>
+  </div>
+
+  <div class="content-card">
+    <h3 class="font-semibold text-base mb-3 flex items-center gap-2">
+      <ng-icon name="lucidePackage" class="text-primary" />
+      Sistema
+    </h3>
+    <dl class="space-y-2 text-sm">
+      <div class="flex justify-between">
+        <dt class="text-base-content/60">Aplicación</dt>
+        <dd class="font-medium">Mozo Admin</dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-base-content/60">Framework</dt>
+        <dd class="font-medium">Angular 21</dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-base-content/60">UI</dt>
+        <dd class="font-medium">Tailwind 4 + DaisyUI 5</dd>
+      </div>
+    </dl>
+  </div>
+
+</div>

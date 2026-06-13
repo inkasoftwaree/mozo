@@ -1,48 +1,32 @@
-import { Component, Input, Output, EventEmitter, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 @Component({
   selector: 'mz-pagination-control',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './pagination.control.html'
+  imports: [],
+  templateUrl: './pagination.control.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaginationControl {
 
-  @Input() page = 1;
-  @Input() totalPages = 1;
+  page = input(1);
+  totalPages = input(1);
 
-  @Output() change = new EventEmitter<number>();
+  change = output<number>();
 
-  _page = signal(1);
-  _totalPages = signal(1);
-
-  ngOnChanges() {
-    this._page.set(this.page);
-    this._totalPages.set(this.totalPages);
-  }
-
-  // 🔥 solo 5 páginas visibles
-  pages = computed(() => {
-    const total = this._totalPages();
-    const current = this._page();
-
+  readonly pages = computed(() => {
+    const total = this.totalPages();
+    const current = this.page();
     const start = Math.max(1, current - 2);
     const end = Math.min(total, current + 2);
-
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   });
 
-  goTo(p: number) {
-    if (p < 1 || p > this._totalPages()) return;
+  goTo(p: number): void {
+    if (p < 1 || p > this.totalPages()) return;
     this.change.emit(p);
   }
 
-  prev() {
-    this.goTo(this._page() - 1);
-  }
-
-  next() {
-    this.goTo(this._page() + 1);
-  }
+  prev(): void { this.goTo(this.page() - 1); }
+  next(): void { this.goTo(this.page() + 1); }
 }

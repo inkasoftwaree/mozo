@@ -1,5 +1,5 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, isDevMode } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 interface ProblemDetails {
   type?: string;
   title?: string;
-  status?: number; // ✅ Hacer opcional
+  status?: number;
   detail?: string;
   code?: string;
   errors?: ErrorDetail[];
@@ -32,47 +32,29 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      const problemDetails: ProblemDetails = error.error || {};
+      // 1. Dejar que authInterceptor maneje los 401 — evita doble manejo
+      if (error.status === 401) {
+        return throwError(() => error);
+      }
 
-      // Registrar para debugging
-      console.error('Error Response:', {
+      const problem: ProblemDetails = error.error || {};
+      const message = problem.detail ?? problem.message ?? 'Ocurrió un error inesperado';
+      const title   = problem.title ?? `Error ${error.status}`;
+      const code    = problem.code  ?? String(error.status);
+
+      if (isDevMode()) console.error('HTTP Error:', {
         httpStatus: error.status,
-        apiStatus: problemDetails.status,
-        code: problemDetails.code,
-        detail: problemDetails.detail,
-        traceId: problemDetails.traceId
+        code,
+        detail: problem.detail,
+        traceId: problem.traceId,
       });
 
-      // ✅ Obtener mensaje
-      const message = problemDetails.detail || problemDetails.message || 'Ocurrió un error inesperado';
-      const title = problemDetails.title || `Error ${error.status}`;
-      const code = problemDetails.code || error.status.toString();
-
-      // Manejar según status HTTP
       switch (error.status) {
-        case 400:
-          handleBadRequest(toastr, problemDetails, message, title, code);
-          break;
-
-        case 401:
-          handleUnauthorized(toastr, router, message, code);
-          break;
-
-        case 403:
-          handleForbidden(toastr, router, message, code);
-          break;
-
-        case 404:
-          handleNotFound(toastr, message, code);
-          break;
-
-        case 500:
-          handleInternalServerError(toastr, problemDetails, message, code);
-          break;
-
-        default:
-          toastr.error(message, 'Error');
-          break;
+        case 400: handleBadRequest(toastr, problem, message, title, code); break;
+        case 403: handleForbidden(toastr, router, message, code);          break;
+        case 404: handleNotFound(toastr, message, code);                   break;
+        case 500: handleServerError(toastr, problem, message, code);       break;
+        default:  toastr.error(message, `Error ${error.status}`);          break;
       }
 
       return throwError(() => error);
@@ -80,104 +62,56 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   );
 };
 
-/**
- * Maneja errores 400 - Bad Request / Validación
- */
+// ── Handlers ────────────────────────────────────────────────────────────────
+
 function handleBadRequest(
   toastr: ToastrService,
-  problemDetails: ProblemDetails,
+  problem: ProblemDetails,
   message: string,
   title: string,
   code: string
 ): void {
-  if (problemDetails.errors && Array.isArray(problemDetails.errors)) {
-    const errors = problemDetails.errors as ErrorDetail[];
+  const errors: ErrorDetail[] = Array.isArray(problem.errors) ? problem.errors : [];
 
-    if (errors.length > 1) {
-      // Mostrar primero la validación general
-      toastr.error(message || 'Errores de validación', `${title} (${code})`);
-      // Y luego un resumen de otros errores
-      console.warn('Errores de validación:', errors);
-    } else if (errors.length === 1) {
-      toastr.error(
-        `${errors[0].field}: ${errors[0].message}`,
-        `Validación (${code})`
-      );
-    }
-  } else {
+  if (errors.length === 0) {
     toastr.error(message, `${title} (${code})`);
+    return;
   }
-}
 
-/**
- * Maneja errores 401 - No autorizado
- */
-function handleUnauthorized(
-  toastr: ToastrService,
-  router: Router,
-  message: string,
-  code: string
-): void {
-  toastr.warning(
-    message || 'Sesión expirada, inicia sesión nuevamente',
-    `No autorizado (${code})`
+  if (errors.length === 1) {
+    toastr.error(`${errors[0].field}: ${errors[0].message}`, `Validación (${code})`);
+    return;
+  }
+
+  // Múltiples errores: mostrar uno por uno para que el usuario los vea todos
+  errors.forEach(e =>
+    toastr.error(`${e.field}: ${e.message}`, `Validación (${e.code})`)
   );
-
-  // Limpiar almacenamiento
-  localStorage.removeItem('token');
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('credencial');
-
-  // Redirigir después de un pequeño delay
-  setTimeout(() => {
-    router.navigate(['/login']);
-  }, 1500);
 }
 
-/**
- * Maneja errores 403 - Acceso denegado
- */
 function handleForbidden(
   toastr: ToastrService,
   router: Router,
   message: string,
   code: string
 ): void {
-  toastr.error(
-    message || 'No tienes permisos para realizar esta acción',
-    `Prohibido (${code})`
-  );
+  toastr.error(message || 'No tienes permisos para realizar esta acción', `Prohibido (${code})`);
   router.navigate(['/forbidden']);
 }
 
-/**
- * Maneja errores 404 - No encontrado
- */
-function handleNotFound(
-  toastr: ToastrService,
-  message: string,
-  code: string
-): void {
+function handleNotFound(toastr: ToastrService, message: string, code: string): void {
   toastr.error(message || 'Recurso no encontrado', `Error ${code}`);
 }
 
-/**
- * Maneja errores 500 - Error interno del servidor
- */
-function handleInternalServerError(
+function handleServerError(
   toastr: ToastrService,
-  problemDetails: ProblemDetails,
+  problem: ProblemDetails,
   message: string,
   code: string
 ): void {
-  toastr.error(
-    message || 'Error interno del servidor',
-    `Error ${code}`
-  );
+  toastr.error(message || 'Error interno del servidor', `Error ${code}`);
 
-  if (problemDetails.traceId) {
-    console.error('Trace ID:', problemDetails.traceId);
-    // ✅ Eliminar la verificación de environment
-    console.log(`Para más detalles, busca el Trace ID en los logs del servidor: ${problemDetails.traceId}`);
+  if (problem.traceId && isDevMode()) {
+    console.error(`Trace ID para soporte: ${problem.traceId}`);
   }
 }

@@ -1,40 +1,47 @@
-<div class="flex items-center justify-between mb-4">
-  <h1 class="text-2xl font-bold">Mantenimiento de Módulos</h1>
-
-   <mz-button-control
-        type="submit"
-        [view]="MenuControlTypeEnum.New"
-        (click)="onMenuAction('insert', null)"
-      />
+<div class="page-header">
+  <h1 class="page-title">Módulos</h1>
+  <mz-button-control
+    type="submit"
+    [view]="MenuControlTypeEnum.New"
+    (click)="onMenuAction('insert', null)" />
 </div>
 
-<table class="table table-zebra">
-  <thead>
-    <tr>
-      <th class="w-10">Orden</th>
-      <th class="w-10">Id</th>
-      <th>Módulo</th>
-      <th class="w-40"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    @for (modulo of modulos(); track modulo.coModulo) {
-    <tr>
-      <td>{{ modulo.nuOrden }}</td>
-       <td>
-        {{ modulo.coModulo }}
-      </td>
-      <td>
-        <mz-state-control [state]="modulo.flEstReg == 1 ? 1 : 0" /> {{ modulo.noModulo }}
-      </td>
-      <td>
-        <mz-menu-control [items]="menuItems" [state]="modulo.flEstReg ?? null" (action)="onMenuAction($event, modulo)" />
-      </td>
-    </tr>
-    }
-  </tbody>
-</table>
+<div class="content-card">
+  <div class="table-responsive">
+    <table class="table table-zebra table-sm sm:table-md">
+      <thead>
+        <tr>
+          <th class="w-14 text-center">Orden</th>
+          <th class="w-14 text-center">ID</th>
+          <th>Módulo</th>
+          <th class="w-12"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (modulo of modulos(); track modulo.coModulo) {
+          <tr class="hover">
+            <td class="text-center text-sm opacity-60">{{ modulo.nuOrden }}</td>
+            <td class="text-center">
+              <span class="badge badge-ghost badge-sm font-mono">{{ modulo.coModulo }}</span>
+            </td>
+            <td>
+              <div class="flex items-center gap-2">
+                <mz-state-control [state]="modulo.flEstReg == 1 ? 1 : 0" />
+                <span class="font-medium">{{ modulo.noModulo }}</span>
+              </div>
+            </td>
+            <td>
+              <mz-menu-control
+                [items]="menuItems"
+                [state]="modulo.flEstReg ?? null"
+                (action)="onMenuAction($event, modulo)" />
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
 
 <mz-modal-control name="modulo-form-page" #moduloModal>
   <mz-modulo-form-page (saved)="onSaved(moduloModal.data$())" [data]="moduloModal.data$()" />

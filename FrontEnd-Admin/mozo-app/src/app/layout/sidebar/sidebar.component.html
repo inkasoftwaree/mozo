@@ -1,51 +1,67 @@
-<label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
+<label for="my-drawer-4" aria-label="Cerrar menú lateral" class="drawer-overlay"></label>
 
-<div class="flex min-h-full flex-col bg-base-200 border-r border-base-300
-            is-drawer-close:w-16
-            is-drawer-open:w-64
-            transition-all duration-300">
+<div class="flex flex-col bg-base-100 border-r border-base-200
+            h-screen sticky top-0 w-64
+            transition-all duration-300 ease-in-out overflow-x-hidden">
 
-  <ul class="menu w-full p-2 gap-1 is-drawer-close:space-y-0">
+  <!-- Brand / Logo -->
+  <div class="flex items-center gap-3 px-4 py-4 border-b border-base-200 flex-shrink-0 h-14">
+    <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+      <ng-icon name="lucidePackage" class="text-sm text-primary-content" />
+    </div>
+    <span class="sidebar-brand-text whitespace-nowrap">Mozo Admin</span>
+  </div>
+
+  <!-- Navegación con scroll -->
+  <ul class="menu menu-sm w-full p-2 flex-1 min-h-0 overflow-y-auto gap-0.5">
+
+    <!-- Inicio -->
     <li>
-      <a routerLink="home" routerLinkActive="active" class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-        data-tip="Homepage">
-        <!-- Home icon -->
-        <ng-icon name="lucideHome" class="text-2xl text-primary" />
-        <span class="is-drawer-close:hidden">Principal</span>
+      <a routerLink="home" routerLinkActive="menu-active">
+        <ng-icon name="lucideHome" class="text-lg text-primary" />
+        Inicio
       </a>
     </li>
 
-    @for(modulo of modulos(); track $index) {
-    <li class="text-zinc-500">
-      <div class="is-drawer-close:tooltip is-drawer-close:tooltip-right" [attr.data-tip]="modulo.noModulo">
-        <ng-icon [name]="modulo.noIcono" class="text-2xl text-primary" />
-        <span class="is-drawer-close:hidden pl-2">{{ modulo.noModulo }}</span>
-      </div>
-    </li>
-    <li class="is-drawer-close:hidden">
-      @for (menu of modulo.menuLst; track $index) {
-      <details class="group is-drawer-close:hidden">
-        <summary class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-base-300">
-          <ng-icon name="lucideMenu" class="text-1xl text-primary" />
-          <span class="flex-1 text-left">
-            {{ menu.noMenu }}
-          </span>
-        </summary>
-        <ul class="mt-1 ml-4 border-l border-base-300 pl-2">
-          @for (pagina of menu.paginaLst; track $index) {
-          <li>
-            <a [routerLink]="['/', pagina.noArea, pagina.noControlador]"
-            routerLinkActive="menu-active"
-            [routerLinkActiveOptions]="{ exact: true }"
-              class="rounded-md">
-              {{ pagina.noOpcion }}
-            </a>
-          </li>
-          }
-        </ul>
-      </details>
-      }
-    </li>
+    <!-- Módulos dinámicos -->
+    @for (modulo of modulos(); track modulo.coModulo) {
+
+      <!-- Separador / título de módulo -->
+      <li class="menu-title mt-2">
+        <span class="text-xs font-semibold uppercase tracking-widest opacity-50">
+          {{ modulo.noModulo }}
+        </span>
+      </li>
+
+      <!-- Menús del módulo -->
+      <li>
+        @for (menu of modulo.menuLst; track menu.coMenu) {
+          <details>
+            <summary>
+              <ng-icon name="lucideMenu" class="text-base text-base-content/50 flex-shrink-0" />
+              <span class="flex-1 text-sm">{{ menu.noMenu }}</span>
+            </summary>
+            <ul class="ml-2 border-l-2 border-base-200 pl-2">
+              @for (pagina of menu.paginaLst; track pagina.coPagina) {
+                <li>
+                  <a [routerLink]="['/', pagina.noArea, pagina.noControlador]"
+                     routerLinkActive="menu-active"
+                     [routerLinkActiveOptions]="{ exact: true }">
+                    {{ pagina.noOpcion }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </details>
+        }
+      </li>
     }
+
   </ul>
+
+  <!-- Footer -->
+  <div class="border-t border-base-200 px-4 py-2 flex-shrink-0">
+    <p class="text-xs text-base-content/40 text-center">Mozo Admin v1.0</p>
+  </div>
+
 </div>

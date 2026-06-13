@@ -1,12 +1,12 @@
-import { Component, input, HostBinding } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, HostBinding, input } from '@angular/core';
 
 @Component({
   selector: 'mz-form-field-control',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './form-field.control.html',
-  styleUrls: ['./form-field.control.css']
+  styleUrls: ['./form-field.control.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormFieldControl {
 

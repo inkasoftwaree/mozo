@@ -1,21 +1,24 @@
+export type ModalSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xl2' | 'xl3' | 'xl4' | 'xl5' | 'xl6' | 'xl7' | 'full';
+
+export type ModalMetaData = {
+  action?: 'update' | 'insert' | 'view';
+  [key: string]: unknown;
+};
+
 /**
- * Payload genérico para cualquier modal
- * model: la entidad principal a gestionar
- * relations: entidades relacionadas (claves foráneas)
+ * Payload genérico para cualquier modal.
+ * T = entidad principal.
  */
-export interface ModalPayload<T = any> {
-  model: T | null;  // Entidad principal
-  relations?: Record<string, any>;  // Entidades relacionadas
-  metaData?: {
-    action?: 'update' | 'insert' | 'view';
-    [key: string]: any;
-  };
+export interface ModalPayload<T = unknown> {
+  model: T | null;
+  relations?: Record<string, unknown>;
+  metaData?: ModalMetaData;
 }
 
-export interface ModalControlModel<T = any> {
+export interface ModalControlModel<T = unknown> {
   modalName: string;
   title: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xl2' | 'xl3' | 'xl4' | 'xl5' | 'xl6' | 'xl7' | 'full';
+  size?: ModalSize;
   data: ModalPayload<T>;
 }
 

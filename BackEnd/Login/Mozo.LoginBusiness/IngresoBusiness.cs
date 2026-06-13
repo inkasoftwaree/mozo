@@ -6,9 +6,10 @@ namespace Mozo.LoginBusiness;
 public interface IIngresoBusiness
 {
     Task<int> InsertAsync(IngresoModel c);
-    Task UpdateCloseTokenAsync(IngresoModel c);
-    Task<IngresoModel?> SelByIdAsync(IngresoFilterDto c);
-
+    Task RevokeAsync(IngresoModel c);
+    Task<int> ReplaceAsync(IngresoModel c);
+    Task RevokeAllAsync(IngresoModel c);
+    Task<IngresoModel?> SelByRefreshTokenAsync(IngresoFilterDto c);
 }
 public class IngresoBusiness : IIngresoBusiness
 {
@@ -17,9 +18,11 @@ public class IngresoBusiness : IIngresoBusiness
     {
         _data = data;
     }
-
     public async Task<int> InsertAsync(IngresoModel c) => await _data.InsertAsync(c);
-    public async Task UpdateCloseTokenAsync(IngresoModel c) => await _data.UpdateCloseTokenAsync(c);
-    public async Task<IngresoModel?> SelByIdAsync(IngresoFilterDto c) => await _data.SelByIdAsync(c);
+    public async Task RevokeAsync(IngresoModel c) => await _data.RevokeAsync(c);
+
+    public async Task<int> ReplaceAsync(IngresoModel c) => await _data.ReplaceAsync(c);
+    public async Task RevokeAllAsync(IngresoModel c) => await _data.RevokeAllAsync(c);
+    public async Task<IngresoModel?> SelByRefreshTokenAsync(IngresoFilterDto c) => await _data.SelByRefreshTokenAsync(c);
 
 }

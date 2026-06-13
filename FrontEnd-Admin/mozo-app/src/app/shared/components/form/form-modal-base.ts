@@ -1,48 +1,44 @@
-import { Directive, Input, Output, EventEmitter, inject, signal, computed } from '@angular/core';
+import { Directive, DestroyRef, effect, inject, input, output, signal, computed } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { DestroyRef, effect } from '@angular/core';
-import { ModalPayload } from '@app/shared/models/controls/modal-control.model';
+import { ModalMetaData, ModalPayload } from '@app/shared/models/controls/modal-control.model';
 
 /**
- * Base para todos los formularios modales
- * NO usa OnInit - reacciona a cambios de @Input
+ * Base para todos los formularios modales.
+ * Reacciona a cambios de data via effect() — sin ngOnInit ni @Input setter.
  */
 @Directive()
-export abstract class FormModalBase<T = any> {
-  protected fb = inject(FormBuilder);
-  protected toastr = inject(ToastrService);
-  protected destroyRef = inject(DestroyRef);
+export abstract class FormModalBase<T = object> {
+  protected readonly fb = inject(FormBuilder);
+  protected readonly toastr = inject(ToastrService);
+  protected readonly destroyRef = inject(DestroyRef);
 
-  @Input() set data(payload: ModalPayload<T> | null) {
-    this.payload$.set(payload);
-  }
+  /** Input signal — el padre vincula con [data]="payload" */
+  readonly data = input<ModalPayload<T> | null>(null);
 
-  @Output() saved = new EventEmitter<T | null>();
+  /** Output signal — emite el modelo guardado */
+  readonly saved = output<T | null>();
 
-  protected payload$ = signal<ModalPayload<T> | null>(null);
-  protected isLoading = signal(false);
+  protected readonly payload$ = signal<ModalPayload<T> | null>(null);
+  protected readonly isLoading = signal(false);
 
-  // ✅ Computed para facilitar acceso
-  protected model = computed(() => this.payload$()?.model ?? null);
-  protected relations = computed(() => this.payload$()?.relations ?? {});
-  protected metadata = computed(() => this.payload$()?.metaData ?? {});
+  protected readonly model = computed(() => this.payload$()?.model ?? null);
+  protected readonly relations = computed<Record<string, unknown>>(() => this.payload$()?.relations ?? {});
+  protected readonly metadata = computed<ModalMetaData>(() => this.payload$()?.metaData ?? {});
 
-  protected action = computed<'insert' | 'update' | string>(() => {
+  protected readonly action = computed<'insert' | 'update' | 'view'>(() => {
     const meta = this.metadata();
-    return (meta?.action as string) || (this.model() === null ? 'insert' : 'update');
+    return (meta?.action as 'insert' | 'update' | 'view') ?? (this.model() === null ? 'insert' : 'update');
   });
 
-  // ✅ Subclases deben definir el formulario
   abstract form: FormGroup;
 
   constructor() {
-    // ✅ Usar effect() para reaccionar a cambios de datos
+    // Sync payload$ whenever the data input changes; notify subclasses via onDataChanged
     effect(() => {
-      const payload = this.payload$();
-      if (payload) {
-        this.onDataChanged(payload);
-      }
+      const payload = this.data();
+      this.payload$.set(payload);
+      if (payload) this.onDataChanged(payload);
     });
   }
 
@@ -54,17 +50,11 @@ export abstract class FormModalBase<T = any> {
     // Implementar en subclases si necesitan
   }
 
-  /**
-   * Obtener una relación específica
-   */
-  protected getRelation<R = any>(key: string): R | null {
-    return this.relations()[key] ?? null;
+  protected getRelation<R = unknown>(key: string): R | null {
+    return (this.relations()[key] as R) ?? null;
   }
 
-  /**
-   * Obtener todas las relaciones
-   */
-  protected getAllRelations(): Record<string, any> {
+  protected getAllRelations(): Record<string, unknown> {
     return this.relations();
   }
 
@@ -105,10 +95,9 @@ export abstract class FormModalBase<T = any> {
   /**
    * Lógica común de error
    */
-  protected handleError(error: any, message: string = 'Error al guardar'): void {
+  protected handleError(_error: unknown, message: string = 'Error al guardar'): void {
     this.isLoading.set(false);
     this.toastr.error(message, 'Error');
-    console.error(error);
   }
 
   /**
@@ -118,53 +107,32 @@ export abstract class FormModalBase<T = any> {
     this.form.reset();
   }
 
-  /**
-    * ✅ Obtener valores del formulario (sin controles deshabilitados)
-    */
-  protected getFormValue(): any {
-    return this.form.getRawValue();
+  protected getFormValue(): T {
+    return this.form.getRawValue() as T;
   }
 
-  /**
-  * ✅ Obtener solo valores válidos del formulario
-  */
   protected getFormValueIfValid(): T | null {
-    return this.form.valid ? (this.form.value as T) : null;
+    return this.form.valid ? (this.form.getRawValue() as T) : null;
   }
 
-  /**
-   * Marcar todos los campos como touched
-   */
   protected markAllAsTouched(): void {
     this.form.markAllAsTouched();
   }
 
-  /**
-  * ✅ Limpiar form (reset + mark pristine)
-  */
   protected clearForm(): void {
     this.form.reset();
     this.form.markAsPristine();
     this.form.markAsUntouched();
   }
 
-  /**
-   * ✅ Deshabilitar form
-   */
   protected disableForm(): void {
     this.form.disable();
   }
 
-  /**
- * ✅ Habilitar form
- */
   protected enableForm(): void {
     this.form.enable();
   }
 
-  /**
- * ✅ Obtener estado del form
- */
   protected getFormStatus(): {
     valid: boolean;
     pristine: boolean;

@@ -33,17 +33,20 @@ public static partial class TipoGeneralEndPoints
         g.MapGet("/byid", SelByIdAsync)
           .WithResponses<TipoGeneralModel>(StatusCodes.Status200OK)
          .Produces(StatusCodes.Status404NotFound)
-         .WithDescription("Obtener una Tipo General");
+         .WithDescription("Obtener una Tipo General")
+         .CacheOutput("LookupByQuery");
 
         g.MapGet("/active", SelAllActiveAsync)
           .WithResponses<IEnumerable<TipoGeneralModel>>(StatusCodes.Status200OK)
           .Produces(StatusCodes.Status404NotFound)
-          .WithDescription("Obtener todos los Tipo General activos");
+          .WithDescription("Obtener todos los Tipo General activos")
+          .CacheOutput("LookupByQuery");
 
         g.MapGet("/modulos/active", SelAllActiveByModuloAsync)
           .WithResponses<IEnumerable<TipoGeneralModel>>(StatusCodes.Status200OK)
           .Produces(StatusCodes.Status404NotFound)
-          .WithDescription("Obtener todos los Tipo General activos del Módulo");
+          .WithDescription("Obtener todos los Tipo General activos del Módulo")
+          .CacheOutput("LookupByQuery");
 
         return g;
     }

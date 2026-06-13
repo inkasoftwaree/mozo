@@ -6,7 +6,7 @@ import { cleanParams } from '@app/core/global/params.helper';
 import { UrlApiService } from '@app/core/services/url-api.service';
 import { API_ROUTES } from '@app/core/global/constants';
 import { ArchivoFilterDto, ArchivoModel, ArchivoUploadParams, DownloadUrlOptions, OrdenMasivoRequest, UploadProgress } from '@app/shared/models/maestro/archivo.model';
-import { ImageCompressionService } from '@app/core/services/image-compression.service ';
+import { ImageCompressionService } from '@app/core/services/image-compression.service';
 
 
 @Injectable({ providedIn: 'root' })

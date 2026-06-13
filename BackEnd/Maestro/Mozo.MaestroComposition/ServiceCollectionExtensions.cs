@@ -3,17 +3,12 @@
 using Mozo.MaestroBusiness;
 using Mozo.MaestroData;
 
-using Npgsql;
-
-using System.Data;
 namespace Mozo.MaestroComposition;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection MaestroComposition(this IServiceCollection services, string connectionString)
+    public static IServiceCollection MaestroComposition(this IServiceCollection services)
     {
-        services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString));
-        // Registrar DAL y BL
         services.AddScoped<IArchivoData, ArchivoData>();
         services.AddScoped<IArchivoBusiness, ArchivoBusiness>();
 
