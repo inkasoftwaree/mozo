@@ -1,20 +1,28 @@
-<div class="join mt-4">
+<div class="flex items-center justify-between mt-4 flex-wrap gap-2">
 
-  <button class="join-item btn" (click)="prev()" [disabled]="page() === 1">
-    «
-  </button>
+  <p class="text-xs text-base-content/50">
+    Página <span class="font-semibold text-base-content">{{ page() }}</span> de
+    <span class="font-semibold text-base-content">{{ totalPages() }}</span>
+  </p>
 
-  @for (p of pages(); track p) {
-  <button
-    class="join-item btn"
-    [class.btn-active]="p === page()"
-    (click)="goTo(p)">
-    {{ p }}
-  </button>
-  }
+  <div class="join">
+    <button class="join-item btn btn-sm btn-ghost" (click)="prev()" [disabled]="page() === 1" aria-label="Anterior">
+      «
+    </button>
 
-  <button class="join-item btn" (click)="next()" [disabled]="page() === totalPages()">
-    »
-  </button>
+    @for (p of pages(); track p) {
+      <button
+        class="join-item btn btn-sm"
+        [class.btn-primary]="p === page()"
+        [class.btn-ghost]="p !== page()"
+        (click)="goTo(p)">
+        {{ p }}
+      </button>
+    }
+
+    <button class="join-item btn btn-sm btn-ghost" (click)="next()" [disabled]="page() === totalPages()" aria-label="Siguiente">
+      »
+    </button>
+  </div>
 
 </div>

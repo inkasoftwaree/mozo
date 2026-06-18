@@ -14,8 +14,8 @@ public interface IPersonaTipoBusiness
 {
     Task<int> InsertAsync(PersonaTipoModel c);
     Task UpdateAsync(PersonaTipoModel c);
-    Task<IEnumerable<PersonaTipoModel>> SelAllActiveByPersonaAsync(PersonaTipoModel c);
-    Task<IEnumerable<PersonaTipoModel>> SelAllActiveByModuloAndPersonaAsync(PersonaTipoModel c);
+    Task<IEnumerable<PersonaTipoModel>> SelAllActiveByPersonAsync(PersonaTipoModel c);
+    Task<IEnumerable<PersonaTipoModel>> SelAllActiveByModuleAndPersonAsync(PersonaTipoModel c);
     Task<IEnumerable<PersonaTipoModel>> SelAllActiveAsync(PersonaTipoModel c);
 }
 
@@ -28,8 +28,8 @@ public class PersonaTipoBusiness : IPersonaTipoBusiness
     }
     public async Task<int> InsertAsync(PersonaTipoModel c) => await _data.InsertAsync(c);
     public async Task UpdateAsync(PersonaTipoModel c) => await _data.UpdateAsync(c);
-    public async Task<IEnumerable<PersonaTipoModel>> SelAllActiveByPersonaAsync(PersonaTipoModel c) => await _data.SelAllActiveByPersonaAsync(c);
-    public async Task<IEnumerable<PersonaTipoModel>> SelAllActiveByModuloAndPersonaAsync(PersonaTipoModel c) => await _data.SelAllActiveByModuloAndPersonaAsync(c);
+    public async Task<IEnumerable<PersonaTipoModel>> SelAllActiveByPersonAsync(PersonaTipoModel c) => await _data.SelAllActiveByPersonAsync(c);
+    public async Task<IEnumerable<PersonaTipoModel>> SelAllActiveByModuleAndPersonAsync(PersonaTipoModel c) => await _data.SelAllActiveByModuleAndPersonAsync(c);
     public async Task<IEnumerable<PersonaTipoModel>> SelAllActiveAsync(PersonaTipoModel c) => await _data.SelAllActiveAsync(c);
 
 

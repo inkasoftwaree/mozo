@@ -1,20 +1,18 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
 import { RedSocialService } from '@moduleMaestro/services/red-social.service';
 import { RedSocialModel } from '@app/shared/models/maestro/red-social.model';
-import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 import { PersonaModel } from '@app/shared/models/maestro/persona.model';
 import { ConfirmService } from '@app/shared/services/confirm.service';
 import { ToastrService } from 'ngx-toastr';
 import { ButtonControl } from "@app/shared/components/button/button.control";
 import { TipoGeneralService } from '@moduleMaestro/services/tipo-general.service';
 import { TIPO_MAESTRO } from '@app/core/global/tipo.constants';
+import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 
-// Tipo interno para manejar filas nuevas sin coRedSocial
 type RedSocialRow = RedSocialModel & { _tempId?: number };
-
 type Seccion = { coTipo: number; noTipo: string };
 
 @Component({
@@ -30,18 +28,46 @@ export class RedSocialFormPage {
   private readonly tipoGeneralService = inject(TipoGeneralService);
   private readonly confirmService = inject(ConfirmService);
   private readonly toastr = inject(ToastrService);
-  protected destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
+
   protected readonly TIPO_MAESTRO = TIPO_MAESTRO;
   protected readonly MenuControlTypeEnum = MenuControlTypeEnum;
-  readonly empresa = signal<EmpresaModel | null>(null);
-  readonly persona = signal<PersonaModel | null>(null);
+
+  readonly data = input<EmpresaModel | PersonaModel | null>(null);
+
+  // Derivados reactivamente del input — eliminan writable signals y sets manuales en el effect
+  readonly empresa = computed<EmpresaModel | null>(() => {
+    const e = this.data();
+    return e && this.isEmpresa(e) ? e : null;
+  });
+  readonly persona = computed<PersonaModel | null>(() => {
+    const e = this.data();
+    return e && this.isPersona(e) ? e : null;
+  });
+
   readonly items = signal<RedSocialRow[]>([]);
   readonly editandoId = signal<number | null>(null);
 
-  readonly etiquetas = toSignal(this.tipoGeneralService.selAllActive({ coGrupo: TIPO_MAESTRO.general.etiquetaRedSocial.grupo }), { initialValue: [] });
-  readonly tiposUrl = toSignal(this.tipoGeneralService.selAllActive({ coGrupo: TIPO_MAESTRO.general.urlRedSocial.grupo }), { initialValue: [] });
+  readonly etiquetas = toSignal(
+    this.tipoGeneralService.selAllActive({ coGrupo: TIPO_MAESTRO.general.etiquetaRedSocial.grupo }),
+    { initialValue: [] }
+  );
+  readonly tiposUrl = toSignal(
+    this.tipoGeneralService.selAllActive({ coGrupo: TIPO_MAESTRO.general.urlRedSocial.grupo }),
+    { initialValue: [] }
+  );
 
-  private tempIdCounter = -1;
+  // Agrupa items por coTipoRedSocial una sola vez cuando items() cambia
+  readonly itemsPorTipo = computed(() => {
+    const map = new Map<number, RedSocialRow[]>();
+    for (const item of this.items()) {
+      const coTipo = item.coTipoRedSocial ?? 0;
+      const list = map.get(coTipo) ?? [];
+      list.push(item);
+      map.set(coTipo, list);
+    }
+    return map;
+  });
 
   readonly secciones: Seccion[] = [
     { coTipo: TIPO_MAESTRO.general.redSocial.items.telefonoMovil, noTipo: 'Teléfono móvil' },
@@ -50,39 +76,30 @@ export class RedSocialFormPage {
     { coTipo: TIPO_MAESTRO.general.redSocial.items.redSocial, noTipo: 'Redes sociales' },
   ];
 
-  readonly data = input<EmpresaModel | PersonaModel | null>(null);
+  private tempIdCounter = -1;
 
   constructor() {
     effect(() => {
       const entidad = this.data();
-      this.empresa.set(null);
-      this.persona.set(null);
       this.items.set([]);
       this.editandoId.set(null);
       if (!entidad) return;
-      if (this.isPersona(entidad)) this.persona.set(entidad);
-      else if (this.isEmpresa(entidad)) this.empresa.set(entidad);
       this.selAll();
     });
   }
 
-  // ← filtrar items por tipo para el template
-  getItemsPorTipo(coTipo: number): RedSocialRow[] {
-    return this.items().filter(x => x.coTipoRedSocial === coTipo);
+  isEditando(item: RedSocialRow): boolean {
+    const id = this.editandoId();
+    return id !== null && (id === item.coRedSocial || id === item._tempId);
   }
 
   private selAll(): void {
-    const redSocial: RedSocialModel = {};
-    if (this.empresa()) {
-      redSocial.flPersona = 0;
-      redSocial.coEmpresa = this.empresa()!.coEmpresa;
-      redSocial.flEmpresaNotKey = 1;
-    } else if (this.persona()) {
-      redSocial.flPersona = 1;
-      redSocial.coPersona = this.persona()!.coPersona;
-      redSocial.coEmpresa = this.persona()!.coEmpresa;
-      redSocial.flEmpresaNotKey = 0;
-    }
+    const empresa = this.empresa();
+    const persona = this.persona();
+
+    const redSocial: RedSocialModel = empresa
+      ? { flPersona: 0, coEmpresa: empresa.coEmpresa, flEmpresaNotKey: 1 }
+      : { flPersona: 1, coPersona: persona!.coPersona, coEmpresa: persona!.coEmpresa, flEmpresaNotKey: 0 };
 
     this.redSocialService.selAll(redSocial)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -90,22 +107,25 @@ export class RedSocialFormPage {
   }
 
   agregarFila(coTipo: number): void {
-    // cancelar edición previa si existe
     if (this.editandoId() !== null) this.cancelarEdicionActual();
 
     const tempId = this.tempIdCounter--;
+    const empresa = this.empresa();
+    const persona = this.persona();
+
     const nueva: RedSocialRow = {
       _tempId: tempId,
       coTipoRedSocial: coTipo,
-      coEmpresa: this.empresa()?.coEmpresa,
-      coPersona: this.persona()?.coPersona,
-      flPersona: this.persona() ? 1 : 0,
+      coEmpresa: empresa?.coEmpresa,
+      coPersona: persona?.coPersona,
+      flPersona: persona ? 1 : 0,
+      flEmpresaNotKey: empresa ? 1 : 0,
       noRedSocial: '',
       flWhatsapp: 0,
     };
 
     this.items.update(list => [...list, nueva]);
-    this.editandoId.set(tempId); // ← abrir en edición inmediatamente
+    this.editandoId.set(tempId);
   }
 
   editarFila(item: RedSocialRow): void {
@@ -129,7 +149,6 @@ export class RedSocialFormPage {
       .subscribe({
         next: (id) => {
           if (esNuevo) {
-            // ← asignar coRedSocial real devuelto por el backend
             this.items.update(list =>
               list.map(x => x._tempId === item._tempId
                 ? { ...x, coRedSocial: id, _tempId: undefined }
@@ -140,23 +159,19 @@ export class RedSocialFormPage {
           this.editandoId.set(null);
           this.toastr.success('Guardado correctamente', 'Éxito');
         },
-        error: () => this.toastr.error('Error al guardar', 'Error')
+        error: () => this.toastr.error('Error al guardar', 'Error'),
       });
   }
 
   cancelarEdicion(item: RedSocialRow): void {
-    const esNuevo = !item.coRedSocial;
-    if (esNuevo) {
-      // ← eliminar fila temporal si cancela
+    if (!item.coRedSocial) {
       this.items.update(list => list.filter(x => x._tempId !== item._tempId));
     }
     this.editandoId.set(null);
   }
 
   async eliminarFila(item: RedSocialRow): Promise<void> {
-    const ok = await this.confirmService.confirm(
-      '¿Eliminar registro?', '', 'Sí, eliminar'
-    );
+    const ok = await this.confirmService.confirm('¿Eliminar registro?', '', 'Sí, eliminar');
     if (!ok) return;
 
     if (!item.coRedSocial) {
@@ -168,17 +183,14 @@ export class RedSocialFormPage {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.items.update(list =>
-            list.filter(x => x.coRedSocial !== item.coRedSocial)
-          );
+          this.items.update(list => list.filter(x => x.coRedSocial !== item.coRedSocial));
           this.toastr.success('Eliminado correctamente', 'Éxito');
         },
-        error: () => this.toastr.error('Error al eliminar', 'Error')
+        error: () => this.toastr.error('Error al eliminar', 'Error'),
       });
   }
 
   private cancelarEdicionActual(): void {
-    // eliminar filas temporales huérfanas
     this.items.update(list => list.filter(x => x.coRedSocial != null));
     this.editandoId.set(null);
   }

@@ -72,7 +72,7 @@ public static partial class ArchivoEndPoints
 
 
         // ✅ NUEVO: Actualizar solo orden
-        g.MapPut("/orden", UpdateOrdenAsync)
+        g.MapPut("/orden", UpdateOrderAsync)
             .WithResponses(StatusCodes.Status204NoContent)
             .WithDescription("Actualizar orden de un archivo");
 
@@ -215,11 +215,11 @@ public static partial class ArchivoEndPoints
 
 
     // ✅ NUEVO
-    private static async Task<IResult> UpdateOrdenAsync(
+    private static async Task<IResult> UpdateOrderAsync(
         ArchivoModel m,
         IArchivoBusiness biz)
     {
-        await biz.UpdateOrdenAsync(m);
+        await biz.UpdateOrderAsync(m);
         return Results.NoContent();
     }
 
@@ -228,7 +228,7 @@ public static partial class ArchivoEndPoints
         OrdenMasivoRequest req,
         IArchivoBusiness biz)
     {
-        await biz.UpdateOrdenMasivoAsync(req);
+        await biz.UpdateOrderMassiveAsync(req);
         return Results.NoContent();
     }
 

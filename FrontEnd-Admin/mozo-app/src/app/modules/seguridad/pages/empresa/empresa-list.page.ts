@@ -10,13 +10,13 @@ import { ModalControl } from "@app/shared/components/modal/modal.control";
 import { ButtonControl } from "@app/shared/components/button/button.control";
 import { ModalPayload } from '@app/shared/models/controls/modal-control.model';
 import { EmpresaFormPage } from "./empresa-form.page";
-import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 import { EmpresaService } from '../../services/empresa.service';
 import { PaginationControl } from "@app/shared/components/pagination/pagination.control";
 import { EmpresaModuloService } from '../../services/empresa-modulo.service';
 import { EmpresaModuloModel } from '@app/shared/models/seguridad/empresa-modulo.model';
 import { GenericGridCControl } from "@app/shared/components/grid/grid.control";
 import { CrudListPageBase, WritableListResource } from '@app/shared/components/list/crud-list-page-base';
+import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 
 @Component({
   selector: 'mz-empresa-list-page',
@@ -57,6 +57,7 @@ export class EmpresaListPage extends CrudListPageBase<EmpresaModel> {
 
   readonly empresas = computed(() => this.empresasResource.value()?.data ?? []);
   readonly rowsCount = computed(() => this.empresasResource.value()?.rowsCount ?? 0);
+  readonly isLoadingGrid = computed(() => this.empresasResource.isLoading());
 
   get pageCount(): number {
     return Math.ceil(this.rowsCount() / this.pageSize);
@@ -116,10 +117,10 @@ export class EmpresaListPage extends CrudListPageBase<EmpresaModel> {
         next: () => {
           this.empresasResource.update(result => result
             ? {
-                ...result,
-                data: result.data.filter(x => x.coEmpresa !== c.coEmpresa),
-                rowsCount: result.rowsCount - 1
-              }
+              ...result,
+              data: result.data.filter(x => x.coEmpresa !== c.coEmpresa),
+              rowsCount: result.rowsCount - 1
+            }
             : result
           );
           this.toastr.success(`${this.entityLabel} eliminado`, 'Éxito');
@@ -135,7 +136,7 @@ export class EmpresaListPage extends CrudListPageBase<EmpresaModel> {
     }
 
     const requests = empresas.map(emp =>
-      this.empresaModuloService.selAll({ coEmpresa: emp.coEmpresa } as EmpresaModuloModel)
+      this.empresaModuloService.selAll({ coEmpresa: emp.coEmpresa, flEmpresaNotKey: 1 } as EmpresaModuloModel)
     );
 
     forkJoin(requests)

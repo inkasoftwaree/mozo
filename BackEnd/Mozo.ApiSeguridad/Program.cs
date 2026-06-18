@@ -117,16 +117,42 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddCustomProblemDetails();
 
+//builder.Services.AddOutputCache(options =>
+//{
+//    // Datos de catálogo sin parámetros — misma respuesta para todos los usuarios
+//    options.AddPolicy("StaticLookup", p =>
+//        p.Expire(TimeSpan.FromHours(1)));
+
+//    // Datos de catálogo con filtros en query string — una entrada por combinación de parámetros
+//    options.AddPolicy("LookupByQuery", p =>
+//        p.Expire(TimeSpan.FromHours(1))
+//         .SetVaryByQuery("*"));
+//});
+
+
 builder.Services.AddOutputCache(options =>
 {
-    // Datos de catálogo sin parámetros — misma respuesta para todos los usuarios
-    options.AddPolicy("StaticLookup", p =>
-        p.Expire(TimeSpan.FromHours(1)));
+    // Sin filtro — 1 sola entrada en caché
+    options.AddPolicy("pais",    p => p.Expire(TimeSpan.FromHours(24)).Tag("pais"));
+    options.AddPolicy("empresa", p => p.Expire(TimeSpan.FromMinutes(60)).Tag("empresa"));
+    options.AddPolicy("modulo",  p => p.Expire(TimeSpan.FromHours(24)).Tag("modulo"));
 
-    // Datos de catálogo con filtros en query string — una entrada por combinación de parámetros
-    options.AddPolicy("LookupByQuery", p =>
-        p.Expire(TimeSpan.FromHours(1))
-         .SetVaryByQuery("*"));
+    // Con filtro — varía por querystring
+    options.AddPolicy("docidentidad", p => p
+        .Expire(TimeSpan.FromHours(24))
+        .SetVaryByQuery("copais")
+        .Tag("docidentidad"));
+
+    options.AddPolicy("tipogeneral", p => p
+        .Expire(TimeSpan.FromHours(24))
+        .SetVaryByQuery("comodulo", "cogrupo")
+        .Tag("tipogeneral"));
+
+    options.AddPolicy("tipoparticular", p => p
+        .Expire(TimeSpan.FromMinutes(60))
+        .SetVaryByQuery("coempresa", "comodulo", "cogrupo", "cogrupopadre", "cotipopadre", "flestreg")
+        .SetVaryByHeader("Authorization")
+        .Tag("tipoparticular"));
 });
 
 
@@ -245,7 +271,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();
-app.UseOutputCache();
+
 
 
 app.UseCors();
@@ -253,6 +279,7 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseOutputCache();
 #endregion
 
 

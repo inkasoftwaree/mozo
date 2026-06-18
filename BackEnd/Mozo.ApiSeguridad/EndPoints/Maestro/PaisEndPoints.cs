@@ -20,6 +20,7 @@ namespace Mozo.Api.Maestro;
 /// </summary>
 public static partial class PaisEndPoints
 {
+    private const string CacheTag = "pais";
     /// <summary>
     /// Función que devuelve el grupo de end points de la entidad "Pais".
     /// </summary>
@@ -30,7 +31,8 @@ public static partial class PaisEndPoints
         g.MapGet("/active", SelAllActiveAsync)
           .WithResponses<IEnumerable<PaisModel>>(StatusCodes.Status200OK)
           .WithDescription("Obtener todos los Paises")
-          .CacheOutput("StaticLookup");
+          .CacheOutput(CacheTag);
+
 
         return g;
     }

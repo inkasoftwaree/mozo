@@ -2,10 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { cleanParams } from '@app/core/global/params.helper';
-import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 import { PagedResult } from '@app/shared/models/base.model';
 import { UrlApiService } from '@app/core/services/url-api.service';
 import { API_ROUTES } from '@app/core/global/constants';
+import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 
 
 @Injectable({

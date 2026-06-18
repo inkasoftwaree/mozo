@@ -16,6 +16,7 @@ using Mozo.MaestroBusiness;
 using Mozo.Model;
 using Mozo.Model.Catalogo;
 using Mozo.Model.Maestro;
+using Mozo.Model.Seguridad;
 
 namespace Mozo.Api.Maestro;
 /// <summary>
@@ -23,32 +24,73 @@ namespace Mozo.Api.Maestro;
 /// </summary>
 public static partial class TipoParticularEndPoints
 {
+
+    private const string CacheTag = "tipoparticular";
+
     /// <summary>
     /// Función que devuelve el grupo de end points de la entidad "trftipoparticular".
     /// </summary>
     public static RouteGroupBuilder MapTipoParticular(this RouteGroupBuilder g)
     {
-        g.DisableAntiforgery().RequireAuthorization();
-        g.MapPost("/", InsertAsync);
-        g.MapPut("/", UpdateAsync);
-        g.MapDelete("/{cogrupo:int}/{cotipo:int}", DeleteByIdAsync);
+        g.WithSecurity();
 
-        g.MapGet("/{cogrupo:int}/{cotipo:int}", SelByIdAsync);
-        g.MapGet("/", SelAllAsync).AllowAnonymous();
+        g.MapPost("/", InsertAsync)
+          .WithResponsesValue<int>(StatusCodes.Status200OK)
+          .WithDescription("Insertar una Tipo");
 
-        g.MapPatch("/state", UpdateStateAsync);
-        g.MapPatch("/command", UpdateCommandAsync);
-        g.MapPatch("/default", UpdateDefaultAsync);
+        g.MapPut("/", UpdateAsync)
+            .WithResponsesValue<int>(StatusCodes.Status200OK)
+            .WithDescription("Actualizar una Tipo");
 
-        g.MapGet("/active", SelAllActiveAsync);
+        g.MapPatch("/state", UpdateStateAsync)
+            .WithResponsesValue<int>(StatusCodes.Status200OK)
+            .WithDescription("Activar o desactivar un Tipo");
 
-        g.MapGet("/hijos", SelAllHijoAsync);
-        g.MapGet("/hijos/active", SelAllActiveHijoAsync);
-        g.MapGet("/hijos/grupos/active", SelAllActiveHijoByGrupoAsync);
-        g.MapGet("/modulos/grupos", SelAllGrupoByModuloAsync);
+        g.MapPatch("/command", UpdateCommandAsync)
+           .WithResponsesValue<int>(StatusCodes.Status200OK)
+           .WithDescription("Actualizar comando");
 
-        g.MapGet("/next-orden", SelOrdenNextAsync);
-        g.MapGet("/grupos/{cotipo:int}", SelByIdGrupoAsync);
+        g.MapPatch("/default", UpdateDefaultAsync)
+            .WithResponsesValue<int>(StatusCodes.Status200OK)
+            .WithDescription("Actualizar Default");
+
+        g.MapDelete("/", DeleteByIdAsync)
+             .WithResponses(StatusCodes.Status204NoContent)
+             .WithDescription("Eliminar una Tipo");
+
+        g.MapGet("/", SelByIdAsync)
+            .WithResponses<TipoParticularModel>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .WithDescription("Obtener un Tipo");
+
+        g.MapGet("/all", SelAllAsync)
+            .WithResponses<IEnumerable<TipoParticularModel>>(StatusCodes.Status200OK)
+            .WithDescription("Obtener todas los Tipos");
+
+        g.MapGet("/children", SelAllChildrenAsync)
+           .WithResponses<IEnumerable<TipoParticularModel>>(StatusCodes.Status200OK)
+           .WithDescription("Obtener todas los hijos de los Tipos")
+           .CacheOutput(CacheTag);
+  
+        g.MapGet("/father-children/active", SelAllActiveFatherAndChildrenAsync)
+            .WithResponses<IEnumerable<TipoParticularModel>>(StatusCodes.Status200OK)
+            .WithDescription("Obtener todas los padres e hijos activos")
+            .CacheOutput(CacheTag);
+
+        g.MapGet("/modules/groups", SelAllActiveGroupsByModuleAsync)
+           .WithResponses<IEnumerable<TipoParticularModel>>(StatusCodes.Status200OK)
+            .WithDescription("Obtener todas los grupos por modulos")
+            .CacheOutput(CacheTag);
+
+        g.MapGet("/next-order", SelOrderNextAsync)
+            .WithResponsesValue<int>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .WithDescription("Obtener el siguiente numero de orden del grupo");
+
+        g.MapGet("/group", SelByIdGroupAsync)
+            .WithResponses<TipoParticularModel>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .WithDescription("Obtener un grupo por id");
 
         return g;
     }
@@ -56,126 +98,163 @@ public static partial class TipoParticularEndPoints
 }
 public static partial class TipoParticularEndPoints
 {
-    static async Task<Results<Created<int?>, ValidationProblem>> InsertAsync([FromBody] TipoParticularModel m, IOutputCacheStore outputCacheStore, ITipoParticularBusiness ITipo, UserClaims user)
-    {        
+    private static Task InvalidateCacheAsync(IOutputCacheStore cacheStore)
+        => cacheStore.InvalidateCacheAsync(CacheTag);
+
+    private static async Task<IResult>
+      InsertAsync(       
+       TipoParticularModel m,
+       IOutputCacheStore cacheStore,
+       ITipoParticularBusiness ITipo
+       )
+    {
         m.CoTipo = await ITipo.InsertAsync(m);
-        await outputCacheStore.EvictByTagAsync("Tipo_SelAllActive", default);
-        return TypedResults.Created($"/{m.CoTipo}", m.CoTipo);
+        await InvalidateCacheAsync(cacheStore);
+        return Results.Created($"/{m.CoTipo}", m.CoTipo);
     }
 
-    static async Task<Results<Ok<int?>, ValidationProblem>> UpdateAsync([FromBody] TipoParticularModel m, IOutputCacheStore outputCacheStore, ITipoParticularBusiness ITipo, UserClaims user)
-    {
-        
+    private static async Task<IResult>
+        UpdateAsync(
+         TipoParticularModel m,
+         IOutputCacheStore cacheStore, 
+         ITipoParticularBusiness ITipo
+    )
+    {        
         await ITipo.UpdateAsync(m);
-        await outputCacheStore.EvictByTagAsync("Tipo_SelAllActive", default);
-        return TypedResults.Ok(m.CoTipo);
+        await InvalidateCacheAsync(cacheStore);
+        return Results.Ok(m.CoTipo);
     }
-    static async Task<Results<Ok<int?>, ValidationProblem>> UpdateCommandAsync([FromBody] TipoParticularModel m, IOutputCacheStore outputCacheStore, ITipoParticularBusiness ITipo, UserClaims user)
+
+    private static async Task<IResult>
+        UpdateCommandAsync(
+            TipoParticularModel m, 
+            IOutputCacheStore cacheStore,  
+            ITipoParticularBusiness ITipo
+    )
     {
         
         await ITipo.UpdateCommandAsync(m);
-        await outputCacheStore.EvictByTagAsync("Tipo_SelAllActive", default);
-        return TypedResults.Ok(m.CoTipo);
+        await InvalidateCacheAsync(cacheStore);
+        return Results.Ok(m.CoTipo);
     }
-    static async Task<Results<NoContent, ValidationProblem>> DeleteByIdAsync(int cogrupo, int cotipo, IOutputCacheStore outputCacheStore, ITipoParticularBusiness ITipo, UserClaims user)
+
+    private static async Task<IResult>
+     UpdateStateAsync(
+        TipoParticularModel m, 
+        IOutputCacheStore cacheStore, 
+        ITipoParticularBusiness ITipo
+     )
     {
-        TipoParticularModel m = new() { CoGrupo = cogrupo, CoTipo = cotipo };
-        
-        await ITipo.DeleteByIdAsync(m);
-        await outputCacheStore.EvictByTagAsync("Tipo_SelAllActive", default);
-        return TypedResults.NoContent();
-    }
-    static async Task<Results<Ok<int?>, ValidationProblem>> UpdateStateAsync([FromBody] TipoParticularModel m, IOutputCacheStore outputCacheStore, ITipoParticularBusiness ITipo, UserClaims user)
-    {
-        
+
         await ITipo.UpdateStateAsync(m);
-        await outputCacheStore.EvictByTagAsync("Tipo_SelAllActive", default);
-        return TypedResults.Ok(m.CoTipo);
+        await InvalidateCacheAsync(cacheStore);
+        return Results.Ok(m.CoTipo);
     }
-    static async Task<Results<Ok<int?>, ValidationProblem>> UpdateDefaultAsync([FromBody] TipoParticularModel m, IOutputCacheStore outputCacheStore, ITipoParticularBusiness ITipo, UserClaims user)
+
+    private static async Task<IResult>
+    UpdateDefaultAsync(
+      TipoParticularModel m,
+      IOutputCacheStore cacheStore,
+      ITipoParticularBusiness ITipo
+    )
     {
-        
         await ITipo.UpdateDefaultAsync(m);
-        await outputCacheStore.EvictByTagAsync("Tipo_SelAllActive", default);
-        return TypedResults.Ok(m.CoTipo);
+        await InvalidateCacheAsync(cacheStore);
+        return Results.Ok(m.CoTipo);
     }
-    static async Task<Results<Ok<IEnumerable<TipoParticularModel>>, ValidationProblem>> SelAllGrupoByModuloAsync([AsParameters] TipoParticularDto f, ITipoParticularBusiness ITipo, UserClaims user)
+
+    private static async Task<IResult>
+        DeleteByIdAsync(
+           [AsParameters] TipoParticularFilterDto f,
+           IOutputCacheStore cacheStore, 
+           ITipoParticularBusiness ITipo
+    )
+    {   
+        await ITipo.DeleteByIdAsync(f);
+        await InvalidateCacheAsync(cacheStore);
+        return Results.NoContent();
+    }
+
+  
+
+    private static async Task<IResult> 
+        SelAllActiveGroupsByModuleAsync(
+        [AsParameters] TipoParticularFilterDto f, 
+        ITipoParticularBusiness ITipo
+    )
     {       
-        return TypedResults.Ok(await ITipo.SelAllGrupoByModuloAsync(new()));
+        return Results.Ok(await ITipo.SelAllActiveGroupsByModuleAsync(f));
     }
 
-    //static async Task<Results<Ok<IEnumerable<TipoParticularModel>>, ValidationProblem>> SelAllAsync(TipoParticularDto f, ITipoBusiness ITipo, UserClaims user)
-    //{       
-    //    return TypedResults.Ok(await ITipo.SelAllAsync(new()));
-    //}
 
-    static async Task<Results<Ok<PaginationModel<TipoParticularModel>>, ValidationProblem, NotFound>> SelAllAsync([AsParameters] TipoParticularDto f, ITipoParticularBusiness ITipo, UserClaims user)
+
+    private static async Task<IResult>
+        SelAllAsync(
+        [AsParameters] TipoParticularFilterDto f,
+        ITipoParticularBusiness ITipo
+    )
     {
-        int rowCount = await ITipo.SelAllCountAsync(f);
-        IEnumerable<TipoParticularModel> r = await ITipo.SelAllAsync(f);
-        PaginationModel<TipoParticularModel> p = new(r, rowCount, f.PageSize, f.PageIndex);
-        return TypedResults.Ok(p);
+        if (f.FlEstReg == 1)
+            return Results.Ok(await ITipo.SelAllActiveAsync(f));
+        else
+            return Results.Ok(await ITipo.SelAllAsync(f));
     }
 
-    private static IEnumerable<TipoParticularModel> GetAll2(IEnumerable<TipoParticularModel> r)
+    private static async Task<IResult>
+     SelAllChildrenAsync(
+        [AsParameters] TipoParticularFilterDto f,
+        ITipoParticularBusiness ITipo
+     )
     {
-        List<TipoParticularModel> r2 = r.ToList();
-        List<TipoParticularModel> listTmp = r2.FindAll(x => x.FlDefault == 1);
-        if (listTmp.Count() > 0)
-            r2.FindAll(x => x.FlDefault == 1).ForEach(y => y.FlDefault = 0);
-        return r2;
+        if (f.FlEstReg == 1)
+            return Results.Ok(await ITipo.SelAllChildrenAsync(f));
+        else
+            return Results.Ok(await ITipo.SelAllActiveChildrenAsync(f));
     }
 
-    static async Task<Results<Ok<IEnumerable<TipoParticularModel>>, ValidationProblem>> SelAllActiveAsync([AsParameters] TipoParticularDto f, ITipoParticularBusiness ITipo, UserClaims user)
+
+
+    private static async Task<IResult>
+    SelAllActiveFatherAndChildrenAsync(
+        [AsParameters] TipoParticularFilterDto f,
+        ITipoParticularBusiness ITipo
+    )
     {       
-        return TypedResults.Ok(await ITipo.SelAllActiveAsync(new()));
+        IEnumerable<TipoParticularModel> r = await ITipo.SelAllActiveFatherAndChildrenAsync(f);
+        return Results.Ok(r);
     }
 
-    static async Task<Results<Ok<IEnumerable<TipoParticularModel>>, ValidationProblem>> SelAllHijoAsync([AsParameters] TipoParticularDto f, ITipoParticularBusiness ITipo, UserClaims user)
-    {       
-        IEnumerable<TipoParticularModel> r = await ITipo.SelAllHijoAsync(new());
-        r = GetAll2(r);
-        return TypedResults.Ok(r);
-    }
-
-    static async Task<Results<Ok<IEnumerable<TipoParticularModel>>, ValidationProblem>> SelAllActiveHijoAsync([AsParameters] TipoParticularDto f, ITipoParticularBusiness ITipo, UserClaims user)
-    {      
-        IEnumerable<TipoParticularModel> r = await ITipo.SelAllActiveHijoAsync(new());
-        return TypedResults.Ok(r);
-    }
-
-    static async Task<Results<Ok<IEnumerable<TipoParticularModel>>, ValidationProblem>> SelAllActiveHijoByGrupoAsync([AsParameters] TipoParticularDto f, ITipoParticularBusiness ITipo, UserClaims user)
-    {       
-        IEnumerable<TipoParticularModel> r = await ITipo.SelAllActiveHijoByGrupoAsync(new());
-        return TypedResults.Ok(r);
-    }
-
-
-    static async Task<Results<Ok<TipoParticularModel>, NotFound, ValidationProblem>> SelByIdAsync(int cogrupo, int cotipo, ITipoParticularBusiness ITipo, UserClaims user)
-    {
-        TipoParticularModel m = new() { CoGrupo = cogrupo, CoTipo = cotipo };
-        
-
-        TipoParticularModel? i = await ITipo.SelByIdAsync(m);
+    private static async Task<IResult> 
+    SelByIdAsync(
+        [AsParameters] TipoParticularFilterDto f,
+        ITipoParticularBusiness ITipo
+    )
+    {        
+        TipoParticularModel? i = await ITipo.SelByIdAsync(f);
         if (i == null)
-            return TypedResults.NotFound();
-        return TypedResults.Ok(i);
+            return Results.NotFound();
+        return Results.Ok(i);
     }
 
-
-
-    static async Task<Results<Ok<int>, NotFound, ValidationProblem>> SelOrdenNextAsync([AsParameters] TipoParticularDto f, ITipoParticularBusiness ITipo, UserClaims user)
+    private static async Task<IResult> 
+        SelOrderNextAsync(
+        [AsParameters] TipoParticularFilterDto f, 
+        ITipoParticularBusiness ITipo
+    )
     {       
-        return TypedResults.Ok(await ITipo.SelOrdenNextAsync(new()));
+        return Results.Ok(await ITipo.SelOrderNextAsync(f));
     }
 
-
-    static async Task<Results<Ok<TipoParticularModel>, NotFound, ValidationProblem>> SelByIdGrupoAsync([AsParameters] TipoParticularDto f, ITipoParticularBusiness ITipo, UserClaims user)
+    private static async Task<IResult> 
+        SelByIdGroupAsync(
+            [AsParameters] TipoParticularFilterDto f, 
+            ITipoParticularBusiness ITipo
+    )
     {
-        TipoParticularModel? i = await ITipo.SelByIdGrupoAsync(new());
+        TipoParticularModel? i = await ITipo.SelByIdGroupAsync(f);
         if (i == null)
-            return TypedResults.NotFound();
-        return TypedResults.Ok(i);
+            return Results.NotFound();
+        return Results.Ok(i);
     }
 
 }

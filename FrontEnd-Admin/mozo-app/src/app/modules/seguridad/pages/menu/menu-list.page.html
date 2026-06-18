@@ -7,28 +7,36 @@
     (click)="onMenuAction('insert', null)" />
 </div>
 
+<!-- Selector de módulo -->
 <div class="content-card mb-4">
   <mz-form-field-control label="Módulo">
     <select
       class="select select-bordered w-full"
       [ngModel]="selectedModulo()"
       (ngModelChange)="onModuloChange($event)">
-      <option [value]="null" disabled selected>{{ MSG_FIELD_FORM.COMBO_REQUIRED }}</option>
+      <option [ngValue]="null" disabled selected>{{ MSG_FIELD_FORM.COMBO_REQUIRED }}</option>
       @for (item of modulos(); track item.coModulo) {
-        <option [value]="item.coModulo">{{ item.noModulo }}</option>
+        <option [ngValue]="item.coModulo">{{ item.noModulo }}</option>
       }
     </select>
   </mz-form-field-control>
 </div>
 
-@if (menus().length > 0) {
+<!-- Lista de menús -->
+@if (isLoading()) {
+  <div class="content-card flex items-center justify-center py-10">
+    <span class="loading loading-ring loading-md text-primary"></span>
+  </div>
+
+} @else if (menus().length > 0) {
   <div class="content-card">
     <ul class="space-y-2">
       @for (menu of menus(); track menu.coMenu) {
-        <li class="border border-base-200 rounded-xl overflow-hidden">
+        <li class="border border-base-200 rounded-xl">
+
           <!-- Fila del menú -->
-          <div class="flex items-center gap-3 px-4 py-3 bg-base-100 hover:bg-base-50">
-            <span class="badge badge-ghost badge-sm font-mono w-8 text-center flex-shrink-0">
+          <div class="flex items-center gap-3 px-4 py-3 bg-base-100 hover:bg-base-200/50 transition-colors">
+            <span class="badge badge-ghost badge-sm font-mono w-8 text-center shrink-0">
               {{ menu.nuOrden }}
             </span>
             <div class="flex items-center gap-2 flex-1 min-w-0">
@@ -45,9 +53,9 @@
           @if ((menu.paginaLst?.length ?? 0) > 0) {
             <ul class="divide-y divide-base-200 border-t border-base-200">
               @for (pagina of menu.paginaLst; track pagina.coPagina) {
-                <li class="flex items-center gap-3 px-4 py-2.5 bg-base-50/50 hover:bg-base-100 transition-colors">
-                  <span class="w-3 flex-shrink-0"></span>
-                  <span class="badge badge-ghost badge-xs font-mono w-7 text-center flex-shrink-0">
+                <li class="flex items-center gap-3 px-4 py-2.5 bg-base-200/30 hover:bg-base-200/60 transition-colors">
+                  <span class="w-3 shrink-0"></span>
+                  <span class="badge badge-ghost badge-xs font-mono w-7 text-center shrink-0">
                     {{ pagina.nuOrden }}
                   </span>
                   <div class="flex items-center gap-2 flex-1 min-w-0">
@@ -62,9 +70,23 @@
               }
             </ul>
           }
+
         </li>
       }
     </ul>
+  </div>
+
+} @else if (selectedModulo() !== null) {
+  <!-- Módulo seleccionado pero sin menús -->
+  <div class="content-card flex flex-col items-center justify-center py-14 text-center gap-3">
+    <div class="w-12 h-12 rounded-full bg-base-200 flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-base-content/30" fill="none"
+           viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h7" />
+      </svg>
+    </div>
+    <p class="text-sm font-medium text-base-content/50">No hay menús para este módulo</p>
   </div>
 }
 

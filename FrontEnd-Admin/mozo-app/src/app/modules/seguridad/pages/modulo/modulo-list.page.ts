@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ModuloService } from '@moduleSeguridad/services/modulo.service';
 import { ModuloModel } from '@app/shared/models/seguridad/modulo.model';
@@ -11,14 +11,15 @@ import { ModalControl } from "@app/shared/components/modal/modal.control";
 import { ButtonControl } from "@app/shared/components/button/button.control";
 import { ModalPayload } from '@app/shared/models/controls/modal-control.model';
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
-import { CrudListPageBase } from '@app/shared/components/list/crud-list-page-base';
+import { CrudListPageBase, WritableListResource } from '@app/shared/components/list/crud-list-page-base';
+import { GenericGridCControl } from '@app/shared/components/grid/grid.control';
 
 @Component({
   selector: 'mz-modulo-list-page',
   standalone: true,
   templateUrl: './modulo-list.page.html',
   styleUrl: './modulo-list.page.css',
-  imports: [ModuloFormPage, MenuControl, ModalControl, StateControl, ButtonControl],
+  imports: [ModuloFormPage, MenuControl, ModalControl, StateControl, ButtonControl, GenericGridCControl],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModuloListPage extends CrudListPageBase<ModuloModel> {
@@ -27,21 +28,25 @@ export class ModuloListPage extends CrudListPageBase<ModuloModel> {
   private readonly modalService = inject(ModalService);
 
   protected override readonly crudService = inject(ModuloService);
+  protected override readonly entityLabel = 'Módulo';
 
   private readonly modulosResource = rxResource({
-    defaultValue: [] as ModuloModel[],
     stream: () => this.crudService.selAll()
   });
 
-  protected override readonly listResource = this.modulosResource;
-  protected override readonly entityLabel = 'Módulo';
+  /** Adaptador explícito: traduce rxResource<ModuloModel[]> → WritableListResource<ModuloModel> */
+  protected override readonly listResource: WritableListResource<ModuloModel> = {
+    update: (updater) => this.modulosResource.update(items => items ? updater(items) : items),
+    reload: () => this.modulosResource.reload()
+  };
 
-  readonly modulos = this.modulosResource.value;
+  readonly modulos   = computed(() => this.modulosResource.value() ?? []);
+  readonly isLoading = computed(() => this.modulosResource.isLoading());
 
   readonly menuItems: MenuControlModel[] = [
-    { type: MenuControlTypeEnum.Edit, action: 'edit' },
-    { type: MenuControlTypeEnum.Delete, action: 'deleteById' },
-    { type: MenuControlTypeEnum.State, action: 'updateState' }
+    { type: MenuControlTypeEnum.Edit,        action: 'edit'        },
+    { type: MenuControlTypeEnum.Delete,      action: 'deleteById'  },
+    { type: MenuControlTypeEnum.State,       action: 'updateState' },
   ];
 
   protected override matchesId(a: ModuloModel, b: ModuloModel): boolean {

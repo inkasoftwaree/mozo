@@ -13,7 +13,7 @@ import { PermisoModel } from '@app/shared/models/seguridad/permiso.model';
   standalone: true,
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
-  imports: [RouterOutlet, RouterLink, NgIcon, LoginPage, ModalControl],
+  imports: [RouterOutlet, NgIcon, LoginPage, ModalControl],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {

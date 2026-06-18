@@ -20,7 +20,7 @@
     @if (user(); as u) {
       <div class="dropdown dropdown-end">
         <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-2 px-2">
-          <div class="avatar-initials">{{ u.noUsuario?.charAt(0) }}</div>
+          <div class="avatar-initials">{{ u.noUsuario.charAt(0) }}</div>
           <span class="hidden sm:block text-sm font-medium max-w-28 truncate">{{ u.noUsuario }}</span>
           <ng-icon name="lucideMoreVertical" class="text-base opacity-50" />
         </div>
@@ -50,6 +50,6 @@
 </nav>
 
 <!-- Contenido de la página -->
-<div class="p-3 sm:p-5">
+<div class="p-3 sm:p-5 min-h-[calc(100vh-3.5rem)]">
   <router-outlet />
 </div>

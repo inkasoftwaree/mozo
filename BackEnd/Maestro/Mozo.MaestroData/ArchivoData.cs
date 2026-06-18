@@ -27,17 +27,14 @@ public interface IArchivoData
     Task UpdateAsync(ArchivoModel c);
     Task DeleteByIdAsync(ArchivoFilterDto c);
 
-    Task UpdateOrdenMasivoAsync(OrdenMasivoRequest req);
-    Task UpdateOrdenAsync(ArchivoModel c);
+    Task UpdateOrderMassiveAsync(OrdenMasivoRequest req);
+    Task UpdateOrderAsync(ArchivoModel c);
 
     Task<ArchivoModel?> SelByIdAsync(ArchivoFilterDto c);
     Task<ArchivoModel?> SelMetaDataByUkAsync(ArchivoFilterDto c);
     Task<IEnumerable<ArchivoModel>> SelAllAsync(ArchivoFilterDto c);
     Task<ArchivoModel?> SelMetaDataByIdAsync(ArchivoFilterDto c);
-
     Task<IEnumerable<ArchivoModel>> SelAllActiveAsync(ArchivoFilterDto c);
-
-
 }
 
 public partial class ArchivoData : IArchivoData
@@ -143,7 +140,7 @@ public partial class ArchivoData : IArchivoData
     }
 
 
-    public async Task UpdateOrdenAsync(ArchivoModel c)
+    public async Task UpdateOrderAsync(ArchivoModel c)
     {
         DynamicParameters pr = new();
         pr.Add2("CoEmpresa", c.FlEmpresaNotKey == 1 ? c.CoEmpresa : _user.CoEmpresa, DbType.Int32);
@@ -160,7 +157,7 @@ public partial class ArchivoData : IArchivoData
         await _connection.ExecuteScalarAsync(sql, pr);
     }
 
-    public async Task UpdateOrdenMasivoAsync(OrdenMasivoRequest req)
+    public async Task UpdateOrderMassiveAsync(OrdenMasivoRequest req)
     {
         int[]? coArchivos = req.Ordenes.Select(o => o.CoArchivo).ToArray();
         int[]? nuOrdenes = req.Ordenes.Select(o => o.NuOrden).ToArray();

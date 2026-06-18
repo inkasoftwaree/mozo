@@ -8,7 +8,7 @@
 // -----------------------------------------------------------------------------
 
 using Microsoft.AspNetCore.Http.HttpResults;
-
+using Microsoft.AspNetCore.OutputCaching;
 using Mozo.ApiSeguridad.Helper;
 using Mozo.MaestroBusiness;
 using Mozo.Model.Maestro;
@@ -23,6 +23,9 @@ namespace Mozo.Api.Maestro;
 ///</history>
 public static partial class TipoGeneralEndPoints
 {
+    private const string CacheTag = "tipogeneral";
+
+
     /// <summary>
     /// Mapea todas las rutas de TipoGeneral
     /// </summary>
@@ -34,19 +37,19 @@ public static partial class TipoGeneralEndPoints
           .WithResponses<TipoGeneralModel>(StatusCodes.Status200OK)
          .Produces(StatusCodes.Status404NotFound)
          .WithDescription("Obtener una Tipo General")
-         .CacheOutput("LookupByQuery");
+       ;
 
         g.MapGet("/active", SelAllActiveAsync)
           .WithResponses<IEnumerable<TipoGeneralModel>>(StatusCodes.Status200OK)
           .Produces(StatusCodes.Status404NotFound)
           .WithDescription("Obtener todos los Tipo General activos")
-          .CacheOutput("LookupByQuery");
+          .CacheOutput(CacheTag);
 
-        g.MapGet("/modulos/active", SelAllActiveByModuloAsync)
+        g.MapGet("/modulos/active", SelAllActiveByModuleAsync)
           .WithResponses<IEnumerable<TipoGeneralModel>>(StatusCodes.Status200OK)
           .Produces(StatusCodes.Status404NotFound)
           .WithDescription("Obtener todos los Tipo General activos del Módulo")
-          .CacheOutput("LookupByQuery");
+         .CacheOutput(CacheTag);
 
         return g;
     }
@@ -57,7 +60,7 @@ public static partial class TipoGeneralEndPoints
 
     private static async Task<IResult>
         SelByIdAsync(
-      [AsParameters]  TipoGeneralFilterDto f,
+        [AsParameters]  TipoGeneralFilterDto f,
         ITipoGeneralBusiness ITipoGeneral)
     {
         TipoGeneralModel? i = await ITipoGeneral.SelByIdAsync(f);
@@ -68,19 +71,19 @@ public static partial class TipoGeneralEndPoints
     private static async Task<IResult> 
         SelAllActiveAsync(
        [AsParameters] TipoGeneralFilterDto f,
-        ITipoGeneralBusiness ITipoGeneral)
-    {
-
+        ITipoGeneralBusiness ITipoGeneral
+        )
+    {     
         IEnumerable<TipoGeneralModel> r = await ITipoGeneral.SelAllActiveAsync(f);
         return Results.Ok(r.OrderBy(x => x.NuOrden));
     }
 
-    private static async Task<IResult> 
-        SelAllActiveByModuloAsync(
-        [AsParameters] TipoGeneralFilterDto f,
-        ITipoGeneralBusiness ITipoGeneral)
-    {
-        IEnumerable<TipoGeneralModel> r = await ITipoGeneral.SelAllActiveByModuloAsync(f);
+    private static async Task<IResult>
+        SelAllActiveByModuleAsync(
+            [AsParameters] TipoGeneralFilterDto f,
+            ITipoGeneralBusiness ITipoGeneral)
+    {       
+        IEnumerable<TipoGeneralModel> r = await ITipoGeneral.SelAllActiveByModuleAsync(f);
         return Results.Ok(r.OrderBy(x => x.NuOrden));
     }
 

@@ -7,40 +7,51 @@
 </div>
 
 <div class="content-card">
-  <div class="table-responsive">
-    <table class="table table-zebra table-sm sm:table-md">
-      <thead>
-        <tr>
-          <th class="w-14 text-center">Orden</th>
-          <th class="w-14 text-center">ID</th>
-          <th>Módulo</th>
-          <th class="w-12"></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (modulo of modulos(); track modulo.coModulo) {
-          <tr class="hover">
-            <td class="text-center text-sm opacity-60">{{ modulo.nuOrden }}</td>
-            <td class="text-center">
-              <span class="badge badge-ghost badge-sm font-mono">{{ modulo.coModulo }}</span>
-            </td>
-            <td>
-              <div class="flex items-center gap-2">
-                <mz-state-control [state]="modulo.flEstReg == 1 ? 1 : 0" />
-                <span class="font-medium">{{ modulo.noModulo }}</span>
-              </div>
-            </td>
-            <td>
-              <mz-menu-control
-                [items]="menuItems"
-                [state]="modulo.flEstReg ?? null"
-                (action)="onMenuAction($event, modulo)" />
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+  <mz-generic-grid
+      [items]="modulos()"
+      [loading]="isLoading()"
+      [skeletonCount]="6"
+      [columnas]="2"
+      [espaciado]="4"
+      [bordeGrosor]="1"
+      bordeColor="border-base-200"
+      redondeado="xl"
+      [sombra]="true"
+      [hover]="true"
+      emptyMessage="No hay módulos registrados"
+      bgColor="bg-base-100">
+
+    <ng-template #itemTemplate let-modulo>
+      <div class="flex items-center gap-2 px-3 py-2.5">
+
+        <!-- Orden -->
+        <span class="w-5 shrink-0 text-center text-xs font-bold text-base-content/35">
+          {{ modulo.nuOrden }}
+        </span>
+
+        <!-- Estado -->
+        <mz-state-control class="shrink-0" [state]="modulo.flEstReg == 1 ? 1 : 0" />
+
+        <!-- Nombre (ocupa el espacio restante, trunca) -->
+        <span class="flex-1 min-w-0 truncate text-sm font-medium text-base-content">
+          {{ modulo.noModulo }}
+        </span>
+
+        <!-- ID -->
+        <span class="badge badge-ghost font-mono text-xs shrink-0">
+          #{{ modulo.coModulo }}
+        </span>
+
+        <!-- Menú -->
+        <mz-menu-control
+          class="shrink-0"
+          [items]="menuItems"
+          [state]="modulo.flEstReg ?? null"
+          (action)="onMenuAction($event, modulo)" />
+
+      </div>
+    </ng-template>
+  </mz-generic-grid>
 </div>
 
 <mz-modal-control name="modulo-form-page" #moduloModal>

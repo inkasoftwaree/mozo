@@ -15,8 +15,8 @@ public interface IArchivoBusiness
     Task<ArchivoModel> InsertMetaDataAsync(ArchivoModel c, IFormFile file);
     Task<ArchivoModel> UpdateMetaDataAsync(ArchivoModel c, IFormFile file);
     Task UpdateAsync(ArchivoModel c);
-    Task UpdateOrdenAsync(ArchivoModel c);
-    Task UpdateOrdenMasivoAsync(OrdenMasivoRequest req);
+    Task UpdateOrderAsync(ArchivoModel c);
+    Task UpdateOrderMassiveAsync(OrdenMasivoRequest req);
     Task DeleteByIdAsync(ArchivoFilterDto c);
 
     Task<ArchivoModel?> SelByIdAsync(ArchivoFilterDto c);
@@ -46,10 +46,10 @@ public class ArchivoBusiness : IArchivoBusiness
     }
 
 
-    public Task UpdateOrdenAsync(ArchivoModel c) => _data.UpdateOrdenAsync(c);
+    public Task UpdateOrderAsync(ArchivoModel c) => _data.UpdateOrderAsync(c);
 
-    public Task UpdateOrdenMasivoAsync(OrdenMasivoRequest req) =>
-        _data.UpdateOrdenMasivoAsync(req);
+    public Task UpdateOrderMassiveAsync(OrdenMasivoRequest req) =>
+        _data.UpdateOrderMassiveAsync(req);
 
     public async Task<ArchivoModel?> SelByIdAsync(ArchivoFilterDto c)
     {

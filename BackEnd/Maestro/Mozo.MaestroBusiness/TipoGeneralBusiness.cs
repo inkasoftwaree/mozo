@@ -6,7 +6,7 @@ namespace Mozo.MaestroBusiness;
 public interface ITipoGeneralBusiness
 {
     Task<IEnumerable<TipoGeneralModel>> SelAllActiveAsync(TipoGeneralFilterDto c);
-    Task<IEnumerable<TipoGeneralModel>> SelAllActiveByModuloAsync(TipoGeneralFilterDto c);
+    Task<IEnumerable<TipoGeneralModel>> SelAllActiveByModuleAsync(TipoGeneralFilterDto c);
     Task<TipoGeneralModel?> SelByIdAsync(TipoGeneralFilterDto c);
 }
 public class TipoGeneralBusiness : ITipoGeneralBusiness
@@ -17,7 +17,7 @@ public class TipoGeneralBusiness : ITipoGeneralBusiness
         _data = data;
     }
     public async Task<IEnumerable<TipoGeneralModel>> SelAllActiveAsync(TipoGeneralFilterDto c) => await _data.SelAllActiveAsync(c);
-    public async Task<IEnumerable<TipoGeneralModel>> SelAllActiveByModuloAsync(TipoGeneralFilterDto c) => await _data.SelAllActiveByModuloAsync(c);
+    public async Task<IEnumerable<TipoGeneralModel>> SelAllActiveByModuleAsync(TipoGeneralFilterDto c) => await _data.SelAllActiveByModuleAsync(c);
     public async Task<TipoGeneralModel?> SelByIdAsync(TipoGeneralFilterDto c) => await _data.SelByIdAsync(c);
 
 }

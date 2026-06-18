@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
 import { EmpresaModuloService } from '../../services/empresa-modulo.service';
 import { EmpresaModuloModel } from '@app/shared/models/seguridad/empresa-modulo.model';
-import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 import { ButtonControl } from '@app/shared/components/button/button.control';
 import { ToastrService } from 'ngx-toastr';
-
+import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 
 type ModuloFormValue = {
   coEmpresaModulo: number | null;
@@ -16,7 +15,6 @@ type ModuloFormValue = {
   flEstReg: boolean;
   isChanged: boolean;
 };
-
 
 @Component({
   selector: 'mz-empresa-modulo-form-page',
@@ -30,26 +28,30 @@ export class EmpresaModuloFormPage {
   private readonly toastr = inject(ToastrService);
   private readonly empresaModuloService = inject(EmpresaModuloService);
   private readonly destroyRef = inject(DestroyRef);
-  protected readonly fb = inject(FormBuilder);
+  private readonly fb = inject(FormBuilder);
+
   protected readonly MenuControlTypeEnum = MenuControlTypeEnum;
 
-  // Emits before every form rebuild to cancel stale valueChanges subscriptions
-  private readonly formSubs$ = new Subject<void>();
-
-  // Trigger for HTTP load — switchMap cancels the previous in-flight request
-  private readonly loadTrigger$ = new Subject<EmpresaModuloModel>();
-
   readonly data = input<EmpresaModel | null>(null);
-  readonly empresa = signal<EmpresaModel | null>(null);
+
+  // Derivado reactivamente del input — elimina el writable signal y el set manual en el effect
+  readonly empresa = computed(() => this.data());
+
   readonly empresaModulos = signal<EmpresaModuloModel[]>([]);
 
-  form = this.fb.group({
-    modulos: this.fb.array<FormGroup>([])
+  readonly form = this.fb.group({
+    modulos: this.fb.array<FormGroup>([]),
   });
 
   get modulosArray(): FormArray {
     return this.form.get('modulos') as FormArray;
   }
+
+  // Emite antes de cada reconstrucción del form para cancelar suscripciones valueChanges anteriores
+  private readonly formSubs$ = new Subject<void>();
+
+  // switchMap cancela la petición HTTP anterior si llega una nueva antes de completar
+  private readonly loadTrigger$ = new Subject<EmpresaModuloModel>();
 
   constructor() {
     this.destroyRef.onDestroy(() => this.formSubs$.complete());
@@ -59,13 +61,12 @@ export class EmpresaModuloFormPage {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((modulos: EmpresaModuloModel[]) => {
       this.empresaModulos.set(modulos);
-      this.buildForm(modulos);
+      this.buildModulosForm(modulos);
     });
 
     effect(() => {
       const empresa = this.data();
       if (!empresa) return;
-      this.empresa.set(empresa);
       this.modulosArray.clear();
       this.empresaModulos.set([]);
       this.loadTrigger$.next({ coEmpresa: empresa.coEmpresa });
@@ -79,9 +80,7 @@ export class EmpresaModuloFormPage {
     const observables: Observable<number | void>[] = raw.modulos
       .filter((modulo, index) => {
         if (!modulo.isChanged) return false;
-        // No DB record + user left it unchecked → nothing to do
         if (modulo.coEmpresaModulo == null && !modulo.flEstReg) return false;
-        // DB record exists + user left it checked → toggled and reverted
         if (modulo.coEmpresaModulo != null && modulo.flEstReg) return false;
         changedIndexes.push(index);
         return true;
@@ -93,8 +92,6 @@ export class EmpresaModuloFormPage {
           coModulo: modulo.coModulo,
           flEstReg: modulo.flEstReg ? 1 : 0,
         };
-        // No DB record → INSERT (user checked a new module)
-        // DB record exists → DELETE (user unchecked an existing module)
         return modulo.coEmpresaModulo == null
           ? this.empresaModuloService.insert(payload)
           : this.empresaModuloService.deleteById(payload);
@@ -116,12 +113,11 @@ export class EmpresaModuloFormPage {
             `Se guardaron ${observables.length} cambio(s) de Módulos para la Empresa`,
             'Éxito'
           );
-        }
+        },
       });
   }
 
-  private buildForm(modulos: EmpresaModuloModel[]): void {
-    // Cancel stale valueChanges subscriptions before clearing the array
+  private buildModulosForm(modulos: EmpresaModuloModel[]): void {
     this.formSubs$.next();
     this.modulosArray.clear();
 
@@ -129,11 +125,11 @@ export class EmpresaModuloFormPage {
       const group = this.fb.group({
         coEmpresaModulo: [modulo.coEmpresaModulo ?? null],
         coModulo: [modulo.coModulo],
-        flEstReg: [!!modulo.flEstReg],  // normalize API number (0/1) → boolean
+        flEstReg: [!!modulo.flEstReg],
         isChanged: [false],
       });
 
-      // Track checkbox changes — tied to formSubs$ so rebuild cancels old subscriptions
+      // Vincula el cambio del checkbox con isChanged; formSubs$ cancela al reconstruir
       group.get('flEstReg')!.valueChanges
         .pipe(takeUntil(this.formSubs$))
         .subscribe(() => group.get('isChanged')!.setValue(true, { emitEvent: false }));

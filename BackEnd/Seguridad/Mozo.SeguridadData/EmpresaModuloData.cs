@@ -68,7 +68,7 @@ public partial class EmpresaModuloData : IEmpresaModuloData
     public async Task<IEnumerable<EmpresaModuloModel>> SelAllAsync(EmpresaModuloFilterDto c)
     {
         DynamicParameters pr = new();
-        pr.Add2("CoEmpresa", c.CoEmpresa, DbType.Int32);
+        pr.Add2("CoEmpresa", c.FlEmpresaNotKey == 1 ? c.CoEmpresa : _user.CoEmpresa, DbType.Int32);
 
         string sql = $"SELECT * FROM {_schema}.fn_empresamodulo_sel_all(@CoEmpresa)";
         return await _connection.QueryAsync<EmpresaModuloModel>(sql, pr);

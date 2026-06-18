@@ -37,9 +37,9 @@ public static partial class PersonaTipoEndPoints
     {
         IEnumerable<PersonaTipoModel> r = Enumerable.Empty<PersonaTipoModel>();
         if (f.CoModulo != null && f.CoPersona != null)
-            r = await IPersonaTipo.SelAllActiveByModuloAndPersonaAsync(new());
+            r = await IPersonaTipo.SelAllActiveByModuleAndPersonAsync(new());
         else if (f.CoModulo == null && f.CoPersona != null)
-            r = await IPersonaTipo.SelAllActiveByPersonaAsync(new());
+            r = await IPersonaTipo.SelAllActiveByPersonAsync(new());
         else if (f.CoModulo == null && f.CoPersona == null)
             r = await IPersonaTipo.SelAllActiveAsync(new());
         return TypedResults.Ok(r);

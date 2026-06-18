@@ -19,6 +19,7 @@ namespace Mozo.Api.Maestro;
 /// </summary>
 public static partial class DocumentoIdentidadEndPoints
 {
+    private const string CacheTag = "docidentidad";
     /// <summary>
     /// Función que devuelve el grupo de end points de la entidad "DocumentoIdentidad".
     /// </summary>
@@ -29,7 +30,8 @@ public static partial class DocumentoIdentidadEndPoints
         g.MapGet("/active", SelAllActiveAsync)
           .WithResponses<IEnumerable<DocumentoIdentidadModel>>(StatusCodes.Status200OK)
           .WithDescription("Obtener todos los Documentos de Identidad")
-          .CacheOutput("StaticLookup");
+          .CacheOutput(CacheTag);
+
         return g;
     }
 
@@ -38,7 +40,9 @@ public static partial class DocumentoIdentidadEndPoints
 {
 
     static async Task<IResult>
-       SelAllActiveAsync(IDocumentoIdentidadBusiness IDocumentoIdentidad)
+       SelAllActiveAsync(
+        IDocumentoIdentidadBusiness IDocumentoIdentidad
+    )
     {      
         IEnumerable<DocumentoIdentidadModel> r = await IDocumentoIdentidad.SelAllActiveAsync();
         return Results.Ok(r);

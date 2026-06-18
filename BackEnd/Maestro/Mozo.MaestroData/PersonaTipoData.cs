@@ -19,8 +19,8 @@ public interface IPersonaTipoData
 {
     Task<int> InsertAsync(PersonaTipoModel c, IDbTransaction? tran = null);
     Task UpdateAsync(PersonaTipoModel c);
-    Task<IEnumerable<PersonaTipoModel>> SelAllActiveByPersonaAsync(PersonaTipoModel c);
-    Task<IEnumerable<PersonaTipoModel>> SelAllActiveByModuloAndPersonaAsync(PersonaTipoModel c);
+    Task<IEnumerable<PersonaTipoModel>> SelAllActiveByPersonAsync(PersonaTipoModel c);
+    Task<IEnumerable<PersonaTipoModel>> SelAllActiveByModuleAndPersonAsync(PersonaTipoModel c);
     Task<IEnumerable<PersonaTipoModel>> SelAllActiveAsync(PersonaTipoModel c);
 }
 
@@ -63,7 +63,7 @@ public partial class PersonaTipoData : IPersonaTipoData
         string sql = $"CALL {_schema}.usp_personatipo_update({args})";
         await _connection.ExecuteScalarAsync<int>(sql, pr);
     }
-    public async Task<IEnumerable<PersonaTipoModel>> SelAllActiveByPersonaAsync(PersonaTipoModel c)
+    public async Task<IEnumerable<PersonaTipoModel>> SelAllActiveByPersonAsync(PersonaTipoModel c)
     {
         (DynamicParameters pr, string args) = BuildDinamicParameter.Build(c, _user.CoEmpresa, _user.CoPersona,
             "CoEmpresa",
@@ -72,7 +72,7 @@ public partial class PersonaTipoData : IPersonaTipoData
         string sql = $"SELECT * FROM {_schema}.fn_personatipo_sel_all_active_by_persona({args})";
         return await _connection.QueryAsync<PersonaTipoModel>(sql, pr);
     }
-    public async Task<IEnumerable<PersonaTipoModel>> SelAllActiveByModuloAndPersonaAsync(PersonaTipoModel c)
+    public async Task<IEnumerable<PersonaTipoModel>> SelAllActiveByModuleAndPersonAsync(PersonaTipoModel c)
     {
         (DynamicParameters pr, string args) = BuildDinamicParameter.Build(c, _user.CoEmpresa, _user.CoPersona,
            "CoEmpresa",

@@ -1,4 +1,3 @@
-// src/app/core/services/tipo-archivo-catalogo.service.ts
 import { Injectable, inject, isDevMode, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { TipoGeneralService } from '@app/modules/maestro/services/tipo-general.service';
@@ -36,8 +35,6 @@ export interface ArchivoUploaderConfig {
 @Injectable({ providedIn: 'root' })
 export class TipoArchivoCatalogoService {
   private tipoGeneralService = inject(TipoGeneralService);
-
-
 
   // Inicializa desde sessionStorage si existe
   private readonly _tipos = signal<TipoArchivoCatalogo[]>(

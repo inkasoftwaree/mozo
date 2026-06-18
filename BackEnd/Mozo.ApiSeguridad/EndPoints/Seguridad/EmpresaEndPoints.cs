@@ -14,7 +14,7 @@ namespace Mozo.Api.Seguridad;
 ///</history>
 public static partial class EmpresaEndPoints
 {
-    private const string CacheTag = "Empresa_SelAllActive";
+    private const string CacheTag = "empresa";
     /// <summary>
     /// Mapea todas las rutas de Empresa
     /// </summary>
@@ -50,7 +50,8 @@ public static partial class EmpresaEndPoints
         g.MapGet("/active", SelAllActiveAsync)
             .CacheOutput(x => x.Expire(TimeSpan.FromHours(24)).Tag(CacheTag))
             .WithResponses<IEnumerable<EmpresaModel>>(StatusCodes.Status200OK)
-            .WithDescription("Obtener todas las Empresas activas");
+            .WithDescription("Obtener todas las Empresas activas")
+            .CacheOutput(CacheTag);
 
         return g;
     }
@@ -114,9 +115,9 @@ public static partial class EmpresaEndPoints
 
     private static async Task<IResult>
         SelByIdAsync(
-              [AsParameters] EmpresaFilterDto f,
+            [AsParameters] EmpresaFilterDto f,
             IEmpresaBusiness IEmpresa
-            )
+    )
     {
         EmpresaModel? i = await IEmpresa.SelByIdAsync(f);
         if (i is null)
@@ -125,18 +126,19 @@ public static partial class EmpresaEndPoints
     }
 
     private static async Task<IResult>
-        SelAllAsync(
-            [AsParameters] EmpresaFilterDto f,
-            IEmpresaBusiness IEmpresa)
+     SelAllAsync(
+         [AsParameters] EmpresaFilterDto f,
+         IEmpresaBusiness IEmpresa)
     {
-
         IEnumerable<EmpresaModel> r = await IEmpresa.SelAllAsync(f);
         return Results.Ok(r);
     }
 
 
     private static async Task<IResult>
-        SelAllActiveAsync(IEmpresaBusiness IEmpresa)
+        SelAllActiveAsync(
+            IEmpresaBusiness IEmpresa
+    )
     {
         IEnumerable<EmpresaModel> r = await IEmpresa.SelAllActiveAsync();
         return Results.Ok(r);

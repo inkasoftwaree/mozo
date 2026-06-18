@@ -50,7 +50,15 @@ public partial class ModuloData : IModuloData
         pr.Add2("FlArea", c.FlArea, DbType.Int32);
         pr.Add2("CoUsuCre", _user.CoPersona, DbType.Int32);
 
-        string sql = $"SELECT {_schema}.fn_modulo_insert(@NoModulo,@NoArea,@NoModuloDescripcion,@NuOrden,@NoIcono,@FlArea,@CoUsuCre)";
+        string sql = $@"SELECT {_schema}.fn_modulo_insert(
+            @NoModulo,
+            @NoArea,
+            @NoModuloDescripcion,
+            @NuOrden,
+            @NoIcono,
+            @FlArea,
+            @CoUsuCre
+        )";
         return await _connection.ExecuteScalarAsync<int>(sql, pr);
     }
     public async Task UpdateAsync(ModuloModel c)

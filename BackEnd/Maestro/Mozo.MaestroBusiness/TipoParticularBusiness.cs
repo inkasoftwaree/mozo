@@ -10,18 +10,18 @@ public interface ITipoParticularBusiness
     Task UpdateStateAsync(TipoParticularModel c);
     Task UpdateCommandAsync(TipoParticularModel c);
     Task UpdateDefaultAsync(TipoParticularModel c);
-    Task DeleteByIdAsync(TipoParticularModel c);
-    Task<IEnumerable<TipoParticularModel>> SelAllAsync(TipoParticularDto c);
-    Task<int> SelAllCountAsync(TipoParticularDto c);
-    Task<IEnumerable<TipoParticularModel>> SelAllHijoAsync(TipoParticularModel c);
-    Task<IEnumerable<TipoParticularModel>> SelAllActiveHijoByGrupoAsync(TipoParticularModel c);
-    Task<IEnumerable<TipoParticularModel>> SelAllGrupoByModuloAsync(TipoParticularModel c);
-    Task<TipoParticularModel?> SelByIdAsync(TipoParticularModel c);
-    Task<TipoParticularModel?> SelByIdGrupoAsync(TipoParticularModel c);
-    Task<IEnumerable<TipoParticularModel>> SelAllActiveAsync(TipoParticularModel c);
-    Task<IEnumerable<TipoParticularModel>> SelAllActiveHijoAsync(TipoParticularModel c);
-    Task<int> SelOrdenNextAsync(TipoParticularModel c);
-    Task<TipoParticularModel?> SelDefaultAsync(TipoParticularModel c);
+
+    Task DeleteByIdAsync(TipoParticularFilterDto c);
+    Task<IEnumerable<TipoParticularModel>> SelAllAsync(TipoParticularFilterDto c);
+    Task<IEnumerable<TipoParticularModel>> SelAllChildrenAsync(TipoParticularFilterDto c);
+    Task<IEnumerable<TipoParticularModel>> SelAllActiveFatherAndChildrenAsync(TipoParticularFilterDto c);
+    Task<IEnumerable<TipoParticularModel>> SelAllActiveGroupsByModuleAsync(TipoParticularFilterDto c);
+    Task<TipoParticularModel?> SelByIdAsync(TipoParticularFilterDto c);
+    Task<TipoParticularModel?> SelByIdGroupAsync(TipoParticularFilterDto c);
+    Task<IEnumerable<TipoParticularModel>> SelAllActiveAsync(TipoParticularFilterDto c);
+    Task<IEnumerable<TipoParticularModel>> SelAllActiveChildrenAsync(TipoParticularFilterDto c);
+    Task<int> SelOrderNextAsync(TipoParticularFilterDto c);
+    Task<TipoParticularModel?> SelDefaultAsync(TipoParticularFilterDto c);
 }
 public class TipoParticularBusiness : ITipoParticularBusiness
 {
@@ -35,44 +35,44 @@ public class TipoParticularBusiness : ITipoParticularBusiness
     public async Task UpdateCommandAsync(TipoParticularModel c) => await _data.UpdateCommandAsync(c);
     public async Task UpdateAsync(TipoParticularModel c) => await _data.UpdateAsync(c);
     public async Task UpdateStateAsync(TipoParticularModel c) => await _data.UpdateStateAsync(c);
-    public async Task DeleteByIdAsync(TipoParticularModel c) => await _data.DeleteByIdAsync(c);
-    public async Task<IEnumerable<TipoParticularModel>> SelAllAsync(TipoParticularDto c)
+    public async Task UpdateDefaultAsync(TipoParticularModel c) => await _data.UpdateDefaultAsync(c);
+    public async Task DeleteByIdAsync(TipoParticularFilterDto c) => await _data.DeleteByIdAsync(c);
+    public async Task<IEnumerable<TipoParticularModel>> SelAllAsync(TipoParticularFilterDto c)
     {
         IEnumerable<TipoParticularModel> r = await _data.SelAllAsync(c);
         return r.OrderBy(s => s.NuOrden);
     }
 
-    public async Task<int> SelAllCountAsync(TipoParticularDto c) => await _data.SelAllCountAsync(c);
-    public async Task<IEnumerable<TipoParticularModel>> SelAllActiveAsync(TipoParticularModel c)
+    public async Task<IEnumerable<TipoParticularModel>> SelAllActiveAsync(TipoParticularFilterDto c)
     {
         IEnumerable<TipoParticularModel> r = await _data.SelAllActiveAsync(c);
         return r.OrderBy(s => s.NuOrden).ToList();
     }
-    public async Task<IEnumerable<TipoParticularModel>> SelAllActiveHijoAsync(TipoParticularModel c)
+    public async Task<IEnumerable<TipoParticularModel>> SelAllActiveChildrenAsync(TipoParticularFilterDto c)
     {
-        IEnumerable<TipoParticularModel> r = await _data.SelAllActiveHijoAsync(c);
+        IEnumerable<TipoParticularModel> r = await _data.SelAllActiveChildrenAsync(c);
         return r.OrderBy(s => s.NuOrden).ThenBy(s => s.NuSubOrden).ToList();
     }
-    public async Task<IEnumerable<TipoParticularModel>> SelAllActiveHijoByGrupoAsync(TipoParticularModel c)
+    public async Task<IEnumerable<TipoParticularModel>> SelAllActiveFatherAndChildrenAsync(TipoParticularFilterDto c)
     {
-        IEnumerable<TipoParticularModel> r = await _data.SelAllActiveHijoByGrupoAsync(c);
+        IEnumerable<TipoParticularModel> r = await _data.SelAllActiveFatherAndChildrenAsync(c);
         return r.OrderBy(s => s.NuOrden).ThenBy(s => s.NoTipo).ThenBy(s => s.NuSubOrden);
     }
-    public async Task<IEnumerable<TipoParticularModel>> SelAllGrupoByModuloAsync(TipoParticularModel c)
+    public async Task<IEnumerable<TipoParticularModel>> SelAllActiveGroupsByModuleAsync(TipoParticularFilterDto c)
     {
-        IEnumerable<TipoParticularModel> r = await _data.SelAllGrupoByModuloAsync(c);
+        IEnumerable<TipoParticularModel> r = await _data.SelAllActiveGroupsByModuleAsync(c);
         return r.OrderBy(s => s.NuOrden);
     }
-    public async Task<IEnumerable<TipoParticularModel>> SelAllHijoAsync(TipoParticularModel c)
+    public async Task<IEnumerable<TipoParticularModel>> SelAllChildrenAsync(TipoParticularFilterDto c)
     {
-        IEnumerable<TipoParticularModel> r = await _data.SelAllHijoAsync(c);
+        IEnumerable<TipoParticularModel> r = await _data.SelAllChildrenAsync(c);
         return r.OrderBy(s => s.NuOrden);
     }
-    public async Task<TipoParticularModel?> SelByIdAsync(TipoParticularModel c) => await _data.SelByIdAsync(c);
-    public async Task<int> SelOrdenNextAsync(TipoParticularModel c) => await _data.SelOrdenNextAsync(c);
-    public async Task<TipoParticularModel?> SelByIdGrupoAsync(TipoParticularModel c) => await _data.SelByIdGrupoAsync(c);
-    public async Task UpdateDefaultAsync(TipoParticularModel c) => await _data.UpdateDefaultAsync(c);
-    public async Task<TipoParticularModel?> SelDefaultAsync(TipoParticularModel c) => await _data.SelDefaultAsync(c);
+    public async Task<TipoParticularModel?> SelByIdAsync(TipoParticularFilterDto c) => await _data.SelByIdAsync(c);
+    public async Task<int> SelOrderNextAsync(TipoParticularFilterDto c) => await _data.SelOrderNextAsync(c);
+    public async Task<TipoParticularModel?> SelByIdGroupAsync(TipoParticularFilterDto c) => await _data.SelByIdGroupAsync(c);
+    
+    public async Task<TipoParticularModel?> SelDefaultAsync(TipoParticularFilterDto c) => await _data.SelDefaultAsync(c);
 
 
 }

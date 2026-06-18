@@ -12,6 +12,7 @@ namespace Mozo.Api.Seguridad;
 ///</history>
 public static partial class ModuloEndPoints
 {
+    private const string CacheTag = "modulo";
     ///<summary>
     /// Mapea todas las rutas de Módulos
     ///</summary>
@@ -49,7 +50,8 @@ public static partial class ModuloEndPoints
 
         g.MapGet("/active", SelAllActiveAsync)
             .WithResponses<IEnumerable<ModuloModel>>(StatusCodes.Status200OK)
-            .WithDescription("Obtener todos los Módulo activos");
+            .WithDescription("Obtener todos los Módulo activos")
+            .CacheOutput(CacheTag);
 
         //    g.MapGet("/active-for-empresa", SelAllActiveForEmpresaAsync)
         //.WithResponses<IEnumerable<ModuloModel>>(StatusCodes.Status200OK)

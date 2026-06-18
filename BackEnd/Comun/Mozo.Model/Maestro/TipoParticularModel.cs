@@ -1,15 +1,21 @@
 namespace Mozo.Model.Maestro;
 
-public record TipoParticularDto : BaseFilterDto
-{
+public record TipoParticularFilterDto : BaseFilterDto
+{    
+    public int? CoModulo { get; set; }
     public int? CoGrupo { get; set; }
+    public int? CoGrupoPadre { get; set; }
+    public int? CoTipoPadre { get; set; }
     public int? CoTipo { get; set; }
+
 }
 [Serializable]
 public partial class TipoParticularModel : BaseModel //<TipoParticularModel>
 {
 
     public TipoParticularModel() { }
+
+    public int? CoEmpresa { get; set; }
     public int? CoGrupo { get; set; }
     public int? CoModulo { get; set; }
     public int? CoTipo { get; set; }

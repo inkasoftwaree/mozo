@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { rxResource, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { ButtonControl } from "@app/shared/components/button/button.control";
@@ -20,7 +20,7 @@ import { PaginaService } from '../../services/pagina.service';
 import { PaginaFormPage } from "../pagina/pagina-form.page";
 import { MSG_FIELD_FORM } from '@app/core/global/constants';
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
-import { CrudListPageBase } from '@app/shared/components/list/crud-list-page-base';
+import { CrudListPageBase, WritableListResource } from '@app/shared/components/list/crud-list-page-base';
 
 @Component({
   selector: 'mz-menu-list-page',
@@ -39,12 +39,12 @@ export class MenuListPage extends CrudListPageBase<MenuModel> {
   private readonly modalService = inject(ModalService);
 
   protected override readonly crudService = inject(MenuService);
+  protected override readonly entityLabel = 'Menú';
 
-  readonly modulos = toSignal(this.moduloService.selAllActive(), { initialValue: [] });
+  readonly modulos        = toSignal(this.moduloService.selAllActive(), { initialValue: [] });
   readonly selectedModulo = signal<number | null>(null);
 
   private readonly menusResource = rxResource({
-    defaultValue: [] as MenuModel[],
     params: () => this.selectedModulo(),
     stream: ({ params: coModulo }) =>
       coModulo !== null
@@ -52,15 +52,20 @@ export class MenuListPage extends CrudListPageBase<MenuModel> {
         : of([])
   });
 
-  protected override readonly listResource = this.menusResource;
-  protected override readonly entityLabel = 'Menú';
+  /** Adaptador explícito: traduce rxResource<MenuModel[]> → WritableListResource<MenuModel> */
+  protected override readonly listResource: WritableListResource<MenuModel> = {
+    update: (updater) => this.menusResource.update(items => items ? updater(items) : items),
+    reload: () => this.menusResource.reload()
+  };
 
-  readonly menus = this.menusResource.value;
+  readonly menus     = computed(() => this.menusResource.value() ?? []);
+  readonly isLoading = computed(() => this.menusResource.isLoading());
 
   onModuloChange(coModulo: number): void {
     this.selectedModulo.set(coModulo);
   }
 
+  /** Despacha acciones propias (newPagina) y delega el resto a la clase base. */
   override onMenuAction(action: string, c: MenuModel | null): void {
     if (action === 'newPagina') {
       this.openModalPagina(c!, null);
@@ -79,16 +84,16 @@ export class MenuListPage extends CrudListPageBase<MenuModel> {
   }
 
   readonly menuItems: MenuControlModel[] = [
-    { type: MenuControlTypeEnum.Edit, action: 'edit' },
-    { type: MenuControlTypeEnum.Delete, action: 'deleteById' },
-    { type: MenuControlTypeEnum.State, action: 'updateState' },
-    { type: MenuControlTypeEnum.New, action: 'newPagina', label: 'Agregar sub Menú' }
+    { type: MenuControlTypeEnum.Edit,   action: 'edit'        },
+    { type: MenuControlTypeEnum.Delete, action: 'deleteById'  },
+    { type: MenuControlTypeEnum.State,  action: 'updateState' },
+    { type: MenuControlTypeEnum.New,    action: 'newPagina', label: 'Agregar sub Menú' }
   ];
 
   readonly menuPaginaItems: MenuControlModel[] = [
-    { type: MenuControlTypeEnum.Edit, action: 'edit' },
-    { type: MenuControlTypeEnum.Delete, action: 'deleteById' },
-    { type: MenuControlTypeEnum.State, action: 'updateState' }
+    { type: MenuControlTypeEnum.Edit,   action: 'edit'        },
+    { type: MenuControlTypeEnum.Delete, action: 'deleteById'  },
+    { type: MenuControlTypeEnum.State,  action: 'updateState' },
   ];
 
   protected override matchesId(a: MenuModel, b: MenuModel): boolean {
@@ -142,7 +147,7 @@ export class MenuListPage extends CrudListPageBase<MenuModel> {
       .subscribe({
         next: () => {
           this.menusResource.update(menus =>
-            menus.map(menu =>
+            (menus ?? []).map(menu =>
               menu.coMenu === c.coMenu
                 ? {
                     ...menu,
@@ -172,7 +177,7 @@ export class MenuListPage extends CrudListPageBase<MenuModel> {
       .subscribe({
         next: () => {
           this.menusResource.update(menus =>
-            menus.map(menu =>
+            (menus ?? []).map(menu =>
               menu.coMenu === c.coMenu
                 ? {
                     ...menu,

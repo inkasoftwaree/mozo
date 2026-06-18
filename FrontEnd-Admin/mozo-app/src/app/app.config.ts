@@ -43,7 +43,10 @@ import {
   lucideEye,
   lucideLogOut, // Salir
   lucideCheckLine,   // Defect
-  lucideToggleRight // Toogle
+  lucideToggleRight, // Toogle
+  lucideShield,
+  lucideSettings,
+  lucideInfo
 
 } from '@ng-icons/lucide';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
@@ -94,7 +97,10 @@ export const appConfig: ApplicationConfig = {
       lucideEye,
       lucideLogOut, // Salir
       lucideCheckLine,   // Defecto
-      lucideToggleRight // Toogle
+      lucideToggleRight, // Toogle
+      lucideShield,
+      lucideSettings,
+      lucideInfo
     })
   ]
 };

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { ButtonControl } from "@app/shared/components/button/button.control";
@@ -20,11 +20,12 @@ import { ModalPayload } from '@app/shared/models/controls/modal-control.model';
 import { MenuControlTypeEnum } from '@app/shared/enum/menu-control-type.enum';
 import { PerfilPaginaFormPage } from "../perfil-pagina/perfil-pagina-form.page";
 import { CrudListPageBase } from '@app/shared/components/list/crud-list-page-base';
+import { GenericGridCControl } from "@app/shared/components/grid/grid.control";
 
 @Component({
   selector: 'mz-perfil-list-page',
   standalone: true,
-  imports: [FormsModule, ButtonControl, FormFieldControl, ModalControl, PerfilFormPage, StateControl, MenuControl, DefaultControl, PerfilPaginaFormPage],
+  imports: [FormsModule, ButtonControl, FormFieldControl, ModalControl, PerfilFormPage, StateControl, MenuControl, PerfilPaginaFormPage, GenericGridCControl],
   templateUrl: './perfil-list.page.html',
   styleUrl: './perfil-list.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,7 +54,8 @@ export class PerfilListPage extends CrudListPageBase<PerfilModel> {
   protected override readonly listResource = this.perfilesResource;
   protected override readonly entityLabel = 'Perfil';
 
-  readonly perfiles = this.perfilesResource.value;
+  readonly perfiles = computed(() => this.perfilesResource.value() ?? []);
+  readonly isLoading = computed(() => this.perfilesResource.isLoading());
 
   onModuloChange(coModulo: number): void {
     this.selectedModulo.set(coModulo);

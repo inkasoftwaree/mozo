@@ -1,1 +1,102 @@
-<p>tipo-particular-list!</p>
+<div class="page-header">
+  <h1 class="page-title">Mantenimiento de Tipos</h1>
+  <mz-button-control type="submit" [view]="MenuControlTypeEnum.New" (click)="onMenuAction('insert', null)" />
+</div>
+
+<div class="content-card mb-4">
+  <div class="grid grid-cols-12 gap-4"> 
+
+    <mz-form-field-control [colSpan]="6" label="Módulo">
+      <select
+        class="select select-bordered w-full"
+        [ngModel]="selectedModulo()"
+        (ngModelChange)="onModuloChange($event)">
+        <option [ngValue]="null" disabled selected>{{ MSG_FIELD_FORM.COMBO_REQUIRED }}</option>
+        @for (item of modulos(); track item.coModulo) {
+          <option [ngValue]="item.coModulo">{{ item.noModulo }}</option>
+        }
+      </select>
+    </mz-form-field-control>
+
+    <mz-form-field-control [colSpan]="6" label="Grupo">
+      <select
+        class="select select-bordered w-full"
+        [ngModel]="selectedGrupo()"
+        (ngModelChange)="onGrupoChange($event)"
+        [disabled]="selectedModulo() === null || isLoadingGrupos()">
+        <option [ngValue]="null" disabled selected>{{ MSG_FIELD_FORM.COMBO_REQUIRED }}</option>
+        @for (item of grupos(); track item.coGrupo ?? item.coTipo) {
+          <option [ngValue]="item.coGrupo ?? item.coTipo">{{ item.noTipo }}</option>
+        }
+      </select>
+    </mz-form-field-control>
+  </div>
+</div>
+
+<div class="content-card">
+  <mz-generic-grid
+      [items]="tipoParticulares()"
+      [loading]="isLoadingGrid()"
+      [skeletonCount]="6"
+      [columnas]="3"
+      [espaciado]="4"
+      [bordeGrosor]="1"
+      bordeColor="border-base-200"
+      redondeado="xl"
+      [sombra]="true"
+      [hover]="true"
+      [emptyMessage]="gridEmptyMessage()"
+      bgColor="bg-base-100">
+
+    <ng-template #itemTemplate let-tipo>
+      <div class="p-3 sm:p-4 flex flex-col h-full">
+
+        <div class="flex items-start justify-between gap-2 mb-3">
+          <div class="flex items-center gap-1.5 flex-wrap min-w-0">
+            <span class="badge badge-ghost font-mono text-xs shrink-0">
+              #{{ tipo.coTipo }}
+            </span>
+            @if (tipo.nuOrden != null) {
+              <span class="badge badge-ghost badge-xs font-mono shrink-0">
+                {{ tipo.nuOrden }}
+              </span>
+            }
+            <mz-state-control [state]="tipo.flEstReg == 1 ? 1 : 0" />
+            @if (tipo.flDefault === 1) {
+              <span class="badge badge-primary badge-xs shrink-0">Default</span>
+            }
+            <span class="text-sm font-bold text-base-content leading-tight truncate">
+              {{ tipo.noTipo }}
+            </span>
+          </div>
+          <mz-menu-control
+            class="shrink-0"
+            [items]="menuItems"
+            [state]="tipo.flEstReg ?? null"
+            (action)="onMenuAction($event, tipo)" />
+        </div>
+
+        @if (tipo.noSigla) {
+          <p class="text-xs text-base-content/60 mb-2 truncate">
+            Sigla: {{ tipo.noSigla }}
+          </p>
+        }
+
+        @if (tipo.txDescripcion) {
+          <p class="text-xs text-base-content/50 line-clamp-2 mb-3">
+            {{ tipo.txDescripcion }}
+          </p>
+        }
+
+      </div>
+    </ng-template>
+  </mz-generic-grid>
+</div>
+
+@if (showPagination()) {
+  <mz-pagination-control [page]="pageIndex()" [totalPages]="pageCount" (change)="goToPage($event)" />
+}
+
+<mz-modal-control name="tipo-particular-form-page" #tipoParticularModal>
+  <mz-tipo-particular-form-page (saved)="onSaved(tipoParticularModal.data$())" [data]="tipoParticularModal.data$()" />
+</mz-modal-control>

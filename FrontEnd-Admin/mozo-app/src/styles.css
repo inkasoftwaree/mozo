@@ -1,8 +1,40 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
+}
+
+/* ── Tema personalizado Mozo Admin ──────────────────────────────────────── */
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  color-scheme: light;
+  --color-primary: oklch(52% 0.22 264);
+  --color-primary-content: oklch(98% 0.01 264);
+  --color-secondary: oklch(60% 0.18 215);
+  --color-secondary-content: oklch(98% 0.01 215);
+  --color-accent: oklch(65% 0.2 150);
+  --color-accent-content: oklch(98% 0.01 150);
+  --color-neutral: oklch(35% 0.02 264);
+  --color-neutral-content: oklch(95% 0 0);
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(97% 0.005 264);
+  --color-base-300: oklch(93% 0.01 264);
+  --color-base-content: oklch(22% 0.02 264);
+  --color-info: oklch(68% 0.15 232);
+  --color-info-content: oklch(98% 0 0);
+  --color-success: oklch(63% 0.18 145);
+  --color-success-content: oklch(98% 0 0);
+  --color-warning: oklch(72% 0.2 70);
+  --color-warning-content: oklch(20% 0.04 70);
+  --color-error: oklch(58% 0.22 25);
+  --color-error-content: oklch(98% 0 0);
+  --radius-box: 0.75rem;
+  --radius-btn: 0.5rem;
+  --radius-badge: 9999px;
+}
 
 /* ── Scrollbar personalizado ────────────────────────────────────────────── */
-::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar        { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track  { background: transparent; }
 ::-webkit-scrollbar-thumb  { background: var(--color-base-300); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
@@ -10,9 +42,21 @@
 /* ── Layout base ────────────────────────────────────────────────────────── */
 html, body { height: 100%; }
 
+/* ── Spinner overlay global ─────────────────────────────────────────────── */
+.spinner-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color-mix(in oklch, var(--color-base-100) 70%, transparent);
+  backdrop-filter: blur(2px);
+}
+
 /* ── Active link en sidebar ─────────────────────────────────────────────── */
 .menu-active {
-  background-color: color-mix(in oklch, var(--color-primary) 12%, transparent);
+  background-color: color-mix(in oklch, var(--color-primary) 10%, transparent);
   color: var(--color-primary);
   font-weight: 600;
   border-left: 3px solid var(--color-primary);
@@ -34,7 +78,7 @@ html, body { height: 100%; }
   flex-wrap: wrap;
   gap: 0.75rem;
   margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
+  padding-bottom: 0.875rem;
   border-bottom: 1px solid var(--color-base-300);
 }
 
@@ -42,6 +86,7 @@ html, body { height: 100%; }
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.4;
+  color: var(--color-base-content);
 }
 
 @media (min-width: 640px) {
@@ -51,10 +96,10 @@ html, body { height: 100%; }
 /* ── Card de contenido ──────────────────────────────────────────────────── */
 .content-card {
   background: var(--color-base-100);
-  border-radius: var(--radius-box, 1rem);
+  border-radius: var(--radius-box, 0.75rem);
   border: 1px solid var(--color-base-200);
   padding: 1rem;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+  box-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
 }
 
 @media (min-width: 640px) {
@@ -65,7 +110,7 @@ html, body { height: 100%; }
 .sidebar-brand-text {
   font-size: 1.125rem;
   font-weight: 800;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   color: var(--color-primary);
 }
 
@@ -74,7 +119,7 @@ html, body { height: 100%; }
   position: sticky;
   top: 0;
   z-index: 30;
-  box-shadow: 0 1px 0 0 var(--color-base-300);
+  box-shadow: 0 1px 0 0 var(--color-base-200);
 }
 
 /* ── Avatar initials ────────────────────────────────────────────────────── */
@@ -85,10 +130,25 @@ html, body { height: 100%; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   background-color: var(--color-primary);
   color: var(--color-primary-content);
   flex-shrink: 0;
+}
+
+/* ── Stat card hover ────────────────────────────────────────────────────── */
+.stat-card {
+  background: var(--color-base-100);
+  border-radius: var(--radius-box, 0.75rem);
+  border: 1px solid var(--color-base-200);
+  padding: 1.25rem;
+  box-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.04);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 12px 0 rgb(0 0 0 / 0.08);
+  border-color: var(--color-primary);
 }

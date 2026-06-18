@@ -1,5 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, effect, ElementRef, inject, Injector, viewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgIcon } from '@ng-icons/core';
 import { Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
 import { buildForm, getError, V } from '@app/core/global/form.helper';
@@ -14,7 +15,7 @@ import { TipoArchivoCatalogoService } from '@app/core/services/tipo-archivo-cata
 @Component({
   selector: 'mz-login-page',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgIcon],
   templateUrl: './login.page.html',
   styleUrl: './login.page.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

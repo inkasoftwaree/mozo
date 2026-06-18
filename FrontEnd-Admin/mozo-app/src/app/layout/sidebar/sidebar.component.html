@@ -38,15 +38,16 @@
         @for (menu of modulo.menuLst; track menu.coMenu) {
           <details>
             <summary>
-              <ng-icon name="lucideMenu" class="text-base text-base-content/50 flex-shrink-0" />
-              <span class="flex-1 text-sm">{{ menu.noMenu }}</span>
+              <ng-icon name="lucideList" class="text-base text-primary/60 flex-shrink-0" />
+              <span class="flex-1 text-sm font-medium">{{ menu.noMenu }}</span>
             </summary>
-            <ul class="ml-2 border-l-2 border-base-200 pl-2">
+            <ul class="ml-2 border-l border-base-300 pl-2 mt-0.5">
               @for (pagina of menu.paginaLst; track pagina.coPagina) {
                 <li>
                   <a [routerLink]="['/', pagina.noArea, pagina.noControlador]"
                      routerLinkActive="menu-active"
-                     [routerLinkActiveOptions]="{ exact: true }">
+                     [routerLinkActiveOptions]="{ exact: true }"
+                     class="text-xs text-base-content/70">
                     {{ pagina.noOpcion }}
                   </a>
                 </li>
@@ -60,8 +61,9 @@
   </ul>
 
   <!-- Footer -->
-  <div class="border-t border-base-200 px-4 py-2 flex-shrink-0">
-    <p class="text-xs text-base-content/40 text-center">Mozo Admin v1.0</p>
+  <div class="border-t border-base-200 px-4 py-2.5 flex-shrink-0 flex items-center justify-center gap-1.5">
+    <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+    <p class="text-xs text-base-content/40">Mozo Admin v1.0</p>
   </div>
 
 </div>

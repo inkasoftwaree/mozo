@@ -45,11 +45,12 @@
     </div>
 
     <div class="modal-action flex items-center justify-end gap-2 mt-6">
-      <button type="button" class="btn btn-ghost" (click)="modalService.close()">
+      <button type="button" class="btn btn-ghost btn-sm" (click)="modalService.close()">
         Cancelar
       </button>
-      <button type="submit" class="btn btn-neutral" [disabled]="form.invalid">
-         Ingresar
+      <button type="submit" class="btn btn-primary btn-sm gap-1.5" [disabled]="form.invalid">
+        <ng-icon name="lucideLogOut" class="text-base rotate-180" />
+        Ingresar
       </button>
     </div>
   </div>

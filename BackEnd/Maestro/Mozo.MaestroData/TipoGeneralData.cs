@@ -19,13 +19,12 @@ namespace Mozo.MaestroData;
 public interface ITipoGeneralData
 {
     Task<IEnumerable<TipoGeneralModel>> SelAllActiveAsync(TipoGeneralFilterDto c);
-    Task<IEnumerable<TipoGeneralModel>> SelAllActiveByModuloAsync(TipoGeneralFilterDto c);
+    Task<IEnumerable<TipoGeneralModel>> SelAllActiveByModuleAsync(TipoGeneralFilterDto c);
     Task<TipoGeneralModel?> SelByIdAsync(TipoGeneralFilterDto c);
 }
 public partial class TipoGeneralData : ITipoGeneralData
 {
     private readonly string _schema = EnuCommon.BdDefault.Schema.Maestro;
-
     private readonly IDbConnection _connection;
     private readonly UserContext _user;
     public TipoGeneralData(IDbConnection connection, UserContext user)
@@ -41,7 +40,7 @@ public partial class TipoGeneralData : ITipoGeneralData
         string sql = $"SELECT * FROM {_schema}.fn_tipogeneral_sel_all_active(@CoGrupo)";
         return await _connection.QueryAsync<TipoGeneralModel>(sql, pr);
     }
-    public async Task<IEnumerable<TipoGeneralModel>> SelAllActiveByModuloAsync(TipoGeneralFilterDto c)
+    public async Task<IEnumerable<TipoGeneralModel>> SelAllActiveByModuleAsync(TipoGeneralFilterDto c)
     {
         DynamicParameters pr = new();
         pr.Add2("CoModulo", c.CoModulo, DbType.Int32);
