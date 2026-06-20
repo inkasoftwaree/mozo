@@ -7,7 +7,9 @@
 </label>
 
 @if (errorMessage()) {
-  <span class="text-error text-sm">{{ errorMessage() }}</span>
+  <p class="field-error-message" role="alert" aria-live="polite">
+    {{ errorMessage() }}
+  </p>
 }
 
 @if (hint()) {

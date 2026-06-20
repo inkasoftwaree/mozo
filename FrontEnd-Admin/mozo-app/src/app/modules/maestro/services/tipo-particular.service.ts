@@ -25,15 +25,15 @@ export class TipoParticularService {
   }
 
   updateState(c: TipoParticularModel): Observable<number> {
-    return this.http.put<number>(`${this.baseUrl}/state`, c);
+    return this.http.patch<number>(`${this.baseUrl}/state`, c);
   }
 
   updateCommand(c: TipoParticularModel): Observable<number> {
-    return this.http.put<number>(`${this.baseUrl}/command`, c);
+    return this.http.patch<number>(`${this.baseUrl}/command`, c);
   }
 
   updateDefault(c: TipoParticularModel): Observable<number> {
-    return this.http.put<number>(`${this.baseUrl}/default`, c);
+    return this.http.patch<number>(`${this.baseUrl}/default`, c);
   }
 
   deleteById(c: TipoParticularModel): Observable<void> {
@@ -88,7 +88,7 @@ export class TipoParticularService {
   }
 
   selNextOrder(c: TipoParticularModel): Observable<TipoParticularModel> {
-    return this.http.get<TipoParticularModel>(`${this.baseUrl}/next-orden`, { params: cleanParams(c) });
+    return this.http.get<TipoParticularModel>(`${this.baseUrl}/next-order`, { params: cleanParams(c) });
   }
 
   selGroup(c: TipoParticularModel): Observable<TipoParticularModel> {

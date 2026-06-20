@@ -30,6 +30,9 @@ export class ModalControl<T = any> {
   protected readonly modalWidthClass = computed(() =>
     MODAL_SIZES[(this.activeModal()?.size ?? 'md') as ModalSize]
   );
+  protected readonly closeOnBackdropClick = computed(
+    () => this.activeModal()?.closeOnBackdropClick === true
+  );
 
   public readonly data$ = computed<ModalPayload<T> | null>(() =>
     (this.activeModal()?.data as ModalPayload<T>) ?? null
@@ -37,5 +40,11 @@ export class ModalControl<T = any> {
 
   close(): void {
     this.modalService.close();
+  }
+
+  onBackdropClick(): void {
+    if (this.closeOnBackdropClick()) {
+      this.close();
+    }
   }
 }

@@ -5,13 +5,10 @@
 
 <div class="content-card mb-4">
   <mz-form-field-control label="Módulo">
-    <select
-      class="select select-bordered w-full"
-      [ngModel]="selectedModulo()"
-      (ngModelChange)="onModuloChange($event)">
+    <select class="select select-bordered w-full" [ngModel]="selectedModulo()" (ngModelChange)="onModuloChange($event)">
       <option [ngValue]="null" disabled selected>{{ MSG_FIELD_FORM.COMBO_REQUIRED }}</option>
       @for (item of modulos(); track item.coModulo) {
-        <option [ngValue]="item.coModulo">{{ item.noModulo }}</option>
+      <option [ngValue]="item.coModulo">{{ item.noModulo }}</option>
       }
     </select>
   </mz-form-field-control>
@@ -19,46 +16,25 @@
 
 
 <div class="content-card">
-  <mz-generic-grid
-      [items]="perfiles()"
-      [loading]="isLoading()"
-      [skeletonCount]="6"
-      [columnas]="2"
-      [espaciado]="4"
-      [bordeGrosor]="1"
-      bordeColor="border-base-200"
-      redondeado="xl"
-      [sombra]="true"
-      [hover]="true"
-      emptyMessage="No hay perfiles registrados"
-      bgColor="bg-base-100">
+  <mz-generic-grid [items]="perfiles()" [loading]="isLoading()" [skeletonCount]="6" [columnas]="2" [espaciado]="4"
+    [bordeGrosor]="1" bordeColor="border-base-200" redondeado="xl" [sombra]="true" [hover]="true"
+    emptyMessage="No hay perfiles registrados" bgColor="bg-base-100">
 
     <ng-template #itemTemplate let-perfil>
       <div class="flex items-center gap-2 px-3 py-2.5">
-
-        <!-- Orden -->
-        <span class="w-5 shrink-0 text-center text-xs font-bold text-base-content/35">
-          {{ perfil.nuOrden }}
-        </span>
-
         <!-- Estado -->
         <mz-state-control class="shrink-0" [state]="perfil.flEstReg == 1 ? 1 : 0" />
 
         <!-- Nombre (ocupa el espacio restante, trunca) -->
-        <span class="flex-1 min-w-0 truncate text-sm font-medium text-base-content">
+        <span class="flex-1 min-w-0 truncate font-semibold">
           {{ perfil.noPerfil }}
         </span>
 
         <!-- ID -->
-        <span class="badge badge-ghost font-mono text-xs shrink-0">
-          #{{ perfil.coPerfil }}
-        </span>
+        <pre class="font-code"><code>#{{ perfil.coPerfil }}</code></pre>
 
         <!-- Menú -->
-        <mz-menu-control
-          class="shrink-0"
-          [items]="menuItems"
-          [state]="perfil.flEstReg ?? null"
+        <mz-menu-control class="shrink-0" [items]="menuItems" [state]="perfil.flEstReg ?? null"
           (action)="onMenuAction($event, perfil)" />
 
       </div>

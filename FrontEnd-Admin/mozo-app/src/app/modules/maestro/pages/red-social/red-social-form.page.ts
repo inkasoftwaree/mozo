@@ -11,6 +11,9 @@ import { ButtonControl } from "@app/shared/components/button/button.control";
 import { TipoGeneralService } from '@moduleMaestro/services/tipo-general.service';
 import { TIPO_MAESTRO } from '@app/core/global/tipo.constants';
 import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
+import { FormFieldControl } from "@app/shared/components/form-field/form-field.control";
+import { NgIcon } from "@ng-icons/core";
+import { NgIconComponent } from '@ng-icons/core';
 
 type RedSocialRow = RedSocialModel & { _tempId?: number };
 type Seccion = { coTipo: number; noTipo: string };
@@ -18,7 +21,7 @@ type Seccion = { coTipo: number; noTipo: string };
 @Component({
   selector: 'mz-red-social-form-page',
   standalone: true,
-  imports: [FormsModule, ButtonControl],
+  imports: [FormsModule, ButtonControl, FormFieldControl, NgIcon, NgIconComponent],
   templateUrl: './red-social-form.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

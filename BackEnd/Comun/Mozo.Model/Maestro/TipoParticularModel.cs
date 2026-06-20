@@ -23,7 +23,6 @@ public partial class TipoParticularModel : BaseModel //<TipoParticularModel>
     public string? NoTipo { get; set; }
     public string? NoSigla { get; set; }
     public string? TxDescripcion { get; set; }
-    public string? NoValor { get; set; }
     public int? CoGrupoPadre { get; set; }
     public int? CoTipoPadre { get; set; }
     public int? FlDefault { get; set; }

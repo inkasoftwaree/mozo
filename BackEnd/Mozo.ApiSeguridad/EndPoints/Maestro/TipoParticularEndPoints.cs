@@ -207,9 +207,9 @@ public static partial class TipoParticularEndPoints
      )
     {
         if (f.FlEstReg == 1)
-            return Results.Ok(await ITipo.SelAllChildrenAsync(f));
+            return Results.Ok(await ITipo.SelAllActiveChildrenAsync(f));        
         else
-            return Results.Ok(await ITipo.SelAllActiveChildrenAsync(f));
+            return Results.Ok(await ITipo.SelAllChildrenAsync(f));
     }
 
 

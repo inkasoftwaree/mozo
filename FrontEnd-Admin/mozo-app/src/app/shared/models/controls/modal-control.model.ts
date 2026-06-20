@@ -19,6 +19,8 @@ export interface ModalControlModel<T = unknown> {
   modalName: string;
   title: string;
   size?: ModalSize;
+  /** Si es true, cierra al hacer clic fuera del contenido. Por defecto false (formularios). */
+  closeOnBackdropClick?: boolean;
   data: ModalPayload<T>;
 }
 

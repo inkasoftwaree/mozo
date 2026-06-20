@@ -3,6 +3,7 @@ import { BaseModel } from "@sharedModels/base.model";
 export interface TipoParticularModel extends BaseModel {
   coGrupo?: number;
   coGrupoPadre?: number;
+  coGrupoHijo?: number;
   coTipoPadre?: number;
   coTipo?: number;
   coEmpresa?: number;
@@ -12,9 +13,6 @@ export interface TipoParticularModel extends BaseModel {
   txDescripcion?: string;
   noSigla?: string;
   flDefault?: number;
-  
+  qtHijo?: number;
   noComando?: string;
-  noValor?: string;
 }
-
-//export interface EmpresaModel extends BaseModel {

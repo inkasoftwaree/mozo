@@ -1,12 +1,9 @@
 using Dapper;
-
 using Mozo.Helper.Enu;
 using Mozo.Helper.Global;
 using Mozo.Model.Maestro;
-
 using System.Data;
-using static Mozo.Helper.Enu.EnuCommon.Button;
-using static Mozo.Helper.Enu.EnuSeguridad;
+
 ///<summary>
 ///
 ///</summary>
@@ -55,30 +52,26 @@ public partial class TipoParticularData : ITipoParticularData
         pr.Add2("CoEmpresa", _user.CoEmpresa, DbType.Int32);
         pr.Add2("CoModulo", c.CoModulo, DbType.Int32);
         pr.Add2("CoGrupo", c.CoGrupo, DbType.Int32);
-        pr.Add2("NoTipo", c.NoTipo, DbType.String);
-        pr.Add2("NoSigla", c.NoSigla, DbType.String);
-        pr.Add2("TxDescripcion", c.TxDescripcion, DbType.String);
         pr.Add2("CoTipoPadre", c.CoTipoPadre, DbType.Int32);
         pr.Add2("CoGrupoPadre", c.CoGrupoPadre, DbType.Int32);
         pr.Add2("NuOrden", c.NuOrden, DbType.Int32);
-        pr.Add2("FlDefault", c.FlDefault, DbType.Int32);
-        pr.Add2("NoComando", c.NoComando, DbType.String);
-        pr.Add2("NoValor", c.NoValor, DbType.String);
+        pr.Add2("NoTipo", c.NoTipo, DbType.String);
+        pr.Add2("NoSigla", c.NoSigla, DbType.String);
+        pr.Add2("TxDescripcion", c.TxDescripcion, DbType.String);
+        pr.Add2("FlDefault", c.FlDefault, DbType.Int32);        
         pr.Add2("CoUsuCre", _user.CoPersona, DbType.Int32);
                
         string sql = $@"SELECT {_schema}.fn_tipoparticular_insert(
             @CoEmpresa,
             @CoModulo,
             @CoGrupo,
-            @NoTipo,
-            @NoSigla,
-            @TxDescripcion,
             @CoTipoPadre,
             @CoGrupoPadre,
             @NuOrden,
+            @NoTipo,
+            @NoSigla,
+            @TxDescripcion,
             @FlDefault,
-            @NoComando,
-            @NoValor,
             @CoUsuCre
         )";
         return await _connection.ExecuteScalarAsync<int>(sql, pr);
@@ -87,27 +80,24 @@ public partial class TipoParticularData : ITipoParticularData
     {
         DynamicParameters pr = new();
         pr.Add2("CoEmpresa", _user.CoEmpresa, DbType.Int32);
-        pr.Add2("CoTipo", c.CoTipo, DbType.Int32);
         pr.Add2("CoGrupo", c.CoGrupo, DbType.Int32);
-        pr.Add2("NoTipo", c.NoTipo, DbType.String);
-        pr.Add2("NoSigla", c.NoSigla, DbType.String);       
+        pr.Add2("CoTipo", c.CoTipo, DbType.Int32);
         pr.Add2("NuOrden", c.NuOrden, DbType.Int32);
-        pr.Add2("FlDefault", c.FlDefault, DbType.Int32);
-        pr.Add2("NoComando", c.NoComando, DbType.String);
-        pr.Add2("NoValor", c.NoValor, DbType.String);
+        pr.Add2("NoTipo", c.NoTipo, DbType.String);
+        pr.Add2("NoSigla", c.NoSigla, DbType.String);
+        pr.Add2("TxDescripcion", c.TxDescripcion, DbType.String);        
+        pr.Add2("FlDefault", c.FlDefault, DbType.Int32);        
         pr.Add2("CoUsuMod", _user.CoPersona, DbType.Int32);
 
         string sql = $@"CALL {_schema}.usp_tipoparticular_update(
             @CoEmpresa,
-            @CoTipo,
             @CoGrupo,
+            @CoTipo,
+            @NuOrden,
             @NoTipo,
             @NoSigla,
             @TxDescripcion,
-            @NuOrden,
             @FlDefault,
-            @NoComando,
-            @NoValor,
             @CoUsuMod
         )";
         await _connection.ExecuteScalarAsync(sql, pr);
@@ -116,7 +106,7 @@ public partial class TipoParticularData : ITipoParticularData
     {
         DynamicParameters pr = new();
         pr.Add2("CoEmpresa", _user.CoEmpresa, DbType.Int32);
-        pr.Add2("CoTipo", c.CoModulo, DbType.Int32);
+        pr.Add2("CoTipo", c.CoTipo, DbType.Int32);
         pr.Add2("CoGrupo", c.CoGrupo, DbType.Int32);
         pr.Add2("FlEstReg", c.FlEstReg, DbType.Int32);
         pr.Add2("CoUsuMod", _user.CoPersona, DbType.Int32);
@@ -135,7 +125,7 @@ public partial class TipoParticularData : ITipoParticularData
     {
         DynamicParameters pr = new();
         pr.Add2("CoEmpresa", _user.CoEmpresa, DbType.Int32);
-        pr.Add2("CoTipo", c.CoModulo, DbType.Int32);
+        pr.Add2("CoTipo", c.CoTipo, DbType.Int32);
         pr.Add2("CoGrupo", c.CoGrupo, DbType.Int32);
         pr.Add2("NoComando", c.NoComando, DbType.String);
         pr.Add2("CoUsuMod", _user.CoPersona, DbType.Int32);
@@ -154,7 +144,7 @@ public partial class TipoParticularData : ITipoParticularData
     {
         DynamicParameters pr = new();
         pr.Add2("CoEmpresa", _user.CoEmpresa, DbType.Int32);
-        pr.Add2("CoTipo", c.CoModulo, DbType.Int32);
+        pr.Add2("CoTipo", c.CoTipo, DbType.Int32);
         pr.Add2("CoGrupo", c.CoGrupo, DbType.Int32);
         pr.Add2("FlDefault", c.FlDefault, DbType.Int32);
         pr.Add2("CoUsuMod", _user.CoPersona, DbType.Int32);
@@ -173,15 +163,15 @@ public partial class TipoParticularData : ITipoParticularData
     {
         DynamicParameters pr = new();
         pr.Add2("CoEmpresa", _user.CoEmpresa, DbType.Int32);
-        pr.Add2("CoTipo", c.CoModulo, DbType.Int32);
+        pr.Add2("CoTipo", c.CoTipo, DbType.Int32);
         pr.Add2("CoGrupo", c.CoGrupo, DbType.Int32);
         pr.Add2("CoUsuEli", _user.CoPersona, DbType.Int32);
 
         string sql = $@"CALL {_schema}.usp_tipoparticular_delete_by_id(
-            CoEmpresa,
-            CoTipo,
-            CoGrupo,
-            CoUsuEli
+            @CoEmpresa,
+            @CoTipo,
+            @CoGrupo,
+            @CoUsuEli
         )";
         await _connection.ExecuteScalarAsync(sql, pr);
     }
@@ -220,7 +210,6 @@ public partial class TipoParticularData : ITipoParticularData
         pr.Add2("CoGrupoPadre", c.CoGrupoPadre, DbType.Int32);
         pr.Add2("CoTipoPadre", c.CoTipoPadre, DbType.Int32);
         pr.Add2("NoInputSearch", c.NoInputSearch, DbType.String);
-        pr.Add2("FlEstReg", c.FlEstReg, DbType.Int32);
         pr.Add2("CoTipo", c.CoTipo, DbType.Int32);
         pr.Add2("PageSize", c.PageSize, DbType.Int32);
         pr.Add2("PageIndex", c.PageIndex, DbType.Int32);
@@ -230,7 +219,6 @@ public partial class TipoParticularData : ITipoParticularData
             @CoGrupoPadre,
             @CoTipoPadre,
             @NoInputSearch,
-            @FlEstReg,
             @CoTipo,
             @PageSize,
             @PageIndex

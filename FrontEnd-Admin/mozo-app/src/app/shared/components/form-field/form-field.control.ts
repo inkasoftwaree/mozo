@@ -17,6 +17,11 @@ export class FormFieldControl {
 
   colSpan = input<number>(12);
 
+  @HostBinding('class.form-field--error')
+  get hasError(): boolean {
+    return !!this.errorMessage();
+  }
+
   private spanClasses: Record<number, string> = {
     1: 'col-span-12 md:col-span-1',
     2: 'col-span-12 md:col-span-2',

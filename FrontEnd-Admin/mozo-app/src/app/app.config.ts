@@ -46,7 +46,9 @@ import {
   lucideToggleRight, // Toogle
   lucideShield,
   lucideSettings,
-  lucideInfo
+  lucideInfo,
+  lucideMessageCircle
+
 
 } from '@ng-icons/lucide';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
@@ -100,7 +102,8 @@ export const appConfig: ApplicationConfig = {
       lucideToggleRight, // Toogle
       lucideShield,
       lucideSettings,
-      lucideInfo
+      lucideInfo,
+      lucideMessageCircle
     })
   ]
 };

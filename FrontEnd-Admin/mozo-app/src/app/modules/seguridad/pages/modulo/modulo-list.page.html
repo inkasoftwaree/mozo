@@ -25,7 +25,7 @@
       <div class="flex items-center gap-2 px-3 py-2.5">
 
         <!-- Orden -->
-        <span class="w-5 shrink-0 text-center text-xs font-bold text-base-content/35">
+       <span class="badge badge-ghost badge font-mono shrink-0">
           {{ modulo.nuOrden }}
         </span>
 
@@ -33,14 +33,13 @@
         <mz-state-control class="shrink-0" [state]="modulo.flEstReg == 1 ? 1 : 0" />
 
         <!-- Nombre (ocupa el espacio restante, trunca) -->
-        <span class="flex-1 min-w-0 truncate text-sm font-medium text-base-content">
+        <span class="flex-1 min-w-0 truncate font-semibold">
           {{ modulo.noModulo }}
         </span>
 
         <!-- ID -->
-        <span class="badge badge-ghost font-mono text-xs shrink-0">
-          #{{ modulo.coModulo }}
-        </span>
+        <pre class="font-code" ><code>#{{ modulo.coModulo }}</code></pre>
+       
 
         <!-- Menú -->
         <mz-menu-control

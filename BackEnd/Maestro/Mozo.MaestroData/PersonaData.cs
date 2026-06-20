@@ -42,6 +42,8 @@ public partial class PersonaData : IPersonaData
 
     public async Task<int> InsertAsync(PersonaModel c, IDbTransaction? tran = null)
     {
+
+
         (DynamicParameters pr, string args) = BuildDinamicParameter.Build(c, _user.CoEmpresa, _user.CoPersona,
             "CoEmpresa",
             "CoTipoDocumento",

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { rxResource, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +22,7 @@ import { PagedResult } from '@app/shared/models/base.model';
 import { EmpresaModuloService } from '@app/modules/seguridad/services/empresa-modulo.service';
 
 const EMPTY_PAGE: PagedResult<TipoParticularModel> = { rowsCount: 0, data: [] };
+const MODAL_NAME = 'tipo-particular-form-page';
 
 @Component({
   selector: 'mz-tipo-particular-list-page',
@@ -43,12 +44,11 @@ const EMPTY_PAGE: PagedResult<TipoParticularModel> = { rowsCount: 0, data: [] };
 export class TipoParticularListPage extends CrudListPageBase<TipoParticularModel> {
   protected readonly MSG_FIELD_FORM = MSG_FIELD_FORM;
   protected readonly MenuControlTypeEnum = MenuControlTypeEnum;
+  protected override readonly crudService = inject(TipoParticularService);
+  protected override readonly entityLabel = 'Tipo Particular';
 
   private readonly empresaModuloService = inject(EmpresaModuloService);
   private readonly modalService = inject(ModalService);
-
-  protected override readonly crudService = inject(TipoParticularService);
-  protected override readonly entityLabel = 'Tipo Particular';
 
   readonly selectedModulo = signal<number | null>(null);
   readonly selectedGrupo = signal<number | null>(null);
@@ -58,40 +58,52 @@ export class TipoParticularListPage extends CrudListPageBase<TipoParticularModel
   readonly modulos = toSignal(this.empresaModuloService.selAll({ flEmpresaNotKey: 0 }), { initialValue: [] });
 
   private readonly gruposModulo = signal<number | null>(null);
+  private formModalWasOpen = false;
 
   private readonly gruposResource = rxResource({
     defaultValue: [] as TipoParticularModel[],
     params: () => this.gruposModulo(),
-    stream: ({ params: coModulo }) =>
-      coModulo !== null
-        ? this.crudService.selAllGroupsByModule({ coModulo } as TipoParticularModel)
-        : of([] as TipoParticularModel[]),
+    stream: ({ params: coModulo }) => {
+      if (coModulo === null) return of([]);
+
+      const modulo = this.modulos().find((m) => m.coModulo === coModulo);
+      return this.crudService.selAllGroupsByModule({
+        coModulo,
+        coEmpresa: modulo?.coEmpresa,
+      } as TipoParticularModel);
+    },
+  });
+
+  private readonly gridQueryParams = computed(() => {
+    const coGrupo = this.selectedGrupo();
+    const coModulo = this.selectedModulo();
+    if (coGrupo === null || coModulo === null) return null;
+
+    const modulo = this.modulos().find((m) => m.coModulo === coModulo);
+    return {
+      coModulo,
+      coGrupo,
+      coEmpresa: modulo?.coEmpresa,
+      pageIndex: this.pageIndex(),
+    };
   });
 
   private readonly tipoParticularResource = rxResource({
     defaultValue: EMPTY_PAGE,
-    params: () => {
-      const coGrupo = this.selectedGrupo();
-      const coModulo = this.selectedModulo();
-      if (coGrupo === null || coModulo === null) return null;
-      return {
-        coModulo,
-        coGrupo,
-        pageIndex: this.pageIndex(),
-      };
-    },
+    params: () => this.gridQueryParams(),
     stream: ({ params }) => {
       if (params === null) return of(EMPTY_PAGE);
+
       return this.crudService.selAll({
         coModulo: params.coModulo,
         coGrupo: params.coGrupo,
+        coEmpresa: params.coEmpresa,
         pageIndex: params.pageIndex - 1,
         pageSize: this.pageSize,
       } as TipoParticularModel);
     },
   });
 
-  /** Adapts the paginated resource to the flat-array interface required by CrudListPageBase. */
   protected override readonly listResource: WritableListResource<TipoParticularModel> = {
     update: (updater) =>
       this.tipoParticularResource.update((result) =>
@@ -102,8 +114,14 @@ export class TipoParticularListPage extends CrudListPageBase<TipoParticularModel
 
   readonly grupos = computed(() => this.gruposResource.value() ?? []);
   readonly isLoadingGrupos = computed(() => this.gruposResource.isLoading());
-  readonly tipoParticulares = computed(() => this.tipoParticularResource.value()?.data ?? []);
-  readonly rowsCount = computed(() => this.tipoParticularResource.value()?.rowsCount ?? 0);
+  readonly tipoParticulares = computed(() => {
+    if (!this.hasGridFilters()) return [];
+    return this.tipoParticularResource.value()?.data ?? [];
+  });
+  readonly rowsCount = computed(() => {
+    if (!this.hasGridFilters()) return 0;
+    return this.tipoParticularResource.value()?.rowsCount ?? 0;
+  });
   readonly isLoadingGrid = computed(
     () => this.selectedGrupo() !== null && this.tipoParticularResource.isLoading()
   );
@@ -112,6 +130,7 @@ export class TipoParticularListPage extends CrudListPageBase<TipoParticularModel
       ? 'Seleccione un grupo para ver los tipos'
       : 'No hay tipos registrados'
   );
+  readonly showPagination = computed(() => this.pageCount > 1);
 
   readonly menuItems: MenuControlModel[] = [
     { type: MenuControlTypeEnum.Edit, action: 'edit' },
@@ -119,11 +138,28 @@ export class TipoParticularListPage extends CrudListPageBase<TipoParticularModel
     { type: MenuControlTypeEnum.State, action: 'updateState' },
   ];
 
-  readonly showPagination = computed(() => this.pageCount > 1);
+  constructor() {
+    super();
+
+    effect(() => {
+      const isFormOpen = this.modalService.state()?.modalName === MODAL_NAME;
+      const wasOpen = untracked(() => this.formModalWasOpen);
+
+      if (wasOpen && !isFormOpen && this.selectedGrupo() !== null) {
+        untracked(() => this.tipoParticularResource.reload());
+      }
+
+      untracked(() => {
+        this.formModalWasOpen = isFormOpen;
+      });
+    });
+  }
 
   get pageCount(): number {
     return Math.ceil(this.rowsCount() / this.pageSize);
   }
+
+  // ── Filtros ───────────────────────────────────────────────────────────────
 
   onModuloChange(coModulo: number): void {
     this.selectedModulo.set(coModulo);
@@ -131,21 +167,50 @@ export class TipoParticularListPage extends CrudListPageBase<TipoParticularModel
     this.pageIndex.set(1);
     this.tipoParticularResource.update(() => EMPTY_PAGE);
     this.gruposModulo.set(coModulo);
-    this.gruposResource.reload();
   }
 
   onGrupoChange(coGrupo: number): void {
     this.selectedGrupo.set(coGrupo);
     this.pageIndex.set(1);
-    this.tipoParticularResource.reload();
   }
 
-  goToPage(p: number): void {
-    this.pageIndex.set(p);
+  goToPage(page: number): void {
+    this.pageIndex.set(page);
+  }
+
+  // ── CRUD ──────────────────────────────────────────────────────────────────
+
+  override onSaved(saved?: unknown): void {
+    const raw = saved as TipoParticularModel | null | undefined;
+    if (!raw?.coTipo || !this.hasGridFilters()) return;
+
+    const item = this.enrichSavedItem(raw);
+    const coTipo = Number(item.coTipo);
+
+    this.pageIndex.set(1);
+    this.tipoParticularResource.update((result) => {
+      if (!result) return result;
+
+      const exists = result.data.some((x) => Number(x.coTipo) === coTipo);
+      if (exists) {
+        return {
+          ...result,
+          data: result.data.map((x) =>
+            Number(x.coTipo) === coTipo ? { ...x, ...item } : x
+          ),
+        };
+      }
+
+      return {
+        ...result,
+        data: [item, ...result.data],
+        rowsCount: result.rowsCount + 1,
+      };
+    });
   }
 
   protected override matchesId(a: TipoParticularModel, b: TipoParticularModel): boolean {
-    return a.coTipo === b.coTipo;
+    return Number(a.coTipo) === Number(b.coTipo);
   }
 
   protected override getDeleteDescription(c: TipoParticularModel): string {
@@ -162,23 +227,16 @@ export class TipoParticularListPage extends CrudListPageBase<TipoParticularModel
       return;
     }
 
-    const payload: ModalPayload<TipoParticularModel> = {
-      model: c ?? {
-        coModulo: this.selectedModulo()!,
-        coGrupo: this.selectedGrupo()!,
-      },
-      metaData: { action: c ? 'update' : 'insert' },
-    };
+    const modulo = this.selectedModuloItem();
 
     this.modalService.open<TipoParticularModel>({
-      modalName: 'tipo-particular-form-page',
+      modalName: MODAL_NAME,
       title: (c ? 'Editar' : 'Nuevo') + ' Tipo',
       size: 'lg',
-      data: payload,
+      data: this.buildModalPayload(c, modulo),
     });
   }
 
-  /** Overrides base to also decrement rowsCount in the paginated result. */
   protected override async deleteById(c: TipoParticularModel): Promise<void> {
     const ok = await this.confirmService.confirm(
       `¿Eliminar ${this.entityLabel}?`,
@@ -192,11 +250,12 @@ export class TipoParticularListPage extends CrudListPageBase<TipoParticularModel
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          const coTipo = Number(c.coTipo);
           this.tipoParticularResource.update((result) =>
             result
               ? {
                   ...result,
-                  data: result.data.filter((x) => x.coTipo !== c.coTipo),
+                  data: result.data.filter((x) => Number(x.coTipo) !== coTipo),
                   rowsCount: result.rowsCount - 1,
                 }
               : result
@@ -204,5 +263,51 @@ export class TipoParticularListPage extends CrudListPageBase<TipoParticularModel
           this.toastr.success(`${this.entityLabel} eliminado`, 'Éxito');
         },
       });
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  private hasGridFilters(): boolean {
+    return this.selectedGrupo() !== null && this.selectedModulo() !== null;
+  }
+
+  private selectedModuloItem() {
+    return this.modulos().find((m) => m.coModulo === this.selectedModulo());
+  }
+
+  private selectedGrupoItem() {
+    return this.grupos().find(
+      (g) => (g.coGrupo ?? g.coTipo) === this.selectedGrupo()
+    );
+  }
+
+  private buildModalPayload(
+    c: TipoParticularModel | null,
+    modulo: ReturnType<typeof this.selectedModuloItem>
+  ): ModalPayload<TipoParticularModel> {
+    return {
+      model: c ?? {
+        coModulo: this.selectedModulo()!,
+        coGrupo: this.selectedGrupo()!,
+        coEmpresa: modulo?.coEmpresa,
+      },
+      relations: { grupo: this.selectedGrupoItem() ?? null },
+      metaData: { action: c ? 'update' : 'insert' },
+    };
+  }
+
+  private enrichSavedItem(item: TipoParticularModel): TipoParticularModel {
+    const grupo = this.selectedGrupoItem();
+    const modulo = this.selectedModuloItem();
+
+    return {
+      ...item,
+      coGrupo: item.coGrupo ?? this.selectedGrupo() ?? undefined,
+      coModulo: item.coModulo ?? this.selectedModulo() ?? undefined,
+      coEmpresa: item.coEmpresa ?? modulo?.coEmpresa,
+      coGrupoHijo: item.coGrupoHijo ?? grupo?.coGrupoHijo,
+      qtHijo: item.qtHijo ?? 0,
+      flEstReg: item.flEstReg ?? 1,
+    };
   }
 }
