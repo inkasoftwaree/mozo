@@ -1,0 +1,699 @@
+2026-06-24 19:09:57.409 -05:00 [INF] === Iniciando Mozo API === {"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:09:58.154 -05:00 [FTL] Application startup exception {"EventId":{"Id":6},"SourceContext":"Microsoft.AspNetCore.Hosting.Diagnostics","ExceptionDetail":{"Type":"System.InvalidOperationException","HResult":-2146233079,"Message":"Failure to infer one or more parameters.\r\nBelow is the list of parameters that we found: \r\n\r\nParameter           | Source                        \r\n---------------------------------------------------------------------------------\r\nf                   | Body (Attribute)\r\njwtService          | Services (Inferred)\r\nIUsuario            | UNKNOWN        \r\nIIngreso            | Services (Inferred)\r\nloggerFactory       | Services (Inferred)\r\n\r\n\r\nDid you mean to register the \"UNKNOWN\" parameters as a Service?\r\n\r\n","Source":"Microsoft.AspNetCore.Http.Extensions","TargetSite":"System.Linq.Expressions.Expression[] CreateArguments(System.Reflection.ParameterInfo[], Microsoft.AspNetCore.Http.RequestDelegateFactoryContext)"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+System.InvalidOperationException: Failure to infer one or more parameters.
+Below is the list of parameters that we found: 
+
+Parameter           | Source                        
+---------------------------------------------------------------------------------
+f                   | Body (Attribute)
+jwtService          | Services (Inferred)
+IUsuario            | UNKNOWN        
+IIngreso            | Services (Inferred)
+loggerFactory       | Services (Inferred)
+
+
+Did you mean to register the "UNKNOWN" parameters as a Service?
+
+
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.CreateArguments(ParameterInfo[] parameters, RequestDelegateFactoryContext factoryContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.CreateArgumentsAndInferMetadata(MethodInfo methodInfo, RequestDelegateFactoryContext factoryContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.InferMetadata(MethodInfo methodInfo, RequestDelegateFactoryOptions options)
+   at Microsoft.AspNetCore.Routing.RouteEndpointDataSource.CreateRouteEndpointBuilder(RouteEntry entry, RoutePattern groupPrefix, IReadOnlyList`1 groupConventions, IReadOnlyList`1 groupFinallyConventions)
+   at Microsoft.AspNetCore.Routing.RouteEndpointDataSource.GetGroupedEndpoints(RouteGroupContext context)
+   at Microsoft.AspNetCore.Routing.RouteGroupBuilder.GroupEndpointDataSource.GetGroupedEndpointsWithNullablePrefix(RoutePattern prefix, IReadOnlyList`1 conventions, IReadOnlyList`1 finallyConventions, IServiceProvider applicationServices)
+   at Microsoft.AspNetCore.Routing.RouteGroupBuilder.GroupEndpointDataSource.get_Endpoints()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.CreateEndpointsUnsynchronized()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.EnsureEndpointsInitialized()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.get_Endpoints()
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.Initialize()
+   at System.Threading.LazyInitializer.EnsureInitializedCore[T](T& target, Boolean& initialized, Object& syncLock, Func`1 valueFactory)
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.EnsureInitialized()
+   at Microsoft.AspNetCore.Authorization.Policy.AuthorizationPolicyCache..ctor(EndpointDataSource dataSource)
+   at InvokeStub_AuthorizationPolicyCache..ctor(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at InvokeStub_AuthorizationMiddlewareInternal..ctor(Object, Object, Object, Object, Object)
+   at System.Reflection.ConstructorInvoker.InvokeImpl(Object arg1, Object arg2, Object arg3, Object arg4)
+   at System.Reflection.ConstructorInvoker.Invoke(Span`1 arguments)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+2026-06-24 19:09:58.195 -05:00 [ERR] Hosting failed to start {"EventId":{"Id":11,"Name":"HostedServiceStartupFaulted"},"SourceContext":"Microsoft.Extensions.Hosting.Internal.Host","ExceptionDetail":{"Type":"System.InvalidOperationException","HResult":-2146233079,"Message":"Failure to infer one or more parameters.\r\nBelow is the list of parameters that we found: \r\n\r\nParameter           | Source                        \r\n---------------------------------------------------------------------------------\r\nf                   | Body (Attribute)\r\njwtService          | Services (Inferred)\r\nIUsuario            | UNKNOWN        \r\nIIngreso            | Services (Inferred)\r\nloggerFactory       | Services (Inferred)\r\n\r\n\r\nDid you mean to register the \"UNKNOWN\" parameters as a Service?\r\n\r\n","Source":"Microsoft.AspNetCore.Http.Extensions","TargetSite":"System.Linq.Expressions.Expression[] CreateArguments(System.Reflection.ParameterInfo[], Microsoft.AspNetCore.Http.RequestDelegateFactoryContext)"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+System.InvalidOperationException: Failure to infer one or more parameters.
+Below is the list of parameters that we found: 
+
+Parameter           | Source                        
+---------------------------------------------------------------------------------
+f                   | Body (Attribute)
+jwtService          | Services (Inferred)
+IUsuario            | UNKNOWN        
+IIngreso            | Services (Inferred)
+loggerFactory       | Services (Inferred)
+
+
+Did you mean to register the "UNKNOWN" parameters as a Service?
+
+
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.CreateArguments(ParameterInfo[] parameters, RequestDelegateFactoryContext factoryContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.CreateArgumentsAndInferMetadata(MethodInfo methodInfo, RequestDelegateFactoryContext factoryContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.InferMetadata(MethodInfo methodInfo, RequestDelegateFactoryOptions options)
+   at Microsoft.AspNetCore.Routing.RouteEndpointDataSource.CreateRouteEndpointBuilder(RouteEntry entry, RoutePattern groupPrefix, IReadOnlyList`1 groupConventions, IReadOnlyList`1 groupFinallyConventions)
+   at Microsoft.AspNetCore.Routing.RouteEndpointDataSource.GetGroupedEndpoints(RouteGroupContext context)
+   at Microsoft.AspNetCore.Routing.RouteGroupBuilder.GroupEndpointDataSource.GetGroupedEndpointsWithNullablePrefix(RoutePattern prefix, IReadOnlyList`1 conventions, IReadOnlyList`1 finallyConventions, IServiceProvider applicationServices)
+   at Microsoft.AspNetCore.Routing.RouteGroupBuilder.GroupEndpointDataSource.get_Endpoints()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.CreateEndpointsUnsynchronized()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.EnsureEndpointsInitialized()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.get_Endpoints()
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.Initialize()
+   at System.Threading.LazyInitializer.EnsureInitializedCore[T](T& target, Boolean& initialized, Object& syncLock, Func`1 valueFactory)
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.EnsureInitialized()
+   at Microsoft.AspNetCore.Authorization.Policy.AuthorizationPolicyCache..ctor(EndpointDataSource dataSource)
+   at InvokeStub_AuthorizationPolicyCache..ctor(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at InvokeStub_AuthorizationMiddlewareInternal..ctor(Object, Object, Object, Object, Object)
+   at System.Reflection.ConstructorInvoker.InvokeImpl(Object arg1, Object arg2, Object arg3, Object arg4)
+   at System.Reflection.ConstructorInvoker.Invoke(Span`1 arguments)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2026-06-24 19:12:30.728 -05:00 [INF] === Iniciando Mozo API === {"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:12:31.053 -05:00 [FTL] Application startup exception {"EventId":{"Id":6},"SourceContext":"Microsoft.AspNetCore.Hosting.Diagnostics","ExceptionDetail":{"Type":"System.InvalidOperationException","HResult":-2146233079,"Message":"Failure to infer one or more parameters.\r\nBelow is the list of parameters that we found: \r\n\r\nParameter           | Source                        \r\n---------------------------------------------------------------------------------\r\nf                   | Body (Attribute)\r\njwtService          | Services (Inferred)\r\nIUsuario            | UNKNOWN        \r\nIIngreso            | Services (Inferred)\r\nloggerFactory       | Services (Inferred)\r\n\r\n\r\nDid you mean to register the \"UNKNOWN\" parameters as a Service?\r\n\r\n","Source":"Microsoft.AspNetCore.Http.Extensions","TargetSite":"System.Linq.Expressions.Expression[] CreateArguments(System.Reflection.ParameterInfo[], Microsoft.AspNetCore.Http.RequestDelegateFactoryContext)"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+System.InvalidOperationException: Failure to infer one or more parameters.
+Below is the list of parameters that we found: 
+
+Parameter           | Source                        
+---------------------------------------------------------------------------------
+f                   | Body (Attribute)
+jwtService          | Services (Inferred)
+IUsuario            | UNKNOWN        
+IIngreso            | Services (Inferred)
+loggerFactory       | Services (Inferred)
+
+
+Did you mean to register the "UNKNOWN" parameters as a Service?
+
+
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.CreateArguments(ParameterInfo[] parameters, RequestDelegateFactoryContext factoryContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.CreateArgumentsAndInferMetadata(MethodInfo methodInfo, RequestDelegateFactoryContext factoryContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.InferMetadata(MethodInfo methodInfo, RequestDelegateFactoryOptions options)
+   at Microsoft.AspNetCore.Routing.RouteEndpointDataSource.CreateRouteEndpointBuilder(RouteEntry entry, RoutePattern groupPrefix, IReadOnlyList`1 groupConventions, IReadOnlyList`1 groupFinallyConventions)
+   at Microsoft.AspNetCore.Routing.RouteEndpointDataSource.GetGroupedEndpoints(RouteGroupContext context)
+   at Microsoft.AspNetCore.Routing.RouteGroupBuilder.GroupEndpointDataSource.GetGroupedEndpointsWithNullablePrefix(RoutePattern prefix, IReadOnlyList`1 conventions, IReadOnlyList`1 finallyConventions, IServiceProvider applicationServices)
+   at Microsoft.AspNetCore.Routing.RouteGroupBuilder.GroupEndpointDataSource.get_Endpoints()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.CreateEndpointsUnsynchronized()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.EnsureEndpointsInitialized()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.get_Endpoints()
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.Initialize()
+   at System.Threading.LazyInitializer.EnsureInitializedCore[T](T& target, Boolean& initialized, Object& syncLock, Func`1 valueFactory)
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.EnsureInitialized()
+   at Microsoft.AspNetCore.Authorization.Policy.AuthorizationPolicyCache..ctor(EndpointDataSource dataSource)
+   at InvokeStub_AuthorizationPolicyCache..ctor(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at InvokeStub_AuthorizationMiddlewareInternal..ctor(Object, Object, Object, Object, Object)
+   at System.Reflection.ConstructorInvoker.InvokeImpl(Object arg1, Object arg2, Object arg3, Object arg4)
+   at System.Reflection.ConstructorInvoker.Invoke(Span`1 arguments)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+2026-06-24 19:12:31.081 -05:00 [ERR] Hosting failed to start {"EventId":{"Id":11,"Name":"HostedServiceStartupFaulted"},"SourceContext":"Microsoft.Extensions.Hosting.Internal.Host","ExceptionDetail":{"Type":"System.InvalidOperationException","HResult":-2146233079,"Message":"Failure to infer one or more parameters.\r\nBelow is the list of parameters that we found: \r\n\r\nParameter           | Source                        \r\n---------------------------------------------------------------------------------\r\nf                   | Body (Attribute)\r\njwtService          | Services (Inferred)\r\nIUsuario            | UNKNOWN        \r\nIIngreso            | Services (Inferred)\r\nloggerFactory       | Services (Inferred)\r\n\r\n\r\nDid you mean to register the \"UNKNOWN\" parameters as a Service?\r\n\r\n","Source":"Microsoft.AspNetCore.Http.Extensions","TargetSite":"System.Linq.Expressions.Expression[] CreateArguments(System.Reflection.ParameterInfo[], Microsoft.AspNetCore.Http.RequestDelegateFactoryContext)"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+System.InvalidOperationException: Failure to infer one or more parameters.
+Below is the list of parameters that we found: 
+
+Parameter           | Source                        
+---------------------------------------------------------------------------------
+f                   | Body (Attribute)
+jwtService          | Services (Inferred)
+IUsuario            | UNKNOWN        
+IIngreso            | Services (Inferred)
+loggerFactory       | Services (Inferred)
+
+
+Did you mean to register the "UNKNOWN" parameters as a Service?
+
+
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.CreateArguments(ParameterInfo[] parameters, RequestDelegateFactoryContext factoryContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.CreateArgumentsAndInferMetadata(MethodInfo methodInfo, RequestDelegateFactoryContext factoryContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.InferMetadata(MethodInfo methodInfo, RequestDelegateFactoryOptions options)
+   at Microsoft.AspNetCore.Routing.RouteEndpointDataSource.CreateRouteEndpointBuilder(RouteEntry entry, RoutePattern groupPrefix, IReadOnlyList`1 groupConventions, IReadOnlyList`1 groupFinallyConventions)
+   at Microsoft.AspNetCore.Routing.RouteEndpointDataSource.GetGroupedEndpoints(RouteGroupContext context)
+   at Microsoft.AspNetCore.Routing.RouteGroupBuilder.GroupEndpointDataSource.GetGroupedEndpointsWithNullablePrefix(RoutePattern prefix, IReadOnlyList`1 conventions, IReadOnlyList`1 finallyConventions, IServiceProvider applicationServices)
+   at Microsoft.AspNetCore.Routing.RouteGroupBuilder.GroupEndpointDataSource.get_Endpoints()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.CreateEndpointsUnsynchronized()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.EnsureEndpointsInitialized()
+   at Microsoft.AspNetCore.Routing.CompositeEndpointDataSource.get_Endpoints()
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.Initialize()
+   at System.Threading.LazyInitializer.EnsureInitializedCore[T](T& target, Boolean& initialized, Object& syncLock, Func`1 valueFactory)
+   at Microsoft.AspNetCore.Routing.DataSourceDependentCache`1.EnsureInitialized()
+   at Microsoft.AspNetCore.Authorization.Policy.AuthorizationPolicyCache..ctor(EndpointDataSource dataSource)
+   at InvokeStub_AuthorizationPolicyCache..ctor(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitConstructor(ConstructorCallSite constructorCallSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.VisitRootCache(ServiceCallSite callSite, RuntimeResolverContext context)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteVisitor`2.VisitCallSite(ServiceCallSite callSite, TArgument argument)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteRuntimeResolver.Resolve(ServiceCallSite callSite, ServiceProviderEngineScope scope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.CreateServiceAccessor(ServiceIdentifier serviceIdentifier)
+   at System.Collections.Concurrent.ConcurrentDictionary`2.GetOrAdd(TKey key, Func`2 valueFactory)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(ServiceIdentifier serviceIdentifier, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.GetService(Type serviceType)
+   at InvokeStub_AuthorizationMiddlewareInternal..ctor(Object, Object, Object, Object, Object)
+   at System.Reflection.ConstructorInvoker.InvokeImpl(Object arg1, Object arg2, Object arg3, Object arg4)
+   at System.Reflection.ConstructorInvoker.Invoke(Span`1 arguments)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2026-06-24 19:15:14.907 -05:00 [INF] === Iniciando Mozo API === {"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:17.763 -05:00 [INF] ==> GET / | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-94b7dd001ccd5719efb6304a5b1634f8-5fd8322aaec728f0-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000001","RequestPath":"/","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:17.922 -05:00 [WRN] <== GET / | Status: 404 | Duración: 165ms | Usuario: Anonymous | TraceId: 00-94b7dd001ccd5719efb6304a5b1634f8-5fd8322aaec728f0-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000001","RequestPath":"/","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:18.040 -05:00 [INF] ==> GET /favicon.ico | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-5de22a86b40a7cc4268582a1ad2fb29e-b343e53ef9150974-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000003","RequestPath":"/favicon.ico","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:18.050 -05:00 [WRN] <== GET /favicon.ico | Status: 404 | Duración: 10ms | Usuario: Anonymous | TraceId: 00-5de22a86b40a7cc4268582a1ad2fb29e-b343e53ef9150974-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000003","RequestPath":"/favicon.ico","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:20.879 -05:00 [INF] ==> GET /scalar/v1 | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-4588aa9019cf3e5123debee3da10dfc6-be8b848711063657-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000005","RequestPath":"/scalar/v1","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:21.149 -05:00 [INF] <== GET /scalar/v1 | Status: 200 | Duración: 269ms | Usuario: Anonymous | TraceId: 00-4588aa9019cf3e5123debee3da10dfc6-be8b848711063657-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000005","RequestPath":"/scalar/v1","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:21.158 -05:00 [INF] ==> GET /scalar/scalar.aspnetcore.js | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-cf101cb2d0227af9319daaf2ea8b0037-2647e6b8e0b265ae-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000009","RequestPath":"/scalar/scalar.aspnetcore.js","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:21.158 -05:00 [INF] ==> GET /scalar/scalar.js | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-c8874ab944eff86cbb51126698771ba2-df0a5855ba1e2d2e-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000007","RequestPath":"/scalar/scalar.js","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:21.165 -05:00 [WRN] Unable to configure Browser Link script injection on the response. This may have been caused by the response's Content-Encoding: '["br"]'. Consider disabling response compression. {"EventId":{"Id":4,"Name":"ResponseCompressionDetected"},"SourceContext":"Microsoft.WebTools.BrowserLink.Net.BrowserLinkMiddleware","RequestId":"0HNMI9RAI1IFJ:00000005","RequestPath":"/scalar/v1","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:21.179 -05:00 [WRN] Unable to configure browser refresh script injection on the response. This may have been caused by the response's Content-Encoding: '["br"]'. Consider disabling response compression. {"EventId":{"Id":4,"Name":"ResponseCompressionDetected"},"SourceContext":"Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware","RequestId":"0HNMI9RAI1IFJ:00000005","RequestPath":"/scalar/v1","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:21.183 -05:00 [INF] <== GET /scalar/scalar.aspnetcore.js | Status: 200 | Duración: 25ms | Usuario: Anonymous | TraceId: 00-cf101cb2d0227af9319daaf2ea8b0037-2647e6b8e0b265ae-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000009","RequestPath":"/scalar/scalar.aspnetcore.js","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:21.217 -05:00 [INF] <== GET /scalar/scalar.js | Status: 200 | Duración: 59ms | Usuario: Anonymous | TraceId: 00-c8874ab944eff86cbb51126698771ba2-df0a5855ba1e2d2e-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000007","RequestPath":"/scalar/scalar.js","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:21.417 -05:00 [INF] ==> GET /openapi/v1.json | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-12313adf1e5a3ea498c49600576e3635-3db5446edcf04909-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000000B","RequestPath":"/openapi/v1.json","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:21.638 -05:00 [INF] <== GET /openapi/v1.json | Status: 200 | Duración: 220ms | Usuario: Anonymous | TraceId: 00-12313adf1e5a3ea498c49600576e3635-3db5446edcf04909-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000000B","RequestPath":"/openapi/v1.json","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:22.297 -05:00 [INF] ==> GET /scalar/favicon.svg | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-a8d0991f28e4d7405541408e17bea33b-bf6d62c1e7606ad7-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000000D","RequestPath":"/scalar/favicon.svg","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:15:22.305 -05:00 [INF] <== GET /scalar/favicon.svg | Status: 200 | Duración: 7ms | Usuario: Anonymous | TraceId: 00-a8d0991f28e4d7405541408e17bea33b-bf6d62c1e7606ad7-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000000D","RequestPath":"/scalar/favicon.svg","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:16:27.263 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-eaefb43d0c76ba0b19ebe3d817917e95-7a1873a89c6bf8f2-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000000F","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:17:43.056 -05:00 [ERR] [DATABASE_ERROR] POST /login/usuario | Usuario: Anonymous | Empresa: N/A | TraceId: 00-eaefb43d0c76ba0b19ebe3d817917e95-7a1873a89c6bf8f2-00 | SqlState: 42883 {"SourceContext":"Mozo.Api.ExceptionHandler","RequestId":"0HNMI9RAI1IFJ:0000000F","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","ExceptionDetail":{"Data":{"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42883","MessageText":"no existe la función login.fn_permiso_sel_by_user(text)","Hint":"Ninguna función coincide en el nombre y tipos de argumentos. Puede ser necesario agregar conversión explícita de tipos.","Position":15,"File":"parse_func.c","Line":"636","Routine":"ParseFuncOrColumn"},"HResult":-2147467259,"Message":"42883: no existe la función login.fn_permiso_sel_by_user(text)\r\n\r\nPOSITION: 15","Source":"Npgsql","TargetSite":"Void MoveNext()","IsTransient":false,"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42883","MessageText":"no existe la función login.fn_permiso_sel_by_user(text)","Detail":null,"Hint":"Ninguna función coincide en el nombre y tipos de argumentos. Puede ser necesario agregar conversión explícita de tipos.","Position":15,"InternalPosition":0,"InternalQuery":null,"Where":null,"SchemaName":null,"TableName":null,"ColumnName":null,"DataTypeName":null,"ConstraintName":null,"File":"parse_func.c","Line":"636","Routine":"ParseFuncOrColumn","BatchCommand":null,"DbException.BatchCommand":null,"ErrorCode":-2147467259,"Type":"Npgsql.PostgresException"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+Npgsql.PostgresException (0x80004005): 42883: no existe la función login.fn_permiso_sel_by_user(text)
+
+POSITION: 15
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at Mozo.LoginData.UsuarioData.SelByUserAsync(UsuarioFilterDto c)
+   at Mozo.LoginBusiness.UsuarioBusiness.SelByUserAsync(UsuarioFilterDto c) in E:\Desarrollo\Mozo\BackEnd\Login\Mozo.LoginBusiness\UsuarioBusiness.cs:line 24
+   at Mozo.Api.Login.UsuarioEndPoints.LoginAsync(UsuarioFilterDto f, IJwtService jwtService, IUsuarioBusiness IUsuario, IIngresoBusiness IIngreso, ILoggerFactory loggerFactory) in E:\Desarrollo\Mozo\BackEnd\Mozo.ApiSeguridad\EndPoints\Login\UsuarioEndPoints.cs:line 135
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.StatusCodePagesMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42883
+    MessageText: no existe la función login.fn_permiso_sel_by_user(text)
+    Hint: Ninguna función coincide en el nombre y tipos de argumentos. Puede ser necesario agregar conversión explícita de tipos.
+    Position: 15
+    File: parse_func.c
+    Line: 636
+    Routine: ParseFuncOrColumn
+2026-06-24 19:17:43.206 -05:00 [ERR] An unhandled exception has occurred while executing the request. {"EventId":{"Id":1,"Name":"UnhandledException"},"SourceContext":"Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware","RequestId":"0HNMI9RAI1IFJ:0000000F","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","ExceptionDetail":{"Data":{"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42883","MessageText":"no existe la función login.fn_permiso_sel_by_user(text)","Hint":"Ninguna función coincide en el nombre y tipos de argumentos. Puede ser necesario agregar conversión explícita de tipos.","Position":15,"File":"parse_func.c","Line":"636","Routine":"ParseFuncOrColumn"},"HResult":-2147467259,"Message":"42883: no existe la función login.fn_permiso_sel_by_user(text)\r\n\r\nPOSITION: 15","Source":"Npgsql","TargetSite":"Void MoveNext()","IsTransient":false,"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42883","MessageText":"no existe la función login.fn_permiso_sel_by_user(text)","Detail":null,"Hint":"Ninguna función coincide en el nombre y tipos de argumentos. Puede ser necesario agregar conversión explícita de tipos.","Position":15,"InternalPosition":0,"InternalQuery":null,"Where":null,"SchemaName":null,"TableName":null,"ColumnName":null,"DataTypeName":null,"ConstraintName":null,"File":"parse_func.c","Line":"636","Routine":"ParseFuncOrColumn","BatchCommand":null,"DbException.BatchCommand":null,"ErrorCode":-2147467259,"Type":"Npgsql.PostgresException"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+Npgsql.PostgresException (0x80004005): 42883: no existe la función login.fn_permiso_sel_by_user(text)
+
+POSITION: 15
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at Mozo.LoginData.UsuarioData.SelByUserAsync(UsuarioFilterDto c)
+   at Mozo.LoginBusiness.UsuarioBusiness.SelByUserAsync(UsuarioFilterDto c) in E:\Desarrollo\Mozo\BackEnd\Login\Mozo.LoginBusiness\UsuarioBusiness.cs:line 24
+   at Mozo.Api.Login.UsuarioEndPoints.LoginAsync(UsuarioFilterDto f, IJwtService jwtService, IUsuarioBusiness IUsuario, IIngresoBusiness IIngreso, ILoggerFactory loggerFactory) in E:\Desarrollo\Mozo\BackEnd\Mozo.ApiSeguridad\EndPoints\Login\UsuarioEndPoints.cs:line 135
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.StatusCodePagesMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42883
+    MessageText: no existe la función login.fn_permiso_sel_by_user(text)
+    Hint: Ninguna función coincide en el nombre y tipos de argumentos. Puede ser necesario agregar conversión explícita de tipos.
+    Position: 15
+    File: parse_func.c
+    Line: 636
+    Routine: ParseFuncOrColumn
+2026-06-24 19:17:43.236 -05:00 [ERR] <== POST /login/usuario | Status: 500 | Duración: 75972ms | Usuario: Anonymous | TraceId: 00-eaefb43d0c76ba0b19ebe3d817917e95-7a1873a89c6bf8f2-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000000F","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:17:47.786 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-fce7d857dd48c688c237244708c12270-aa9a661021b59e3e-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000011","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:18:48.323 -05:00 [ERR] [DATABASE_ERROR] POST /login/usuario | Usuario: Anonymous | Empresa: N/A | TraceId: 00-fce7d857dd48c688c237244708c12270-aa9a661021b59e3e-00 | SqlState: 42703 {"SourceContext":"Mozo.Api.ExceptionHandler","RequestId":"0HNMI9RAI1IFJ:00000011","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","ExceptionDetail":{"Data":{"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42703","MessageText":"no existe la columna «p_noclave»","Hint":"Probablemente quiera hacer referencia a la columna «u.noclave».","InternalPosition":749,"InternalQuery":"SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS EmpresaLstJson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n    \t  AND u.noclave = p_noclave\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona","Where":"función PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","File":"parse_relation.c","Line":"3838","Routine":"errorMissingColumn"},"HResult":-2147467259,"Message":"42703: no existe la columna «p_noclave»","Source":"Npgsql","TargetSite":"Void MoveNext()","IsTransient":false,"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42703","MessageText":"no existe la columna «p_noclave»","Detail":null,"Hint":"Probablemente quiera hacer referencia a la columna «u.noclave».","Position":0,"InternalPosition":749,"InternalQuery":"SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS EmpresaLstJson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n    \t  AND u.noclave = p_noclave\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona","Where":"función PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","SchemaName":null,"TableName":null,"ColumnName":null,"DataTypeName":null,"ConstraintName":null,"File":"parse_relation.c","Line":"3838","Routine":"errorMissingColumn","BatchCommand":null,"DbException.BatchCommand":null,"ErrorCode":-2147467259,"Type":"Npgsql.PostgresException"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+Npgsql.PostgresException (0x80004005): 42703: no existe la columna «p_noclave»
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.<ReadMessage>g__ReadMessageSequential|49_0(NpgsqlConnector connector, Boolean async)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at Mozo.LoginData.UsuarioData.SelByUserAsync(UsuarioFilterDto c)
+   at Mozo.LoginBusiness.UsuarioBusiness.SelByUserAsync(UsuarioFilterDto c) in E:\Desarrollo\Mozo\BackEnd\Login\Mozo.LoginBusiness\UsuarioBusiness.cs:line 24
+   at Mozo.Api.Login.UsuarioEndPoints.LoginAsync(UsuarioFilterDto f, IJwtService jwtService, IUsuarioBusiness IUsuario, IIngresoBusiness IIngreso, ILoggerFactory loggerFactory) in E:\Desarrollo\Mozo\BackEnd\Mozo.ApiSeguridad\EndPoints\Login\UsuarioEndPoints.cs:line 135
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.StatusCodePagesMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: no existe la columna «p_noclave»
+    Hint: Probablemente quiera hacer referencia a la columna «u.noclave».
+    InternalPosition: 749
+    InternalQuery: SELECT   
+		u.copersona,
+        u.cousuario,
+        u.nousuario,
+		u.noclave,
+		p.nopersona,
+		jsonb_agg(
+	        jsonb_build_object(
+		            'coempresa', e.coempresa,
+		            'noempresa', ep.nopersona
+	        	)
+        	ORDER BY ep.nopersona
+    	)::text AS EmpresaLstJson
+    FROM seguridad.tblusuario u
+		INNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true
+		INNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona
+		INNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true
+		INNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true
+     WHERE u.flestreg = true      
+		  AND u.nousuario = p_nousuario
+    	  AND u.noclave = p_noclave
+	  GROUP BY
+	    u.cousuario,
+	    u.copersona,
+	    u.nousuario,
+	    p.nopersona
+    Where: función PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY
+    File: parse_relation.c
+    Line: 3838
+    Routine: errorMissingColumn
+2026-06-24 19:18:48.422 -05:00 [ERR] An unhandled exception has occurred while executing the request. {"EventId":{"Id":1,"Name":"UnhandledException"},"SourceContext":"Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware","RequestId":"0HNMI9RAI1IFJ:00000011","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","ExceptionDetail":{"Data":{"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42703","MessageText":"no existe la columna «p_noclave»","Hint":"Probablemente quiera hacer referencia a la columna «u.noclave».","InternalPosition":749,"InternalQuery":"SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS EmpresaLstJson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n    \t  AND u.noclave = p_noclave\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona","Where":"función PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","File":"parse_relation.c","Line":"3838","Routine":"errorMissingColumn"},"HResult":-2147467259,"Message":"42703: no existe la columna «p_noclave»","Source":"Npgsql","TargetSite":"Void MoveNext()","IsTransient":false,"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42703","MessageText":"no existe la columna «p_noclave»","Detail":null,"Hint":"Probablemente quiera hacer referencia a la columna «u.noclave».","Position":0,"InternalPosition":749,"InternalQuery":"SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS EmpresaLstJson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n    \t  AND u.noclave = p_noclave\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona","Where":"función PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","SchemaName":null,"TableName":null,"ColumnName":null,"DataTypeName":null,"ConstraintName":null,"File":"parse_relation.c","Line":"3838","Routine":"errorMissingColumn","BatchCommand":null,"DbException.BatchCommand":null,"ErrorCode":-2147467259,"Type":"Npgsql.PostgresException"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+Npgsql.PostgresException (0x80004005): 42703: no existe la columna «p_noclave»
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.<ReadMessage>g__ReadMessageSequential|49_0(NpgsqlConnector connector, Boolean async)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at Mozo.LoginData.UsuarioData.SelByUserAsync(UsuarioFilterDto c)
+   at Mozo.LoginBusiness.UsuarioBusiness.SelByUserAsync(UsuarioFilterDto c) in E:\Desarrollo\Mozo\BackEnd\Login\Mozo.LoginBusiness\UsuarioBusiness.cs:line 24
+   at Mozo.Api.Login.UsuarioEndPoints.LoginAsync(UsuarioFilterDto f, IJwtService jwtService, IUsuarioBusiness IUsuario, IIngresoBusiness IIngreso, ILoggerFactory loggerFactory) in E:\Desarrollo\Mozo\BackEnd\Mozo.ApiSeguridad\EndPoints\Login\UsuarioEndPoints.cs:line 135
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.StatusCodePagesMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: no existe la columna «p_noclave»
+    Hint: Probablemente quiera hacer referencia a la columna «u.noclave».
+    InternalPosition: 749
+    InternalQuery: SELECT   
+		u.copersona,
+        u.cousuario,
+        u.nousuario,
+		u.noclave,
+		p.nopersona,
+		jsonb_agg(
+	        jsonb_build_object(
+		            'coempresa', e.coempresa,
+		            'noempresa', ep.nopersona
+	        	)
+        	ORDER BY ep.nopersona
+    	)::text AS EmpresaLstJson
+    FROM seguridad.tblusuario u
+		INNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true
+		INNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona
+		INNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true
+		INNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true
+     WHERE u.flestreg = true      
+		  AND u.nousuario = p_nousuario
+    	  AND u.noclave = p_noclave
+	  GROUP BY
+	    u.cousuario,
+	    u.copersona,
+	    u.nousuario,
+	    p.nopersona
+    Where: función PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY
+    File: parse_relation.c
+    Line: 3838
+    Routine: errorMissingColumn
+2026-06-24 19:18:48.491 -05:00 [ERR] <== POST /login/usuario | Status: 500 | Duración: 60704ms | Usuario: Anonymous | TraceId: 00-fce7d857dd48c688c237244708c12270-aa9a661021b59e3e-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000011","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:18:50.672 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-72342fa91554cc0d461b464e1f5a558b-745fd0e9470be812-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000013","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:20:07.669 -05:00 [ERR] [DATABASE_ERROR] POST /login/usuario | Usuario: Anonymous | Empresa: N/A | TraceId: 00-72342fa91554cc0d461b464e1f5a558b-745fd0e9470be812-00 | SqlState: 42804 {"SourceContext":"Mozo.Api.ExceptionHandler","RequestId":"0HNMI9RAI1IFJ:00000013","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","ExceptionDetail":{"Data":{"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42804","MessageText":"structure of query does not match function result type","Detail":"Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Where":"sentencia SQL: «SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS EmpresaLstJson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona»\nfunción PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","File":"attmap.c","Line":"124","Routine":"build_attrmap_by_position"},"HResult":-2147467259,"Message":"42804: structure of query does not match function result type\r\n\r\nDETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Source":"Npgsql","TargetSite":"Void MoveNext()","IsTransient":false,"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42804","MessageText":"structure of query does not match function result type","Detail":"Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Hint":null,"Position":0,"InternalPosition":0,"InternalQuery":null,"Where":"sentencia SQL: «SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS EmpresaLstJson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona»\nfunción PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","SchemaName":null,"TableName":null,"ColumnName":null,"DataTypeName":null,"ConstraintName":null,"File":"attmap.c","Line":"124","Routine":"build_attrmap_by_position","BatchCommand":null,"DbException.BatchCommand":null,"ErrorCode":-2147467259,"Type":"Npgsql.PostgresException"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+Npgsql.PostgresException (0x80004005): 42804: structure of query does not match function result type
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.<ReadMessage>g__ReadMessageSequential|49_0(NpgsqlConnector connector, Boolean async)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at Mozo.LoginData.UsuarioData.SelByUserAsync(UsuarioFilterDto c)
+   at Mozo.LoginBusiness.UsuarioBusiness.SelByUserAsync(UsuarioFilterDto c) in E:\Desarrollo\Mozo\BackEnd\Login\Mozo.LoginBusiness\UsuarioBusiness.cs:line 24
+   at Mozo.Api.Login.UsuarioEndPoints.LoginAsync(UsuarioFilterDto f, IJwtService jwtService, IUsuarioBusiness IUsuario, IIngresoBusiness IIngreso, ILoggerFactory loggerFactory) in E:\Desarrollo\Mozo\BackEnd\Mozo.ApiSeguridad\EndPoints\Login\UsuarioEndPoints.cs:line 135
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.StatusCodePagesMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42804
+    MessageText: structure of query does not match function result type
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    Where: sentencia SQL: «SELECT   
+		u.copersona,
+        u.cousuario,
+        u.nousuario,
+		u.noclave,
+		p.nopersona,
+		jsonb_agg(
+	        jsonb_build_object(
+		            'coempresa', e.coempresa,
+		            'noempresa', ep.nopersona
+	        	)
+        	ORDER BY ep.nopersona
+    	)::text AS EmpresaLstJson
+    FROM seguridad.tblusuario u
+		INNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true
+		INNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona
+		INNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true
+		INNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true
+     WHERE u.flestreg = true      
+		  AND u.nousuario = p_nousuario
+	  GROUP BY
+	    u.cousuario,
+	    u.copersona,
+	    u.nousuario,
+	    p.nopersona»
+función PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY
+    File: attmap.c
+    Line: 124
+    Routine: build_attrmap_by_position
+2026-06-24 19:20:07.717 -05:00 [ERR] An unhandled exception has occurred while executing the request. {"EventId":{"Id":1,"Name":"UnhandledException"},"SourceContext":"Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware","RequestId":"0HNMI9RAI1IFJ:00000013","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","ExceptionDetail":{"Data":{"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42804","MessageText":"structure of query does not match function result type","Detail":"Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Where":"sentencia SQL: «SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS EmpresaLstJson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona»\nfunción PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","File":"attmap.c","Line":"124","Routine":"build_attrmap_by_position"},"HResult":-2147467259,"Message":"42804: structure of query does not match function result type\r\n\r\nDETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Source":"Npgsql","TargetSite":"Void MoveNext()","IsTransient":false,"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42804","MessageText":"structure of query does not match function result type","Detail":"Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Hint":null,"Position":0,"InternalPosition":0,"InternalQuery":null,"Where":"sentencia SQL: «SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS EmpresaLstJson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona»\nfunción PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","SchemaName":null,"TableName":null,"ColumnName":null,"DataTypeName":null,"ConstraintName":null,"File":"attmap.c","Line":"124","Routine":"build_attrmap_by_position","BatchCommand":null,"DbException.BatchCommand":null,"ErrorCode":-2147467259,"Type":"Npgsql.PostgresException"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+Npgsql.PostgresException (0x80004005): 42804: structure of query does not match function result type
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.<ReadMessage>g__ReadMessageSequential|49_0(NpgsqlConnector connector, Boolean async)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at Mozo.LoginData.UsuarioData.SelByUserAsync(UsuarioFilterDto c)
+   at Mozo.LoginBusiness.UsuarioBusiness.SelByUserAsync(UsuarioFilterDto c) in E:\Desarrollo\Mozo\BackEnd\Login\Mozo.LoginBusiness\UsuarioBusiness.cs:line 24
+   at Mozo.Api.Login.UsuarioEndPoints.LoginAsync(UsuarioFilterDto f, IJwtService jwtService, IUsuarioBusiness IUsuario, IIngresoBusiness IIngreso, ILoggerFactory loggerFactory) in E:\Desarrollo\Mozo\BackEnd\Mozo.ApiSeguridad\EndPoints\Login\UsuarioEndPoints.cs:line 135
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.StatusCodePagesMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42804
+    MessageText: structure of query does not match function result type
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    Where: sentencia SQL: «SELECT   
+		u.copersona,
+        u.cousuario,
+        u.nousuario,
+		u.noclave,
+		p.nopersona,
+		jsonb_agg(
+	        jsonb_build_object(
+		            'coempresa', e.coempresa,
+		            'noempresa', ep.nopersona
+	        	)
+        	ORDER BY ep.nopersona
+    	)::text AS EmpresaLstJson
+    FROM seguridad.tblusuario u
+		INNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true
+		INNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona
+		INNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true
+		INNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true
+     WHERE u.flestreg = true      
+		  AND u.nousuario = p_nousuario
+	  GROUP BY
+	    u.cousuario,
+	    u.copersona,
+	    u.nousuario,
+	    p.nopersona»
+función PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY
+    File: attmap.c
+    Line: 124
+    Routine: build_attrmap_by_position
+2026-06-24 19:20:07.759 -05:00 [ERR] <== POST /login/usuario | Status: 500 | Duración: 77085ms | Usuario: Anonymous | TraceId: 00-72342fa91554cc0d461b464e1f5a558b-745fd0e9470be812-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000013","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:20:09.874 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-5c771d6dddf2b02caa72bd49c1b77f22-98d9a06833fc6d0e-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000015","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:21:46.844 -05:00 [ERR] [DATABASE_ERROR] POST /login/usuario | Usuario: Anonymous | Empresa: N/A | TraceId: 00-5c771d6dddf2b02caa72bd49c1b77f22-98d9a06833fc6d0e-00 | SqlState: 42804 {"SourceContext":"Mozo.Api.ExceptionHandler","RequestId":"0HNMI9RAI1IFJ:00000015","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","ExceptionDetail":{"Data":{"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42804","MessageText":"structure of query does not match function result type","Detail":"Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Where":"sentencia SQL: «SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS empresalstjson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona»\nfunción PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","File":"attmap.c","Line":"124","Routine":"build_attrmap_by_position"},"HResult":-2147467259,"Message":"42804: structure of query does not match function result type\r\n\r\nDETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Source":"Npgsql","TargetSite":"Void MoveNext()","IsTransient":false,"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42804","MessageText":"structure of query does not match function result type","Detail":"Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Hint":null,"Position":0,"InternalPosition":0,"InternalQuery":null,"Where":"sentencia SQL: «SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS empresalstjson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona»\nfunción PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","SchemaName":null,"TableName":null,"ColumnName":null,"DataTypeName":null,"ConstraintName":null,"File":"attmap.c","Line":"124","Routine":"build_attrmap_by_position","BatchCommand":null,"DbException.BatchCommand":null,"ErrorCode":-2147467259,"Type":"Npgsql.PostgresException"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+Npgsql.PostgresException (0x80004005): 42804: structure of query does not match function result type
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.<ReadMessage>g__ReadMessageSequential|49_0(NpgsqlConnector connector, Boolean async)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at Mozo.LoginData.UsuarioData.SelByUserAsync(UsuarioFilterDto c)
+   at Mozo.LoginBusiness.UsuarioBusiness.SelByUserAsync(UsuarioFilterDto c) in E:\Desarrollo\Mozo\BackEnd\Login\Mozo.LoginBusiness\UsuarioBusiness.cs:line 24
+   at Mozo.Api.Login.UsuarioEndPoints.LoginAsync(UsuarioFilterDto f, IJwtService jwtService, IUsuarioBusiness IUsuario, IIngresoBusiness IIngreso, ILoggerFactory loggerFactory) in E:\Desarrollo\Mozo\BackEnd\Mozo.ApiSeguridad\EndPoints\Login\UsuarioEndPoints.cs:line 135
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.StatusCodePagesMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42804
+    MessageText: structure of query does not match function result type
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    Where: sentencia SQL: «SELECT   
+		u.copersona,
+        u.cousuario,
+        u.nousuario,
+		u.noclave,
+		p.nopersona,
+		jsonb_agg(
+	        jsonb_build_object(
+		            'coempresa', e.coempresa,
+		            'noempresa', ep.nopersona
+	        	)
+        	ORDER BY ep.nopersona
+    	)::text AS empresalstjson
+    FROM seguridad.tblusuario u
+		INNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true
+		INNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona
+		INNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true
+		INNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true
+     WHERE u.flestreg = true      
+		  AND u.nousuario = p_nousuario
+	  GROUP BY
+	    u.cousuario,
+	    u.copersona,
+	    u.nousuario,
+	    p.nopersona»
+función PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY
+    File: attmap.c
+    Line: 124
+    Routine: build_attrmap_by_position
+2026-06-24 19:21:46.905 -05:00 [ERR] An unhandled exception has occurred while executing the request. {"EventId":{"Id":1,"Name":"UnhandledException"},"SourceContext":"Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware","RequestId":"0HNMI9RAI1IFJ:00000015","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","ExceptionDetail":{"Data":{"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42804","MessageText":"structure of query does not match function result type","Detail":"Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Where":"sentencia SQL: «SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS empresalstjson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona»\nfunción PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","File":"attmap.c","Line":"124","Routine":"build_attrmap_by_position"},"HResult":-2147467259,"Message":"42804: structure of query does not match function result type\r\n\r\nDETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Source":"Npgsql","TargetSite":"Void MoveNext()","IsTransient":false,"Severity":"ERROR","InvariantSeverity":"ERROR","SqlState":"42804","MessageText":"structure of query does not match function result type","Detail":"Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.","Hint":null,"Position":0,"InternalPosition":0,"InternalQuery":null,"Where":"sentencia SQL: «SELECT   \n\t\tu.copersona,\n        u.cousuario,\n        u.nousuario,\n\t\tu.noclave,\n\t\tp.nopersona,\n\t\tjsonb_agg(\n\t        jsonb_build_object(\n\t\t            'coempresa', e.coempresa,\n\t\t            'noempresa', ep.nopersona\n\t        \t)\n        \tORDER BY ep.nopersona\n    \t)::text AS empresalstjson\n    FROM seguridad.tblusuario u\n\t\tINNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true\n\t\tINNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona\n\t\tINNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true\n\t\tINNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true\n     WHERE u.flestreg = true      \n\t\t  AND u.nousuario = p_nousuario\n\t  GROUP BY\n\t    u.cousuario,\n\t    u.copersona,\n\t    u.nousuario,\n\t    p.nopersona»\nfunción PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY","SchemaName":null,"TableName":null,"ColumnName":null,"DataTypeName":null,"ConstraintName":null,"File":"attmap.c","Line":"124","Routine":"build_attrmap_by_position","BatchCommand":null,"DbException.BatchCommand":null,"ErrorCode":-2147467259,"Type":"Npgsql.PostgresException"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+Npgsql.PostgresException (0x80004005): 42804: structure of query does not match function result type
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.<ReadMessage>g__ReadMessageSequential|49_0(NpgsqlConnector connector, Boolean async)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryRowAsync[T](IDbConnection cnn, Row row, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 489
+   at Mozo.LoginData.UsuarioData.SelByUserAsync(UsuarioFilterDto c)
+   at Mozo.LoginBusiness.UsuarioBusiness.SelByUserAsync(UsuarioFilterDto c) in E:\Desarrollo\Mozo\BackEnd\Login\Mozo.LoginBusiness\UsuarioBusiness.cs:line 24
+   at Mozo.Api.Login.UsuarioEndPoints.LoginAsync(UsuarioFilterDto f, IJwtService jwtService, IUsuarioBusiness IUsuario, IIngresoBusiness IIngreso, ILoggerFactory loggerFactory) in E:\Desarrollo\Mozo\BackEnd\Mozo.ApiSeguridad\EndPoints\Login\UsuarioEndPoints.cs:line 135
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.StatusCodePagesMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42804
+    MessageText: structure of query does not match function result type
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    Where: sentencia SQL: «SELECT   
+		u.copersona,
+        u.cousuario,
+        u.nousuario,
+		u.noclave,
+		p.nopersona,
+		jsonb_agg(
+	        jsonb_build_object(
+		            'coempresa', e.coempresa,
+		            'noempresa', ep.nopersona
+	        	)
+        	ORDER BY ep.nopersona
+    	)::text AS empresalstjson
+    FROM seguridad.tblusuario u
+		INNER JOIN maestro.tblpersona p ON u.copersona = p.copersona AND p.flestreg = true
+		INNER JOIN maestro.tblpersonaempresa pe ON pe.copersona = p.copersona
+		INNER JOIN seguridad.tblempresa e ON e.coempresa = pe.coempresa AND e.flestreg = true
+		INNER JOIN maestro.tblpersona ep ON e.copersona = ep.copersona AND ep.flestreg = true
+     WHERE u.flestreg = true      
+		  AND u.nousuario = p_nousuario
+	  GROUP BY
+	    u.cousuario,
+	    u.copersona,
+	    u.nousuario,
+	    p.nopersona»
+función PL/pgSQL login.fn_usuario_sel_by_user(character varying) en la línea 3 en RETURN QUERY
+    File: attmap.c
+    Line: 124
+    Routine: build_attrmap_by_position
+2026-06-24 19:21:46.971 -05:00 [ERR] <== POST /login/usuario | Status: 500 | Duración: 97096ms | Usuario: Anonymous | TraceId: 00-5c771d6dddf2b02caa72bd49c1b77f22-98d9a06833fc6d0e-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000015","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:21:49.146 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-c655a0c602646c4246b5afa7a02ff4f5-169a3f160f2937a0-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000017","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:22:58.333 -05:00 [WRN] [VALIDATION] POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-c655a0c602646c4246b5afa7a02ff4f5-169a3f160f2937a0-00 | Errors: [] {"SourceContext":"Mozo.Api.ExceptionHandler","RequestId":"0HNMI9RAI1IFJ:00000017","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:22:58.348 -05:00 [ERR] An unhandled exception has occurred while executing the request. {"EventId":{"Id":1,"Name":"UnhandledException"},"SourceContext":"Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware","RequestId":"0HNMI9RAI1IFJ:00000017","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","ExceptionDetail":{"HResult":-2146233088,"Message":"contraseña incorrecta","Source":"Mozo.ApiSeguridad","TargetSite":"Void MoveNext()","Code":"400","StatusCode":400,"Errors":[],"Type":"Mozo.ApiSeguridad.HelperWeb.Exceptions.ValidationException"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+Mozo.ApiSeguridad.HelperWeb.Exceptions.ValidationException: contraseña incorrecta
+   at Mozo.Api.Login.UsuarioEndPoints.LoginAsync(UsuarioFilterDto f, IJwtService jwtService, IUsuarioBusiness IUsuario, IIngresoBusiness IIngreso, ILoggerFactory loggerFactory) in E:\Desarrollo\Mozo\BackEnd\Mozo.ApiSeguridad\EndPoints\Login\UsuarioEndPoints.cs:line 150
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.StatusCodePagesMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+2026-06-24 19:22:58.375 -05:00 [ERR] <== POST /login/usuario | Status: 500 | Duración: 69227ms | Usuario: Anonymous | TraceId: 00-c655a0c602646c4246b5afa7a02ff4f5-169a3f160f2937a0-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000017","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:23:00.266 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-4f2537eab380b643f595d5d364e83ee3-fae36498c930e6c5-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000019","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:24:38.117 -05:00 [WRN] [VALIDATION] POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-4f2537eab380b643f595d5d364e83ee3-fae36498c930e6c5-00 | Errors: [] {"SourceContext":"Mozo.Api.ExceptionHandler","RequestId":"0HNMI9RAI1IFJ:00000019","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:24:38.131 -05:00 [ERR] An unhandled exception has occurred while executing the request. {"EventId":{"Id":1,"Name":"UnhandledException"},"SourceContext":"Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware","RequestId":"0HNMI9RAI1IFJ:00000019","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","ExceptionDetail":{"HResult":-2146233088,"Message":"contraseña incorrecta","Source":"Mozo.ApiSeguridad","TargetSite":"Void MoveNext()","Code":"400","StatusCode":400,"Errors":[],"Type":"Mozo.ApiSeguridad.HelperWeb.Exceptions.ValidationException"},"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+Mozo.ApiSeguridad.HelperWeb.Exceptions.ValidationException: contraseña incorrecta
+   at Mozo.Api.Login.UsuarioEndPoints.LoginAsync(UsuarioFilterDto f, IJwtService jwtService, IUsuarioBusiness IUsuario, IIngresoBusiness IIngreso, ILoggerFactory loggerFactory) in E:\Desarrollo\Mozo\BackEnd\Mozo.ApiSeguridad\EndPoints\Login\UsuarioEndPoints.cs:line 150
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.StatusCodePagesMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+2026-06-24 19:24:38.156 -05:00 [ERR] <== POST /login/usuario | Status: 500 | Duración: 97889ms | Usuario: Anonymous | TraceId: 00-4f2537eab380b643f595d5d364e83ee3-fae36498c930e6c5-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:00000019","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:24:40.413 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-a1a0ae930beb472391a4f2f174ebc5f1-252b120ab00d6862-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000001B","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:27:39.700 -05:00 [INF] [SECURITY] LOGIN_PENDING_COMPANY | Usuario: jabregu, varias empresas, sin escojer empresa {"SourceContext":"Mozo.Api.Login","RequestId":"0HNMI9RAI1IFJ:0000001B","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:27:39.713 -05:00 [INF] <== POST /login/usuario | Status: 200 | Duración: 179297ms | Usuario: Anonymous | TraceId: 00-a1a0ae930beb472391a4f2f174ebc5f1-252b120ab00d6862-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000001B","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:27:43.008 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-2746e1fd7f09bd878d558d265d83958d-09e0d3a69ba7ce25-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000001D","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:27:44.898 -05:00 [INF] [SECURITY] LOGIN_PENDING_COMPANY | Usuario: jabregu, varias empresas, sin escojer empresa {"SourceContext":"Mozo.Api.Login","RequestId":"0HNMI9RAI1IFJ:0000001D","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:27:44.906 -05:00 [INF] <== POST /login/usuario | Status: 200 | Duración: 1897ms | Usuario: Anonymous | TraceId: 00-2746e1fd7f09bd878d558d265d83958d-09e0d3a69ba7ce25-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000001D","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:27:47.158 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-fa35e654dbfa1d9abe99ee69d9ff4b16-2ab491eb64104c3c-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000001F","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:31:03.993 -05:00 [INF] [SECURITY] LOGIN_PENDING_COMPANY | Usuario: jabregu, varias empresas, sin escojer empresa {"SourceContext":"Mozo.Api.Login","RequestId":"0HNMI9RAI1IFJ:0000001F","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:31:04.006 -05:00 [INF] <== POST /login/usuario | Status: 200 | Duración: 196845ms | Usuario: Anonymous | TraceId: 00-fa35e654dbfa1d9abe99ee69d9ff4b16-2ab491eb64104c3c-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFJ:0000001F","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFJ","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:31:06.986 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-e2436a56cdec2aa3411d0b4c34266cc4-2c261a964bbee555-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFK:00000001","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFK","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:31:49.412 -05:00 [INF] [SECURITY] LOGIN_PENDING_COMPANY | Usuario: jabregu, varias empresas, sin escojer empresa {"SourceContext":"Mozo.Api.Login","RequestId":"0HNMI9RAI1IFK:00000001","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFK","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:31:49.427 -05:00 [INF] <== POST /login/usuario | Status: 200 | Duración: 42440ms | Usuario: Anonymous | TraceId: 00-e2436a56cdec2aa3411d0b4c34266cc4-2c261a964bbee555-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFK:00000001","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFK","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:31:52.131 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-1bfc9cbacc6c4c7489ff07190cda116b-12170737edf857d1-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFK:00000003","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFK","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:31:54.854 -05:00 [INF] [SECURITY] LOGIN_PENDING_COMPANY | Usuario: jabregu, varias empresas, sin escojer empresa {"SourceContext":"Mozo.Api.Login","RequestId":"0HNMI9RAI1IFK:00000003","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFK","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:31:54.865 -05:00 [INF] <== POST /login/usuario | Status: 200 | Duración: 2734ms | Usuario: Anonymous | TraceId: 00-1bfc9cbacc6c4c7489ff07190cda116b-12170737edf857d1-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFK:00000003","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFK","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:31:57.714 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-3bee963bd3db84c6b12681cdcd3b0a90-dc3b1eb91a3daa75-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFK:00000005","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFK","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:32:09.482 -05:00 [INF] [SECURITY] LOGIN_PENDING_COMPANY | Usuario: jabregu, varias empresas, sin escojer empresa {"SourceContext":"Mozo.Api.Login","RequestId":"0HNMI9RAI1IFK:00000005","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFK","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:32:09.493 -05:00 [INF] <== POST /login/usuario | Status: 200 | Duración: 11779ms | Usuario: Anonymous | TraceId: 00-3bee963bd3db84c6b12681cdcd3b0a90-dc3b1eb91a3daa75-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFK:00000005","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFK","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:32:11.768 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-0384b5abc410dbacd5d569849a2bf46a-3fc7c0f2451aa89c-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMI9RAI1IFK:00000007","RequestPath":"/login/usuario","ConnectionId":"0HNMI9RAI1IFK","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:41.057 -05:00 [INF] === Iniciando Mozo API === {"MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:43.236 -05:00 [INF] ==> GET / | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-ef92f0d8ee992a924c07fab6f974f994-09431b7013251624-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:00000001","RequestPath":"/","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:43.398 -05:00 [WRN] <== GET / | Status: 404 | Duración: 171ms | Usuario: Anonymous | TraceId: 00-ef92f0d8ee992a924c07fab6f974f994-09431b7013251624-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:00000001","RequestPath":"/","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:46.416 -05:00 [INF] ==> GET /scalar/v1 | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-c0fec3bae5fccef82214190269581258-9908177a5ba1397b-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:00000003","RequestPath":"/scalar/v1","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:46.658 -05:00 [INF] <== GET /scalar/v1 | Status: 200 | Duración: 242ms | Usuario: Anonymous | TraceId: 00-c0fec3bae5fccef82214190269581258-9908177a5ba1397b-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:00000003","RequestPath":"/scalar/v1","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:46.668 -05:00 [INF] ==> GET /scalar/scalar.js | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-07cf853e3406d02dd6c0f50a055a768a-be32c6fd3ee7ab13-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:00000005","RequestPath":"/scalar/scalar.js","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:46.682 -05:00 [WRN] Unable to configure Browser Link script injection on the response. This may have been caused by the response's Content-Encoding: '["br"]'. Consider disabling response compression. {"EventId":{"Id":4,"Name":"ResponseCompressionDetected"},"SourceContext":"Microsoft.WebTools.BrowserLink.Net.BrowserLinkMiddleware","RequestId":"0HNMIA5K5L89I:00000003","RequestPath":"/scalar/v1","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:46.699 -05:00 [WRN] Unable to configure browser refresh script injection on the response. This may have been caused by the response's Content-Encoding: '["br"]'. Consider disabling response compression. {"EventId":{"Id":4,"Name":"ResponseCompressionDetected"},"SourceContext":"Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware","RequestId":"0HNMIA5K5L89I:00000003","RequestPath":"/scalar/v1","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:46.722 -05:00 [INF] <== GET /scalar/scalar.js | Status: 200 | Duración: 53ms | Usuario: Anonymous | TraceId: 00-07cf853e3406d02dd6c0f50a055a768a-be32c6fd3ee7ab13-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:00000005","RequestPath":"/scalar/scalar.js","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:46.741 -05:00 [INF] ==> GET /scalar/scalar.aspnetcore.js | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-4f88525a6f3351fd7d282dc4dd64c1da-735898b1062c8ce1-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:00000007","RequestPath":"/scalar/scalar.aspnetcore.js","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:46.749 -05:00 [INF] <== GET /scalar/scalar.aspnetcore.js | Status: 200 | Duración: 7ms | Usuario: Anonymous | TraceId: 00-4f88525a6f3351fd7d282dc4dd64c1da-735898b1062c8ce1-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:00000007","RequestPath":"/scalar/scalar.aspnetcore.js","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:46.977 -05:00 [INF] ==> GET /openapi/v1.json | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-c0b6a1fba96041c49449454d0116bdf1-8771d2a95187ae2c-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:00000009","RequestPath":"/openapi/v1.json","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:33:47.232 -05:00 [INF] <== GET /openapi/v1.json | Status: 200 | Duración: 254ms | Usuario: Anonymous | TraceId: 00-c0b6a1fba96041c49449454d0116bdf1-8771d2a95187ae2c-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:00000009","RequestPath":"/openapi/v1.json","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:34:11.727 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-c206e0dfe3d54752b28cc5220bf1d7a4-d9046cf8096a4236-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:0000000B","RequestPath":"/login/usuario","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:35:13.216 -05:00 [INF] [SECURITY] LOGIN_PENDING_COMPANY | Usuario: jabregu, varias empresas, sin escojer empresa {"SourceContext":"Mozo.Api.Login","RequestId":"0HNMIA5K5L89I:0000000B","RequestPath":"/login/usuario","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:35:13.235 -05:00 [INF] <== POST /login/usuario | Status: 200 | Duración: 61508ms | Usuario: Anonymous | TraceId: 00-c206e0dfe3d54752b28cc5220bf1d7a4-d9046cf8096a4236-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:0000000B","RequestPath":"/login/usuario","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:37:51.481 -05:00 [INF] ==> POST /login/usuario | Usuario: Anonymous | Empresa: N/A | IP: ::1 | TraceId: 00-3099e1aa885165f6e74f9756d8829eb5-b85e6c41e95d8e16-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:0000000D","RequestPath":"/login/usuario","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:37:53.061 -05:00 [INF] [SECURITY] LOGIN_PENDING_COMPANY | Usuario: jabregu, varias empresas, sin escojer empresa {"SourceContext":"Mozo.Api.Login","RequestId":"0HNMIA5K5L89I:0000000D","RequestPath":"/login/usuario","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
+2026-06-24 19:37:53.076 -05:00 [INF] <== POST /login/usuario | Status: 200 | Duración: 1595ms | Usuario: Anonymous | TraceId: 00-3099e1aa885165f6e74f9756d8829eb5-b85e6c41e95d8e16-00 {"SourceContext":"Mozo.ApiSeguridad.Helper.Exceptions.RequestLoggingMiddleware","RequestId":"0HNMIA5K5L89I:0000000D","RequestPath":"/login/usuario","ConnectionId":"0HNMIA5K5L89I","MachineName":"DNROP0526","EnvironmentName":"Development","Application":"Mozo.Api"}
