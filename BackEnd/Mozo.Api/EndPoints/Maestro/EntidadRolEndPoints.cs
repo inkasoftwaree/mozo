@@ -22,7 +22,7 @@ public sealed partial class EntidadRolEndPoints : IEndpoint
         g.DisableAntiforgery().RequireAuthorization();
         g.MapPost("/", InsertAsync);
         g.MapPut("/", UpdateByIdAsync);
-        g.MapGet("/ative", SelAllActiveAsync);
+        g.MapGet("/active", SelAllActiveAsync);
     }
 
 }
@@ -48,13 +48,13 @@ public partial class EntidadRolEndPoints
         SelAllActiveAsync([AsParameters] EntidadRolFilter f,
        IEntidadRolService IEntidadRol)
     {
-        IEnumerable<EntidadRolEntity> r = Enumerable.Empty<EntidadRolEntity>();
+        IEnumerable<EntidadRolEntity> r;
         if (f.CoModulo != null && f.CoEntidad != null)
-            r = await IEntidadRol.SelAllActiveByModuleAndPersonAsync(new());
+            r = await IEntidadRol.SelAllActiveByModuleAndPersonAsync(f);
         else if (f.CoModulo == null && f.CoEntidad != null)
-            r = await IEntidadRol.SelAllActiveByPersonAsync(new());
-        else if (f.CoModulo == null && f.CoEntidad == null)
-            r = await IEntidadRol.SelAllActiveAsync(new());
+            r = await IEntidadRol.SelAllActiveByPersonAsync(f);
+        else
+            r = await IEntidadRol.SelAllActiveAsync(f);
         return Results.Ok(r);
     }
 
