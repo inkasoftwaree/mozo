@@ -1,5 +1,6 @@
-﻿using Mozo.Shared.Contract;
-namespace Mozo.App.Maestro.DocumentoIdentidad;
+using Mozo.Shared.Contract;
+
+namespace Mozo.App.Maestro.DocumentoIdentidad.Contracts;
 
 public record DocumentoIdentidadFilter : BaseFilter
 {

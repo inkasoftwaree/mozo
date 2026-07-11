@@ -10,6 +10,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Mozo.Api.Abstractions;
 using Mozo.App.Maestro.Pais;
+using Mozo.App.Maestro.Pais.Contracts;
 using Mozo.Domain.Maestro;
 
 namespace Mozo.Api.Maestro;
@@ -29,7 +30,7 @@ public sealed partial class PaisEndPoints : IEndpoint
         g.WithSecurity();  
 
         g.MapGet("/active", SelAllActiveAsync)
-          .WithResponses<IEnumerable<PaisEntity>>(StatusCodes.Status200OK)
+          .WithResponses<IEnumerable<PaisOption>>(StatusCodes.Status200OK)
           .WithDescription("Obtener todos los Paises")
           .CacheOutput(CacheTag);
     }
@@ -40,7 +41,7 @@ public partial class PaisEndPoints
     static async Task<IResult>
         SelAllActiveAsync(IPaisService IPais)
     {      
-        IEnumerable<PaisEntity> r = await IPais.SelAllActiveAsync();
+        IEnumerable<PaisOption> r = await IPais.SelAllActiveAsync();
         return Results.Ok(r);
     }
 

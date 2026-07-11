@@ -1,3 +1,4 @@
+using Mozo.App.Maestro.Entidad.Contracts;
 using Mozo.Domain.Maestro;
 using Mozo.Infrastructure.Persistence;
 using Mozo.Infrastructure.Persistence.Builders;

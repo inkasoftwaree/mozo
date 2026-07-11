@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.OutputCaching;
 using Mozo.Api.Abstractions;
 using Mozo.App.Maestro.PersonaJuridica;
+using Mozo.App.Maestro.PersonaJuridica.Contracts;
 using Mozo.App.Maestro.PersonaNatural;
 using Mozo.Domain.Maestro;
 using Mozo.Shared.Exceptions;
@@ -71,7 +72,7 @@ public partial class PersonaJuridicaEndPoints
             [AsParameters] PersonaJuridicaFilter f,
             IPersonaJuridicaService IPersona)
     {
-        IEnumerable<PersonaJuridicaEntity> r = await IPersona.SelAllActiveAsync(f);
+        IReadOnlyList<PersonaJuridicaOption> r = await IPersona.SelAllActiveAsync(f);
         return Results.Ok(r);
     }
 
@@ -81,7 +82,7 @@ public partial class PersonaJuridicaEndPoints
           [AsParameters] PersonaJuridicaFilter f,
         IPersonaJuridicaService IPersona)
     {
-        PersonaJuridicaEntity? i = await IPersona.SelByIdAsync(f);
+        PersonaJuridicaEditResponse? i = await IPersona.SelByIdAsync(f);
         if (i == null)
             return TypedResults.NotFound();
         return Results.Ok(i);

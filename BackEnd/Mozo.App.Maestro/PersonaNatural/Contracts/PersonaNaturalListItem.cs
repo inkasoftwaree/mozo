@@ -1,6 +1,6 @@
 using Mozo.Shared.Contract;
 
-namespace Mozo.App.Maestro.PersonaNatural;
+namespace Mozo.App.Maestro.PersonaNatural.Contracts;
 
 /// <summary>
 /// DTO plano para el listado paginado de Personas Naturales (SelAll).

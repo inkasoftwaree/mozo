@@ -1,5 +1,6 @@
 ﻿using Mozo.Api.Abstractions;
 using Mozo.App.Maestro.EntidadDocumento;
+using Mozo.App.Maestro.EntidadDocumento.Contracts;
 using Mozo.Domain.Maestro;
 
 namespace Mozo.Api.Maestro;
@@ -40,12 +41,12 @@ public sealed partial class EntidadDocumentoEndPoints : IEndpoint
              .WithDescription("Eliminar una  Documento");
 
         g.MapGet("/", SelByIdAsync)
-            .WithResponses<EntidadDocumentoEntity>(StatusCodes.Status200OK)
+            .WithResponses<EntidadDocumentoEditResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithDescription("Obtener una Documento");
 
         g.MapGet("/all", SelAllAsync)
-          .WithResponses<IEnumerable<EntidadDocumentoEntity>>(StatusCodes.Status200OK)
+          .WithResponses<IEnumerable<EntidadDocumentoListItem>>(StatusCodes.Status200OK)
           .WithDescription("Obtener todas las Documento");
     }
 }
@@ -95,7 +96,7 @@ public partial class EntidadDocumentoEndPoints
             IEntidadDocumentoService IEntidadDocumento
        )
     {
-        IEnumerable<EntidadDocumentoEntity> r = await IEntidadDocumento.SelAllAsync(f);
+        IReadOnlyList<EntidadDocumentoListItem> r = await IEntidadDocumento.SelAllAsync(f);
         return Results.Ok(r);
     }
 
@@ -107,7 +108,7 @@ public partial class EntidadDocumentoEndPoints
         IEntidadDocumentoService IEntidadDocumento
     )
     {
-        EntidadDocumentoEntity? i = await IEntidadDocumento.SelByIdAsync(f);
+        EntidadDocumentoEditResponse? i = await IEntidadDocumento.SelByIdAsync(f);
         if (i == null)
             return Results.NotFound();
         return Results.Ok(i);

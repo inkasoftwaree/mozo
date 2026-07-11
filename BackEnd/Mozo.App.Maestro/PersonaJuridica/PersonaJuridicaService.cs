@@ -1,4 +1,5 @@
-﻿using Mozo.Domain.Maestro;
+﻿using Mozo.App.Maestro.PersonaJuridica.Contracts;
+using Mozo.Domain.Maestro;
 using Mozo.Infrastructure.Persistence;
 using Mozo.Infrastructure.Persistence.Builders;
 using Mozo.Shared.Models;
@@ -11,9 +12,9 @@ public interface IPersonaJuridicaService
 {
     Task<int> InsertAsync(PersonaJuridicaEntity c);
     Task<int> UpdateByIdAsync(PersonaJuridicaEntity c);
-    Task<PersonaJuridicaEntity?> SelByIdAsync(PersonaJuridicaFilter f);
+    Task<PersonaJuridicaEditResponse?> SelByIdAsync(PersonaJuridicaFilter f);
     Task<PagedResult<PersonaJuridicaListItem>> SelAllAsync(PersonaJuridicaFilter f);
-    Task<IEnumerable<PersonaJuridicaEntity>> SelAllActiveAsync(PersonaJuridicaFilter f);
+    Task<IReadOnlyList<PersonaJuridicaOption>> SelAllActiveAsync(PersonaJuridicaFilter f);
 }
 
 public sealed class PersonaJuridicaService : IPersonaJuridicaService
@@ -44,8 +45,8 @@ public sealed class PersonaJuridicaService : IPersonaJuridicaService
                 .Add("CoRubro", c.CoRubro, DbType.Int32)
                 .AddUserUpdate(_user.CoUsuarioRequired));
 
-    public Task<PersonaJuridicaEntity?> SelByIdAsync(PersonaJuridicaFilter c) =>
-        _database.FirstAsync<PersonaJuridicaEntity>(PersonaJuridicaDbObjects.SelById,
+    public Task<PersonaJuridicaEditResponse?> SelByIdAsync(PersonaJuridicaFilter c) =>
+        _database.FirstAsync<PersonaJuridicaEditResponse>(PersonaJuridicaDbObjects.SelById,
             p => p.Add("CoEntidad", c.CoEntidad, DbType.Int32));
 
     public async Task<PagedResult<PersonaJuridicaListItem>> SelAllAsync(PersonaJuridicaFilter f)
@@ -69,8 +70,8 @@ public sealed class PersonaJuridicaService : IPersonaJuridicaService
     }
 
 
-    public async Task<IEnumerable<PersonaJuridicaEntity>> SelAllActiveAsync(PersonaJuridicaFilter c) =>
-        await _database.ListAsync<PersonaJuridicaEntity>(PersonaJuridicaDbObjects.SelAllActive,
+    public Task<IReadOnlyList<PersonaJuridicaOption>> SelAllActiveAsync(PersonaJuridicaFilter c) =>
+        _database.ListAsync<PersonaJuridicaOption>(PersonaJuridicaDbObjects.SelAllActive,
             p => p
                  .AddEmpresa(_user.CoEmpresaRequired)
                 .Add("CoModulo", c.CoModulo, DbType.Int32)

@@ -1,6 +1,6 @@
-﻿using Mozo.Shared.Contract;
+using Mozo.Shared.Contract;
 
-namespace Mozo.App.Maestro.PersonaNatural;
+namespace Mozo.App.Maestro.PersonaNatural.Contracts;
 
 public record PersonaNaturalFilter : BaseFilter
 {
@@ -8,5 +8,4 @@ public record PersonaNaturalFilter : BaseFilter
     public int? CoModulo { get; set; }
     public int? CoRolNegocio { get; set; }
     public int? NoImputSearch { get; set; }
-
 }

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Mozo.Api.Abstractions;
 using Mozo.App.Maestro.TipoParticular;
+using Mozo.App.Maestro.TipoParticular.Contracts;
 using Mozo.Domain.Maestro;
 using Mozo.Shared.Models;
 
@@ -59,7 +60,7 @@ public sealed partial class TipoParticularEndPoints : IEndpoint
              .WithDescription("Eliminar una Tipo");
 
         g.MapGet("/", SelByIdAsync)
-            .WithResponses<TipoParticularEntity>(StatusCodes.Status200OK)
+            .WithResponses<TipoParticularEditResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithDescription("Obtener un Tipo");
 
@@ -73,12 +74,12 @@ public sealed partial class TipoParticularEndPoints : IEndpoint
            .CacheOutput(CacheTag);
   
         g.MapGet("/father-children/active", SelAllActiveFatherAndChildrenAsync)
-            .WithResponses<IEnumerable<TipoParticularEntity>>(StatusCodes.Status200OK)
+            .WithResponses<IEnumerable<TipoParticularOption>>(StatusCodes.Status200OK)
             .WithDescription("Obtener todas los padres e hijos activos")
             .CacheOutput(CacheTag);
 
         g.MapGet("/modules/groups", SelAllActiveGroupsByModuleAsync)
-           .WithResponses<IEnumerable<TipoParticularEntity>>(StatusCodes.Status200OK)
+           .WithResponses<IEnumerable<TipoParticularOption>>(StatusCodes.Status200OK)
             .WithDescription("Obtener todas los grupos por modulos")
             .CacheOutput(CacheTag);
 
@@ -88,7 +89,7 @@ public sealed partial class TipoParticularEndPoints : IEndpoint
             .WithDescription("Obtener el siguiente numero de orden del grupo");
 
         g.MapGet("/group", SelByIdGroupAsync)
-            .WithResponses<TipoParticularEntity>(StatusCodes.Status200OK)
+            .WithResponses<TipoParticularEditResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithDescription("Obtener un grupo por id");
     }
@@ -214,7 +215,7 @@ public partial class TipoParticularEndPoints
         ITipoParticularService ITipo
     )
     {       
-        IEnumerable<TipoParticularEntity> r = await ITipo.SelAllActiveFatherAndChildrenAsync(f);
+        IEnumerable<TipoParticularOption> r = await ITipo.SelAllActiveFatherAndChildrenAsync(f);
         return Results.Ok(r);
     }
 
@@ -224,7 +225,7 @@ public partial class TipoParticularEndPoints
         ITipoParticularService ITipo
     )
     {        
-        TipoParticularEntity? i = await ITipo.SelByIdAsync(f);
+        TipoParticularEditResponse? i = await ITipo.SelByIdAsync(f);
         if (i == null)
             return Results.NotFound();
         return Results.Ok(i);
@@ -245,7 +246,7 @@ public partial class TipoParticularEndPoints
             ITipoParticularService ITipo
     )
     {
-        TipoParticularEntity? i = await ITipo.SelByIdGroupAsync(f);
+        TipoParticularEditResponse? i = await ITipo.SelByIdGroupAsync(f);
         if (i == null)
             return Results.NotFound();
         return Results.Ok(i);

@@ -1,5 +1,6 @@
 ﻿using Mozo.Api.Abstractions;
 using Mozo.App.Maestro.EntidadRedSocial;
+using Mozo.App.Maestro.EntidadRedSocial.Contracts;
 using Mozo.Domain.Maestro;
 
 namespace Mozo.Api.Maestro;
@@ -35,12 +36,12 @@ public sealed partial class EntidadRedSocialEndPoints : IEndpoint
              .WithDescription("Eliminar una  Red Social");
 
         g.MapGet("/", SelByIdAsync)
-            .WithResponses<EntidadRedSocialEntity>(StatusCodes.Status200OK)
+            .WithResponses<EntidadRedSocialEditResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithDescription("Obtener una Red Social");
 
         g.MapGet("/all", SelAllAsync)
-          .WithResponses<IEnumerable<EntidadRedSocialEntity>>(StatusCodes.Status200OK)
+          .WithResponses<IEnumerable<EntidadRedSocialListItem>>(StatusCodes.Status200OK)
           .WithDescription("Obtener todas las Redes Social");
     }
 }
@@ -80,7 +81,7 @@ public partial class EntidadRedSocialEndPoints
             IEntidadRedSocialService IRedSocial
        )
     {
-        IEnumerable<EntidadRedSocialEntity> r = await IRedSocial.SelAllAsync(f);
+        IEnumerable<EntidadRedSocialListItem> r = await IRedSocial.SelAllAsync(f);
         r = r.OrderBy(x => x.CoTipoRedSocial).ThenBy(y => y.NoRedSocial);
         return Results.Ok(r);
     }
@@ -92,7 +93,7 @@ public partial class EntidadRedSocialEndPoints
          IEntidadRedSocialService IRedSocial
      )
     {
-        EntidadRedSocialEntity? i = await IRedSocial.SelByIdAsync(f);
+        EntidadRedSocialEditResponse? i = await IRedSocial.SelByIdAsync(f);
         if (i == null)
             return Results.NotFound();
         return Results.Ok(i);

@@ -1,5 +1,6 @@
 using Mozo.Api.Abstractions;
 using Mozo.App.Maestro.EntidadRol;
+using Mozo.App.Maestro.EntidadRol.Contracts;
 using Mozo.Domain.Maestro;
 
 namespace Mozo.Api.Maestro;
@@ -48,7 +49,7 @@ public partial class EntidadRolEndPoints
         SelAllActiveAsync([AsParameters] EntidadRolFilter f,
        IEntidadRolService IEntidadRol)
     {
-        IEnumerable<EntidadRolEntity> r;
+        IReadOnlyList<EntidadRolOption> r;
         if (f.CoModulo != null && f.CoEntidad != null)
             r = await IEntidadRol.SelAllActiveByModuleAndPersonAsync(f);
         else if (f.CoModulo == null && f.CoEntidad != null)

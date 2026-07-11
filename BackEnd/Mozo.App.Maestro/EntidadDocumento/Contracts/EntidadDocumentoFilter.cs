@@ -1,5 +1,6 @@
-﻿using Mozo.Shared.Contract;
-namespace Mozo.App.Maestro.EntidadDocumento;
+using Mozo.Shared.Contract;
+
+namespace Mozo.App.Maestro.EntidadDocumento.Contracts;
 
 public record EntidadDocumentoFilter : BaseFilter
 {
