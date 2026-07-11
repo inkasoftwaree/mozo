@@ -44,13 +44,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
-    <PackageReference Include="System.Runtime.Caching" Version="10.0.7" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
+    <PackageReference Include="System.Runtime.Caching" Version="10.0.9" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Mozo.Helper\Mozo.Helper.csproj" />
-    <ProjectReference Include="..\Mozo.Model\Mozo.Model.csproj" />
+    <ProjectReference Include="..\Mozo.Model\Mozo.Domain.csproj" />
   </ItemGroup>
 
 </Project>

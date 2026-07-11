@@ -21,13 +21,13 @@ export const API_ROUTES = {
   maestro: {
     documentoIdentidad: '/maestro/documento-identidad',
     pais: '/maestro/pais',
-    redSocial: '/maestro/red-social',
+    personaRedSocial: '/maestro/persona-red-social',
     tipoGeneral: '/maestro/tipo-general',
     tipoParticular: '/maestro/tipo-particular',
     archivo: '/maestro/archivo'
   },
   login: {
-    permiso: '/login/permiso',
+    usuario: '/login/usuario',
     ingreso: '/login/ingreso',
     menu: '/login/menu'
   }

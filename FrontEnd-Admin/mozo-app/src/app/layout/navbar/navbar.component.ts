@@ -6,7 +6,7 @@ import { AuthService } from '@app/core/services/auth.service';
 import { NgIcon } from "@ng-icons/core";
 import { LoginPage } from "@app/features/auth/pages/login/login.page";
 import { ModalControl } from "@app/shared/components/modal/modal.control";
-import { PermisoModel } from '@app/shared/models/seguridad/permiso.model';
+import { UsuarioModel } from '@app/shared/models/seguridad/usuario.model';
 
 @Component({
   selector: '[app-navbar-component]',
@@ -26,14 +26,14 @@ export class NavbarComponent {
   readonly user = this.auth.user;
 
   openLogin(): void {
-    const login: PermisoModel = {
-      coPermiso: 0,
+    const login: UsuarioModel = {
+      coUsuario: 0,
       coPersona: 0,
       noUsuario: '',
       noClave: ''
     };
 
-    this.modalService.open<PermisoModel>({
+    this.modalService.open<UsuarioModel>({
       modalName: 'login-page',
       title: 'Login',
       size: 'sm',

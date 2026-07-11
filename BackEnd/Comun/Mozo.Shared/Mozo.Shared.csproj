@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <Compile Remove="Enu\EnuBoga.cs" />
+    <Compile Remove="Enu\EnuBogaExt.cs" />
+    <Compile Remove="Enu\EnuCondominio.cs" />
+    <Compile Remove="Enu\EnuContabilidad.cs" />
+    <Compile Remove="Enu\EnuEmpresa.cs" />
+    <Compile Remove="Enu\EnuGasto.cs" />
+    <Compile Remove="Enu\EnuMaestro.cs" />
+    <Compile Remove="Enu\EnuUrbano.cs" />
+    <Compile Remove="Global\GlobalSessionMarketinkgModel.cs" />
+    <Compile Remove="Global\GloCapcha.cs" />
+    <Compile Remove="Global\GloFile.cs" />
+    <Compile Remove="Global\GloSession.cs" />
+    <Compile Remove="Services\Storage\FileValidator.cs" />
+    <Compile Remove="Services\UserContextService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageReference Include="Dapper" Version="2.1.79" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
+    <!-- Microsoft.Extensions.Configuration.*, .Logging y .Options.ConfigurationExtensions
+         los provee el FrameworkReference Microsoft.AspNetCore.App (ver NU1510). -->
+    <PackageReference Include="Npgsql" Version="10.0.3" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mozo.Domain\Mozo.Domain.csproj" />
+  </ItemGroup>
+
+
+</Project>

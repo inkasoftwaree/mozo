@@ -13,7 +13,7 @@ import { PaisService } from '@app/modules/maestro/services/pais.service';
 import { MSG_FIELD_FORM } from '@app/core/global/constants';
 import { MenuControlModel } from '@app/shared/models/controls/menu-control.model';
 import { EmpresaModuloFormPage } from "../empresa-modulo/empresa-modulo-form.page";
-import { RedSocialFormPage } from "@app/modules/maestro/pages/red-social/red-social-form.page";
+import { PersonaRedSocialFormPage } from "@app/modules/maestro/pages/persona-red-social/persona-red-social-form.page";
 import { FORMATO_ARCHIVO, TIPO_MAESTRO } from '@app/core/global/tipo.constants';
 import { TipoArchivoCatalogoService } from '@app/core/services/tipo-archivo-catalogo.service';
 import { ArchivoModel } from '@app/shared/models/maestro/archivo.model';
@@ -24,7 +24,7 @@ import { EmpresaModel } from '@app/shared/models/seguridad/empresa.model';
 @Component({
   selector: 'mz-empresa-form-page',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonControl, FormFieldControl, EmpresaModuloFormPage, RedSocialFormPage, FileSingleComponent],
+  imports: [ReactiveFormsModule, ButtonControl, FormFieldControl, EmpresaModuloFormPage, PersonaRedSocialFormPage, FileSingleComponent],
   templateUrl: './empresa-form.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

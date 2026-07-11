@@ -1,3 +1,6 @@
+
+@if(step() === 'login'){
+
 <form [formGroup]="form" (ngSubmit)="onSave()" autocomplete="on">
   <div class="grid gap-4">
     <div>
@@ -55,3 +58,30 @@
     </div>
   </div>
 </form>
+}
+@else{
+
+<div role="alert" class="alert alert-info alert-soft mb-2">
+  <span>Seleccionar Empresa</span>
+</div>
+ 
+  
+
+
+    <div class="space-y-2">
+
+        @for(empresa of empresas(); track empresa.coEmpresa){
+
+            <button
+                class="btn btn-outline w-full"
+                (click)="seleccionarEmpresa(empresa.coEmpresa??0)">
+
+                {{empresa.noEmpresa}}
+
+            </button>
+
+        }
+
+    </div>
+
+}

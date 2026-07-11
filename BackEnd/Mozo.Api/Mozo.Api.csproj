@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<!-- Se genera el XML para enriquecer OpenAPI/Scalar, pero no exigimos doc en cada
+         helper interno (CS1591: falta comentario XML para miembro público). -->
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+	</PropertyGroup>
+
+
+
+	<ItemGroup>
+		<Compile Remove="EndPoints\Web\**" />
+		<Compile Remove="SaveImagen\**" />
+		<Content Remove="EndPoints\Web\**" />
+		<Content Remove="SaveImagen\**" />
+		<EmbeddedResource Remove="EndPoints\Web\**" />
+		<EmbeddedResource Remove="SaveImagen\**" />
+		<None Remove="EndPoints\Web\**" />
+		<None Remove="SaveImagen\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="EndPoints\Catalogo\AtributoEndPoints33.cs" />
+		<Compile Remove="EndPoints\Catalogo\ProductoindexEndPoints.cs" />
+		<Compile Remove="EndPoints\Login\PermisoApiController.cs" />
+		<Compile Remove="EndPoints\Login\PermisoEndPointsDoc.cs" />
+		<Compile Remove="EndPoints\Maestro\Report\TipoEndPoints.cs" />
+		<Compile Remove="EndPoints\Maestro\UploadEndPoints.cs" />
+		<Compile Remove="EndPoints\Seguridad\UploadApiController.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.16.7" />
+
+		<!-- Fija la rama 2.x parcheada (GHSA-v5pm-xwqc-g5wc): 2.7.5+ corrige la vuln y
+	       mantiene IOpenApiMediaType.Example asignable, requerido por el source generator
+	       de Microsoft.AspNetCore.OpenApi 10.0.x. La rama 3.x lo hace de solo lectura. -->
+		<PackageReference Include="Microsoft.OpenApi" Version="2.10.0" />
+
+		<PackageReference Include="Npgsql" Version="10.0.3" />
+
+		<PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Comun\Mozo.Domain\Mozo.Domain.csproj" />
+		<ProjectReference Include="..\Comun\Mozo.Infrastructure\Mozo.Infrastructure.csproj" />
+		<ProjectReference Include="..\Comun\Mozo.Shared\Mozo.Shared.csproj" />
+		<ProjectReference Include="..\Mozo.App.Catalogo\Mozo.App.Catalogo.csproj" />
+		<ProjectReference Include="..\Mozo.App.Login\Mozo.App.Login.csproj" />
+		<ProjectReference Include="..\Mozo.App.Maestro\Mozo.App.Maestro.csproj" />
+		<ProjectReference Include="..\Mozo.App.Seguridad\Mozo.App.Seguridad.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="EndPoints\Maestro\Report\" />
+		<Folder Include="logs\" />
+	</ItemGroup>
+
+</Project>

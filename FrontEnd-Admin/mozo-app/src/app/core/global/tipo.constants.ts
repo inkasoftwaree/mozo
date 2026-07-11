@@ -40,7 +40,7 @@ export const TIPO_MAESTRO = {
     situacionEducativa: {
       grupo: 23
     },
-    redSocial: {
+    personaRedSocial: {
       grupo: 25,
       items: {
         telefonoMovil: 1,

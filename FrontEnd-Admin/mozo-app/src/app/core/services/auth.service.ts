@@ -6,7 +6,7 @@ import { CredencialModel } from '@sharedModels/seguridad/auth/credencial.model';
 import { API_ROUTES, STORAGE_KEYS } from '@app/core/global/constants';
 import { ModuloUsuarioModel } from '@app/shared/models/seguridad/modulo-usuario.model';
 import { OptionService } from '@app/core/services/option.service';
-import { PermisoModel } from '@app/shared/models/seguridad/permiso.model';
+import { UsuarioModel } from '@app/shared/models/seguridad/usuario.model';
 import { UrlApiService } from './url-api.service';
 import { TipoArchivoCatalogoService } from './tipo-archivo-catalogo.service';
 
@@ -25,7 +25,7 @@ export class AuthService {
   private readonly tipoArchivoCatalogoService = inject(TipoArchivoCatalogoService);
 
   // ── URLs ────────────────────────────────────────────────────────────────────
-  private readonly permisoUrl = this.api.buildUrl(API_ROUTES.login.permiso);
+  private readonly usuarioUrl = this.api.buildUrl(API_ROUTES.login.usuario);
   private readonly ingresoUrl = this.api.buildUrl(API_ROUTES.login.ingreso);
   private readonly baseMenuUrl = this.api.buildUrl(API_ROUTES.login.menu);
 
@@ -40,13 +40,32 @@ export class AuthService {
   // ══════════════════════════════════════════════════════════════════════════
 
   /** Inicia sesión con credenciales del usuario. */
-  login(credenciales: PermisoModel): Observable<CredencialResponseModel> {
+  login(credenciales: UsuarioModel): Observable<CredencialResponseModel> {
     const { noUsuario, noClave } = credenciales;
     return this.http
-      .post<CredencialResponseModel>(this.permisoUrl, { noUsuario, noClave })
-      .pipe(tap(res => this.handleAuthSuccess(res)));
+      .post<CredencialResponseModel>(this.usuarioUrl, { noUsuario, noClave })
+      .pipe(tap(res => {
+        if (res.flRequiereSeleccionEmpresa === 0)
+          this.handleAuthSuccess(res);
+      })
+      );
   }
 
+  loginEmpresa(
+    tokenTemporal: string,
+    coEmpresa: number
+  ): Observable<CredencialResponseModel> {
+    return this.http
+      .post<CredencialResponseModel>(`${this.usuarioUrl}/login/empresa`,
+        { coEmpresa },
+        {
+          headers: {
+            Authorization: `Bearer ${tokenTemporal}`
+          }
+        }
+      )
+      .pipe(tap(res => this.handleAuthSuccess(res)));
+  }
 
   /**
    * Renueva el access token usando el refresh token.
@@ -163,12 +182,15 @@ export class AuthService {
   // ══════════════════════════════════════════════════════════════════════════
 
   /** Persiste los datos de autenticación y notifica a los suscriptores. */
-  private handleAuthSuccess({ credencial, noToken, noTokenRefresh }: CredencialResponseModel): void {
-    localStorage.setItem(STORAGE_KEYS.TOKEN, noToken);
-    localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, noTokenRefresh);
-    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(credencial));
+  private handleAuthSuccess(response: CredencialResponseModel): void {
+     if (!response.credencial)
+        return;
+      
+    localStorage.setItem(STORAGE_KEYS.TOKEN, response.noToken);
+    localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, response.noTokenRefresh);
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.credencial));
 
-    this.userSignal.set(credencial);
+    this.userSignal.set(response.credencial);
   }
 
   /** Decodifica el payload de un JWT sin librerías externas. */

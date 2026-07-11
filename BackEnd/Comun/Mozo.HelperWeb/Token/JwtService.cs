@@ -8,12 +8,14 @@ using Mozo.Model.Seguridad.Auth;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using static Mozo.Helper.Enu.EnuTipoGeneral.FormatoArchivo.Maestro;
 
 namespace Mozo.HelperWeb.Token;
 
 public interface IJwtService
 {
     string GenerateToken(CredencialModel credential);
+    string GenerateAuthenticationToken(CredencialModel credential);
     string GenerateRefreshToken();
     DateTime GetRefreshTokenExpiration();
 
@@ -57,20 +59,7 @@ public sealed class JwtService : IJwtService
     public string GenerateToken(
         CredencialModel credential)
     {
-        //string privateKeyPath = _configuration["JwtBearerTokenSettings:PrivateKeyPath"]!;
-        //string privateKeyPem = File.ReadAllText(privateKeyPath);
-        //RSA rsa = RSA.Create(); rsa.ImportFromPem(privateKeyPem);
-
-        //RsaSecurityKey rsaKey = new(rsa)
-        //{
-        //    KeyId = "key-2026-01"
-        //};
-
-        var signingCredentials =
-            new SigningCredentials(
-                _keys.PrivateKey,
-                SecurityAlgorithms.RsaSha256);
-
+        SigningCredentials signingCredentials = new ( _keys.PrivateKey, SecurityAlgorithms.RsaSha256);
 
         // Datos del usuario
         List<Claim> claimCollection = new();
@@ -84,22 +73,19 @@ public sealed class JwtService : IJwtService
         claimCollection.Add(new Claim(JwtRegisteredClaimNames.Sub, credential.NoUsuario ?? string.Empty));
 
         if (credential.CoEmpresa != null)
-            claimCollection.Add(new Claim("CoEmpresa", credential.CoEmpresa!.Text()));
+            claimCollection.Add(new Claim("CoEmpresa", credential.CoEmpresa!.Text()!));
 
-        if (credential.CoPersona != null)
-            claimCollection.Add(new Claim("CoPersona", credential.CoPersona!.Text()));
+        if (credential.CoEntidad != null)
+            claimCollection.Add(new Claim("CoEntidad", credential.CoEntidad!.Text()!));
 
-        if (credential.CoPermiso != null)
-            claimCollection.Add(new Claim("CoPermiso", credential.CoPermiso!.Text()));
+        if (credential.CoUsuario != null)
+            claimCollection.Add(new Claim("CoUsuario", credential.CoUsuario!.Text()!));
 
         if (credential.CoIngreso != null)
-            claimCollection.Add(new Claim("CoIngreso", credential.CoIngreso!.Text()));
+            claimCollection.Add(new Claim("CoIngreso", credential.CoIngreso!.Text()!));
 
         if (credential.NoUsuario != null)
-            claimCollection.Add(
-      new Claim(
-          "NoUsuario",
-          credential.NoUsuario));
+            claimCollection.Add(new Claim("NoUsuario", credential.NoUsuario));
 
 
         DateTime feExpiracion = utcNow.AddMinutes(double.Parse(_configuration["JwtBearerTokenSettings:ExpiryTimeInMinute"]!));
@@ -118,7 +104,48 @@ public sealed class JwtService : IJwtService
 
         return noToken;
     }
+    public string GenerateAuthenticationToken(
+      CredencialModel credential)
+    {
+        SigningCredentials signingCredentials = new(_keys.PrivateKey, SecurityAlgorithms.RsaSha256);
 
+        // Datos del usuario
+        List<Claim> claimCollection = new();
+
+        DateTime utcNow = DateTime.UtcNow;
+
+        claimCollection.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+
+        claimCollection.Add(new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(utcNow).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64));
+
+        claimCollection.Add(new Claim(JwtRegisteredClaimNames.Sub, credential.NoUsuario ?? string.Empty));
+
+        if (credential.CoEntidad != null)
+            claimCollection.Add(new Claim("CoEntidad", credential.CoEntidad!.Text()!));
+
+        if (credential.CoUsuario != null)
+            claimCollection.Add(new Claim("CoUsuario", credential.CoUsuario!.Text()!));
+
+        if (credential.NoUsuario != null)
+            claimCollection.Add(new Claim("NoUsuario", credential.NoUsuario));
+
+    
+        DateTime feExpiracion = utcNow.AddMinutes(5);
+
+        JwtSecurityToken jwtSecurityToken =
+            new JwtSecurityToken(
+                issuer: _configuration["JwtBearerTokenSettings:Issuer"],
+                audience: _configuration["JwtBearerTokenSettings:Audience"],
+                claims: claimCollection,
+                notBefore: utcNow,
+                expires: feExpiracion,
+                signingCredentials: signingCredentials
+            );
+
+        string noToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+
+        return noToken;
+    }
     public static bool TokenNoExpiro(DateTime? to, DateTime? from)
     {
         DateTime now = DateTime.UtcNow;

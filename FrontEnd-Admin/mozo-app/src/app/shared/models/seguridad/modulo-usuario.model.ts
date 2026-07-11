@@ -2,8 +2,9 @@ import { MenuModel } from "./menu.model";
 
 export interface ModuloUsuarioModel {
   coModuloUsuario: number;
+  coEmpresa: number;
   coModulo: number;
-  coPersona: number;
+  coUsuario: number;
   coPerfil: number;
   nuOrden: number;
   noModulo: string;

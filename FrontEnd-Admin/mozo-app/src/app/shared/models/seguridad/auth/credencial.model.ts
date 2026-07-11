@@ -3,7 +3,7 @@ export interface CredencialModel{
   noNombreCompleto:string;
   coEmpresa:number;
   coPersona:number;
-  coPermiso:number;
+  coUsuario:number;
   coIngreso:number;
   feExpiration:number;
 }

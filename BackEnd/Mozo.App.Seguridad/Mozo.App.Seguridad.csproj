@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Comun\Mozo.Domain\Mozo.Domain.csproj" />
+    <ProjectReference Include="..\Comun\Mozo.Infrastructure\Mozo.Infrastructure.csproj" />
+    <ProjectReference Include="..\Mozo.App.Maestro\Mozo.App.Maestro.csproj" />
+  </ItemGroup>
+
+</Project>

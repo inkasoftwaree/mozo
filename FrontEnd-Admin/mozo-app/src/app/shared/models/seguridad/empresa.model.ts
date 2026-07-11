@@ -1,6 +1,5 @@
 import { BaseModel } from "@sharedModels/base.model";
 import { HorarioModel } from "@sharedModels/empresa/horario.interface";
-import { RedSocialModel } from "@app/shared/models/maestro/red-social.model";
 import { EmpresaModuloModel } from "@app/shared/models/seguridad/empresa-modulo.model";
 
 export interface EmpresaModel extends BaseModel {
@@ -19,5 +18,4 @@ export interface EmpresaModel extends BaseModel {
   nuDocumentoFiscal?: string;
   empresaModuloLst?: EmpresaModuloModel[];
   horarioCol?: HorarioModel[];
-  redSocialLst?: RedSocialModel[];
 }

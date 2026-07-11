@@ -1,0 +1,113 @@
+@for (seccion of secciones; track seccion.coTipo) {
+  <div class="mb-6">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="font-semibold text-sm">{{ seccion.noTipo }}</h3>
+      <mz-button-control
+        type="button"
+        [view]="MenuControlTypeEnum.New"
+        label=""
+        moreClass="btn-xs"
+        (clicked)="agregarFila(seccion.coTipo)" />
+    </div>
+
+    @if ((itemsPorTipo().get(seccion.coTipo) ?? []).length === 0) {
+      <p class="text-center text-sm text-base-content/40 py-4">Sin registros. Presione Nuevo.</p>
+    } @else {
+      <div class="space-y-2">
+        @for (item of (itemsPorTipo().get(seccion.coTipo) ?? []); track item.coPersonaRedSocial ?? item._tempId) {
+          @if (isEditando(item)) {
+            <div class="card bg-base-200/40 border border-base-200" [class.border-error]="hasRowErrors(item)">
+              <div class="card-body p-4 gap-3">
+                @if (hasRowErrors(item)) {
+                  <div class="alert alert-error alert-soft text-sm py-2" role="alert">
+                    Revise los campos marcados antes de guardar.
+                  </div>
+                }
+
+                <div class="grid grid-cols-12 gap-3">
+                  <mz-form-field-control label="Etiqueta" [colSpan]="6">
+                    <select
+                      class="select select-sm w-full"
+                      [(ngModel)]="item.coEtiqueta"
+                      [ngModelOptions]="{ standalone: true }">
+                      @for (e of etiquetas(); track e.coTipo) {
+                        <option [value]="e.coTipo">{{ e.noTipo }}</option>
+                      }
+                    </select>
+                  </mz-form-field-control>
+
+                  <mz-form-field-control label="Valor" [colSpan]="6" [errorMessage]="getRowError(item, 'noRedSocial')">
+                    <input
+                      class="input input-sm w-full"
+                      [(ngModel)]="item.noRedSocial"
+                      [ngModelOptions]="{ standalone: true }"
+                      placeholder="Valor..."
+                      (ngModelChange)="clearRowError(item, 'noRedSocial')" />
+                  </mz-form-field-control>
+
+                  @if (seccion.coTipo === TIPO_MAESTRO.general.personaRedSocial.items.redSocial) {
+                    <mz-form-field-control label="Tipo URL" [colSpan]="12">
+                      <select
+                        class="select select-sm w-full"
+                        [(ngModel)]="item.coTipoUrl"
+                        [ngModelOptions]="{ standalone: true }">
+                        @for (t of tiposUrl(); track t.coTipo) {
+                          <option [value]="t.coTipo">{{ t.noTipo }}</option>
+                        }
+                      </select>
+                    </mz-form-field-control>
+                  }
+
+                  @if (seccion.coTipo === TIPO_MAESTRO.general.personaRedSocial.items.telefonoMovil) {
+                    <div class="col-span-12">
+                      <label class="label cursor-pointer justify-start gap-3 py-0">
+                        <span class="label-text text-sm">Whatsapp</span>
+                        <input
+                          type="checkbox"
+                          class="toggle toggle-primary toggle-sm"
+                          [checked]="item.flWhatsapp === 1"
+                          (change)="item.flWhatsapp = $any($event.target).checked ? 1 : 0" />
+                      </label>
+                    </div>
+                  }
+                </div>
+
+                <div class="flex justify-end gap-2">
+                  <mz-button-control
+                    type="button"
+                    label="Guardar"
+                    moreClass="btn-xs"
+                    [view]="MenuControlTypeEnum.Save"
+                    (clicked)="guardarFila(item)" />
+                  <mz-button-control
+                    type="button"
+                    label="Cancelar"
+                    moreClass="btn-xs"
+                    [view]="MenuControlTypeEnum.Cancel"
+                    (clicked)="cancelarEdicion(item)" />
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="flex items-center gap-2 px-3 py-2 rounded-xl border border-base-200 bg-base-100 hover:bg-base-200/40 transition-colors">
+              @if (item.noEtiqueta) {
+                <span class="badge badge-ghost badge-xs shrink-0">{{ item.noEtiqueta }}</span>
+              }
+              @if (seccion.coTipo === TIPO_MAESTRO.general.personaRedSocial.items.telefonoMovil && item.flWhatsapp === 1) {
+                <ng-icon name="lucideMessageCircle" class="text-lg text-green-500 shrink-0" />
+              }
+              <span class="flex-1 min-w-0 truncate text-sm font-semibold">
+                {{ item.noRedSocial }}
+                @if (seccion.coTipo === TIPO_MAESTRO.general.personaRedSocial.items.redSocial && item.noTipoUrl) {
+                  <span class="font-normal opacity-60"> — {{ item.noTipoUrl }}</span>
+                }
+              </span>
+              <mz-button-control type="button" moreClass="btn-xs" label="" [view]="MenuControlTypeEnum.Edit" (clicked)="editarFila(item)" />
+              <mz-button-control type="button" moreClass="btn-xs" label="" [view]="MenuControlTypeEnum.Delete" (clicked)="eliminarFila(item)" />
+            </div>
+          }
+        }
+      </div>
+    }
+  </div>
+}

@@ -1,0 +1,20 @@
+
+using Mozo.Infrastructure.Persistence.Objects;
+
+namespace Mozo.App.Catalogo.Atributo;
+
+public static class AtributoDbObjects
+{
+    private const string Schema = "catalogo";
+    private static readonly DbObjectFactory.StandardDbObjects _std = DbObjectFactory.Standard(Schema, "atributo");
+
+    public static DbObject Insert => _std.Insert;
+    public static DbObject UpdateById => _std.UpdateById;
+    public static DbObject UpdateStateById => _std.UpdateStateById;
+    public static DbObject DeleteById => _std.DeleteById;
+    public static DbObject SelById => _std.SelById;
+    public static DbObject SelAll => _std.SelAll;
+
+    public static readonly DbObject SelAllActive =
+        new(Schema, "fn_atributo_sel_all_active", DbExecutionType.Select, DbReturnType.List);
+}
