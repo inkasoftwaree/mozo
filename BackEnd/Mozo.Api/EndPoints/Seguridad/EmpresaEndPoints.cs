@@ -51,7 +51,7 @@ public sealed partial class EmpresaEndPoints : IEndpoint
             .WithDescription("Obtener todas las Empresas");
 
         g.MapGet("/active", SelAllActiveAsync)
-            .CacheOutput(x => x.Expire(TimeSpan.FromHours(24)).Tag(CacheTag))
+            .CacheOutput(CacheTag)
             .WithResponses<IEnumerable<EmpresaOption>>(StatusCodes.Status200OK)
             .WithDescription("Obtener todas las Empresas activas");
     }
