@@ -27,7 +27,7 @@ public sealed partial class PersonaJuridicaEndPoints : IEndpoint
         g.MapPut("/", UpdateAsync);
         g.MapGet("/", SelByIdAsync);
         g.MapGet("/all", SelAllAsync);
-        g.MapGet("/active", SelAllActiveAsync).CacheOutput(x => x.Expire(TimeSpan.FromHours(24)).Tag("PersonaNatural_SelAllActive"));
+        g.MapGet("/active", SelAllActiveAsync);
     }
 
 }
