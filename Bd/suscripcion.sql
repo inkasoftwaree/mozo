@@ -295,3 +295,59 @@ CREATE INDEX "Suscripcion_Suscripcion_Estado_Idx" ON suscripcion.tblsuscripcion 
 CREATE INDEX "Suscripcion_Suscripcion_Renovacion_Idx" ON suscripcion.tblsuscripcion USING btree (ferenovacion);
 CREATE INDEX "Suscripcion_SuscripcionPago_Suscripcion_Idx" ON suscripcion.tblsuscripcionpago USING btree (cosuscripcion);
 CREATE INDEX "Suscripcion_SuscripcionPago_Empresa_Idx" ON suscripcion.tblsuscripcionpago USING btree (coempresa);
+
+--
+-- ============================================================
+-- 6) tblsuscripcionmovimiento: historial FUNCIONAL de la suscripción
+--    (activación / renovación / cambio de estado / cancelación).
+--    Es dato de negocio, INDEPENDIENTE del log técnico seguridad.audgeneral
+--    (que registra ediciones/borrados de todas las tablas, no la historia).
+-- ============================================================
+--
+
+CREATE SEQUENCE suscripcion.tblsuscripcionmovimientoseq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE suscripcion.tblsuscripcionmovimientoseq OWNER TO postgres;
+
+CREATE TABLE suscripcion.tblsuscripcionmovimiento (
+    cosuscripcionmovimiento bigint DEFAULT nextval('suscripcion.tblsuscripcionmovimientoseq'::regclass) NOT NULL,
+    cosuscripcion bigint NOT NULL,                       -- FK suscripcion.tblsuscripcion
+    coempresa bigint NOT NULL,                           -- FK seguridad.tblempresa
+    cotipomovimiento bigint NOT NULL,                    -- FK maestro.trftipogeneral (cogrupo 42)
+    coestadoanterior bigint,                             -- FK maestro.trftipogeneral (NULL en la activación)
+    coestadonuevo bigint NOT NULL,                       -- FK maestro.trftipogeneral
+    fefinanterior date,                                  -- vigencia antes del movimiento
+    fefinactual date,                                    -- vigencia después del movimiento
+    femovimiento timestamp without time zone DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'::text) NOT NULL,
+    txnota character varying(500),
+    cousucre integer NOT NULL,
+    flestreg boolean DEFAULT true NOT NULL
+);
+
+ALTER TABLE suscripcion.tblsuscripcionmovimiento OWNER TO postgres;
+
+ALTER TABLE ONLY suscripcion.tblsuscripcionmovimiento
+    ADD CONSTRAINT "Suscripcion_SuscripcionMovimiento_Pk" PRIMARY KEY (cosuscripcionmovimiento);
+
+ALTER TABLE ONLY suscripcion.tblsuscripcionmovimiento
+    ADD CONSTRAINT "Suscripcion_SuscripcionMovimiento_Suscripcion_Fk" FOREIGN KEY (cosuscripcion) REFERENCES suscripcion.tblsuscripcion(cosuscripcion);
+
+ALTER TABLE ONLY suscripcion.tblsuscripcionmovimiento
+    ADD CONSTRAINT "Suscripcion_SuscripcionMovimiento_Empresa_Fk" FOREIGN KEY (coempresa) REFERENCES seguridad.tblempresa(coempresa);
+
+ALTER TABLE ONLY suscripcion.tblsuscripcionmovimiento
+    ADD CONSTRAINT "Suscripcion_SuscripcionMovimiento_Tipo_Fk" FOREIGN KEY (cotipomovimiento) REFERENCES maestro.trftipogeneral(cotipogeneral);
+
+ALTER TABLE ONLY suscripcion.tblsuscripcionmovimiento
+    ADD CONSTRAINT "Suscripcion_SuscripcionMovimiento_EstadoAnt_Fk" FOREIGN KEY (coestadoanterior) REFERENCES maestro.trftipogeneral(cotipogeneral);
+
+ALTER TABLE ONLY suscripcion.tblsuscripcionmovimiento
+    ADD CONSTRAINT "Suscripcion_SuscripcionMovimiento_EstadoNue_Fk" FOREIGN KEY (coestadonuevo) REFERENCES maestro.trftipogeneral(cotipogeneral);
+
+CREATE INDEX "Suscripcion_SuscripcionMovimiento_Suscripcion_Idx" ON suscripcion.tblsuscripcionmovimiento USING btree (cosuscripcion);
+CREATE INDEX "Suscripcion_SuscripcionMovimiento_Empresa_Idx" ON suscripcion.tblsuscripcionmovimiento USING btree (coempresa);

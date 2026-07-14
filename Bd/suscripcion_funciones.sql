@@ -337,6 +337,14 @@ BEGIN
           SELECT 1 FROM seguridad.segempresamodulo em
           WHERE em.coempresa = p_coempresa AND em.comodulo = pm.comodulo);
 
+    -- historial funcional: activación (dato de negocio, no auditoría técnica)
+    INSERT INTO suscripcion.tblsuscripcionmovimiento(
+        cosuscripcion, coempresa, cotipomovimiento, coestadoanterior, coestadonuevo, fefinanterior, fefinactual, cousucre)
+    VALUES (
+        v_cosuscripcion, p_coempresa,
+        (SELECT cotipogeneral FROM maestro.trftipogeneral WHERE nocomando = 'suscripcion.mov.activacion'),
+        NULL, p_coestado, NULL, v_fefin, p_cousucre);
+
     RETURN v_cosuscripcion;
 END;
 $$;
@@ -350,16 +358,32 @@ ALTER FUNCTION suscripcion.fn_suscripcion_insert(p_coempresa bigint, p_coplan bi
 CREATE FUNCTION suscripcion.fn_suscripcion_renovar(p_cosuscripcion bigint, p_coestado bigint, p_cousumod integer) RETURNS integer
     LANGUAGE plpgsql
     AS $$
-DECLARE v_rows integer;
+DECLARE v_rows integer; v_coempresa bigint; v_estadoant bigint; v_fefinant date; v_fefinnue date;
 BEGIN
+    SELECT coempresa, coestado, fefin INTO v_coempresa, v_estadoant, v_fefinant
+    FROM suscripcion.tblsuscripcion WHERE cosuscripcion = p_cosuscripcion AND flestreg = true;
+    IF NOT FOUND THEN
+        RETURN 0;
+    END IF;
+
     UPDATE suscripcion.tblsuscripcion
     SET fefin = (COALESCE(fefin, (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')::date) + make_interval(months => nuciclomeses))::date,
         ferenovacion = (COALESCE(fefin, (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')::date) + make_interval(months => nuciclomeses))::date,
         coestado = p_coestado,
         cousumod = p_cousumod,
         femod = CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
-    WHERE cosuscripcion = p_cosuscripcion AND flestreg = true;
+    WHERE cosuscripcion = p_cosuscripcion AND flestreg = true
+    RETURNING fefin INTO v_fefinnue;
     GET DIAGNOSTICS v_rows = ROW_COUNT;
+
+    -- historial funcional: renovación
+    INSERT INTO suscripcion.tblsuscripcionmovimiento(
+        cosuscripcion, coempresa, cotipomovimiento, coestadoanterior, coestadonuevo, fefinanterior, fefinactual, cousucre)
+    VALUES (
+        p_cosuscripcion, v_coempresa,
+        (SELECT cotipogeneral FROM maestro.trftipogeneral WHERE nocomando = 'suscripcion.mov.renovacion'),
+        v_estadoant, p_coestado, v_fefinant, v_fefinnue, p_cousumod);
+
     RETURN v_rows;
 END;
 $$;
@@ -374,8 +398,14 @@ ALTER FUNCTION suscripcion.fn_suscripcion_renovar(p_cosuscripcion bigint, p_coes
 CREATE FUNCTION suscripcion.fn_suscripcion_cancelar(p_cosuscripcion bigint, p_coestado bigint, p_cousumod integer) RETURNS integer
     LANGUAGE plpgsql
     AS $$
-DECLARE v_rows integer;
+DECLARE v_rows integer; v_coempresa bigint; v_estadoant bigint; v_fefin date;
 BEGIN
+    SELECT coempresa, coestado, fefin INTO v_coempresa, v_estadoant, v_fefin
+    FROM suscripcion.tblsuscripcion WHERE cosuscripcion = p_cosuscripcion AND flestreg = true;
+    IF NOT FOUND THEN
+        RETURN 0;
+    END IF;
+
     UPDATE suscripcion.tblsuscripcion
     SET coestado = p_coestado,
         flautorenovar = false,
@@ -384,6 +414,15 @@ BEGIN
         femod = CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
     WHERE cosuscripcion = p_cosuscripcion AND flestreg = true;
     GET DIAGNOSTICS v_rows = ROW_COUNT;
+
+    -- historial funcional: cancelación
+    INSERT INTO suscripcion.tblsuscripcionmovimiento(
+        cosuscripcion, coempresa, cotipomovimiento, coestadoanterior, coestadonuevo, fefinanterior, fefinactual, cousucre)
+    VALUES (
+        p_cosuscripcion, v_coempresa,
+        (SELECT cotipogeneral FROM maestro.trftipogeneral WHERE nocomando = 'suscripcion.mov.cancelacion'),
+        v_estadoant, p_coestado, v_fefin, v_fefin, p_cousumod);
+
     RETURN v_rows;
 END;
 $$;
@@ -394,14 +433,28 @@ ALTER FUNCTION suscripcion.fn_suscripcion_cancelar(p_cosuscripcion bigint, p_coe
 CREATE FUNCTION suscripcion.fn_suscripcion_update_estado_by_id(p_cosuscripcion bigint, p_coestado bigint, p_cousumod integer) RETURNS integer
     LANGUAGE plpgsql
     AS $$
-DECLARE v_rows integer;
+DECLARE v_rows integer; v_coempresa bigint; v_estadoant bigint; v_fefin date;
 BEGIN
+    SELECT coempresa, coestado, fefin INTO v_coempresa, v_estadoant, v_fefin
+    FROM suscripcion.tblsuscripcion WHERE cosuscripcion = p_cosuscripcion;
+
     UPDATE suscripcion.tblsuscripcion
     SET coestado = p_coestado,
         cousumod = p_cousumod,
         femod = CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
     WHERE cosuscripcion = p_cosuscripcion AND (coestado IS DISTINCT FROM p_coestado);
     GET DIAGNOSTICS v_rows = ROW_COUNT;
+
+    -- historial funcional: cambio de estado (solo si efectivamente cambió)
+    IF v_rows > 0 THEN
+        INSERT INTO suscripcion.tblsuscripcionmovimiento(
+            cosuscripcion, coempresa, cotipomovimiento, coestadoanterior, coestadonuevo, fefinanterior, fefinactual, cousucre)
+        VALUES (
+            p_cosuscripcion, v_coempresa,
+            (SELECT cotipogeneral FROM maestro.trftipogeneral WHERE nocomando = 'suscripcion.mov.cambioestado'),
+            v_estadoant, p_coestado, v_fefin, v_fefin, p_cousumod);
+    END IF;
+
     RETURN v_rows;
 END;
 $$;
@@ -525,3 +578,27 @@ END;
 $$;
 
 ALTER FUNCTION suscripcion.fn_suscripcionpago_sel_all_by_suscripcion(p_cosuscripcion bigint) OWNER TO postgres;
+
+
+-- ============================================================
+-- tblsuscripcionmovimiento (historial funcional)
+-- ============================================================
+
+CREATE FUNCTION suscripcion.fn_suscripcionmovimiento_sel_all_by_suscripcion(p_cosuscripcion bigint) RETURNS TABLE(cosuscripcionmovimiento bigint, cotipomovimiento bigint, notipomovimiento character varying, coestadoanterior bigint, noestadoanterior character varying, coestadonuevo bigint, noestadonuevo character varying, fefinanterior date, fefinactual date, femovimiento timestamp without time zone, txnota character varying)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT m.cosuscripcionmovimiento, m.cotipomovimiento, tm.notipo,
+           m.coestadoanterior, ea.notipo, m.coestadonuevo, en.notipo,
+           m.fefinanterior, m.fefinactual, m.femovimiento, m.txnota
+    FROM suscripcion.tblsuscripcionmovimiento m
+    JOIN maestro.trftipogeneral tm ON tm.cotipogeneral = m.cotipomovimiento
+    LEFT JOIN maestro.trftipogeneral ea ON ea.cotipogeneral = m.coestadoanterior
+    JOIN maestro.trftipogeneral en ON en.cotipogeneral = m.coestadonuevo
+    WHERE m.cosuscripcion = p_cosuscripcion AND m.flestreg = true
+    ORDER BY m.femovimiento DESC, m.cosuscripcionmovimiento DESC;
+END;
+$$;
+
+ALTER FUNCTION suscripcion.fn_suscripcionmovimiento_sel_all_by_suscripcion(p_cosuscripcion bigint) OWNER TO postgres;

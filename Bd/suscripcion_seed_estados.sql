@@ -2,9 +2,10 @@
 -- Seed de estados para la Gestión de Suscripciones
 -- Tabla: maestro.trftipogeneral (catálogo global de tipos)
 --
--- Crea dos grupos nuevos (cogrupo libres, el máximo actual es 39):
+-- Crea tres grupos nuevos (cogrupo libres, el máximo actual es 39):
 --   * cogrupo = 40  -> Estado Suscripción (trial/activa/vencida/suspendida/cancelada)
 --   * cogrupo = 41  -> Estado Pago        (pendiente/pagado/fallido/reembolsado)
+--   * cogrupo = 42  -> Tipo Movimiento    (activación/renovación/cambio estado/...)
 --
 -- Estos son los valores que consumen suscripcion.tblsuscripcion.coestado y
 -- suscripcion.tblsuscripcionpago.coestado (FK -> maestro.trftipogeneral).
@@ -31,6 +32,24 @@ FROM (VALUES
     (40,         3,           -100,         'Vencida',             '40x3',          'suscripcion.estado.vencida',             false),
     (40,         4,           -100,         'Suspendida',          '40x4',          'suscripcion.estado.suspendida',          false),
     (40,         5,           -100,         'Cancelada',           '40x5',          'suscripcion.estado.cancelada',           false)
+) AS v(cogrupo, nuorden, comodulo, notipo, nosigla, nocomando, fldefault)
+WHERE NOT EXISTS (
+    SELECT 1 FROM maestro.trftipogeneral t
+    WHERE t.cogrupo = v.cogrupo AND t.nuorden = v.nuorden
+);
+
+-- ============================================================
+-- cogrupo 42: Tipo Movimiento (historial funcional de la suscripción)
+-- ============================================================
+INSERT INTO maestro.trftipogeneral (cogrupo, nuorden, comodulo, notipo, nosigla, nocomando, flestreg, fldelete, fldefault)
+SELECT v.cogrupo, v.nuorden, v.comodulo, v.notipo, v.nosigla, v.nocomando, true, false, v.fldefault
+FROM (VALUES
+    (42::bigint, 1::smallint, -100::bigint, 'Activación'::varchar,     '42x1'::varchar, 'suscripcion.mov.activacion'::varchar,   false),
+    (42,         2,           -100,         'Renovación',              '42x2',          'suscripcion.mov.renovacion',            false),
+    (42,         3,           -100,         'Cambio de estado',        '42x3',          'suscripcion.mov.cambioestado',          false),
+    (42,         4,           -100,         'Suspensión',              '42x4',          'suscripcion.mov.suspension',            false),
+    (42,         5,           -100,         'Reactivación',            '42x5',          'suscripcion.mov.reactivacion',          false),
+    (42,         6,           -100,         'Cancelación',             '42x6',          'suscripcion.mov.cancelacion',           false)
 ) AS v(cogrupo, nuorden, comodulo, notipo, nosigla, nocomando, fldefault)
 WHERE NOT EXISTS (
     SELECT 1 FROM maestro.trftipogeneral t
