@@ -23,7 +23,7 @@ public sealed partial class PerfilEndPoints : IEndpoint
         g.WithSecurity();
 
         g.MapPost("/", InsertAsync)
-             .WithResponsesValue<int>(StatusCodes.Status200OK)
+             .WithResponsesValue<int>(StatusCodes.Status201Created)
              .WithDescription("Insertar un Perfil");
 
         g.MapPut("/", UpdateByIdAsync)

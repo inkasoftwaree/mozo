@@ -1,4 +1,4 @@
-﻿using Mozo.Domain.Maestro;
+﻿using Mozo.App.Maestro.DocumentoIdentidad.Contracts;
 using Mozo.Infrastructure.Persistence;
 using System.Data;
 
@@ -6,7 +6,7 @@ namespace Mozo.App.Maestro.DocumentoIdentidad;
 
 public interface IDocumentoIdentidadService
 {
-    Task<IEnumerable<DocumentoIdentidadEntity>> SelAllActiveAsync(DocumentoIdentidadFilter f);
+    Task<IReadOnlyList<DocumentoIdentidadOption>> SelAllActiveAsync(DocumentoIdentidadFilter f);
 }
 
 public sealed class DocumentoIdentidadService : IDocumentoIdentidadService
@@ -18,11 +18,9 @@ public sealed class DocumentoIdentidadService : IDocumentoIdentidadService
         _database = database;
     }
 
-    public async Task<IEnumerable<DocumentoIdentidadEntity>> SelAllActiveAsync(DocumentoIdentidadFilter f) =>
-        await _database.ListAsync<DocumentoIdentidadEntity>(DocumentoIdentidadDbObjects.SelAllActive,
+    public Task<IReadOnlyList<DocumentoIdentidadOption>> SelAllActiveAsync(DocumentoIdentidadFilter f) =>
+        _database.ListAsync<DocumentoIdentidadOption>(DocumentoIdentidadDbObjects.SelAllActive,
             p => p.Add("CoPais", f.CoPais, DbType.Int32)
                   .Add("CoAmbito", f.CoAmbito, DbType.Int32)
          );
-
-
 }

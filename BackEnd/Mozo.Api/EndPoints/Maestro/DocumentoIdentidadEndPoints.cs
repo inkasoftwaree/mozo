@@ -10,6 +10,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Mozo.Api.Abstractions;
 using Mozo.App.Maestro.DocumentoIdentidad;
+using Mozo.App.Maestro.DocumentoIdentidad.Contracts;
 using Mozo.Domain.Maestro;
 
 namespace Mozo.Api.Maestro;
@@ -29,7 +30,7 @@ public sealed partial class DocumentoIdentidadEndPoints : IEndpoint
         g.WithSecurity();
 
         g.MapGet("/active", SelAllActiveAsync)
-          .WithResponses<IEnumerable<DocumentoIdentidadEntity>>(StatusCodes.Status200OK)
+          .WithResponses<IEnumerable<DocumentoIdentidadOption>>(StatusCodes.Status200OK)
           .WithDescription("Obtener todos los Documentos de Identidad")
           .CacheOutput(CacheTag);
     }

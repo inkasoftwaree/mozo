@@ -1,6 +1,6 @@
 using Mozo.Shared.Contract;
 
-namespace Mozo.App.Maestro.TipoParticular;
+namespace Mozo.App.Maestro.TipoParticular.Contracts;
 
 /// <summary>
 /// DTO plano para los listados paginados de Tipo Particular (SelAll y SelAllChildren).

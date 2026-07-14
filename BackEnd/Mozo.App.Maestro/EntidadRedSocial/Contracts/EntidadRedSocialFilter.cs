@@ -1,6 +1,6 @@
-﻿using Mozo.Shared.Contract;
+using Mozo.Shared.Contract;
 
-namespace Mozo.App.Maestro.EntidadRedSocial;
+namespace Mozo.App.Maestro.EntidadRedSocial.Contracts;
 
 public record EntidadRedSocialFilter : BaseFilter
 {

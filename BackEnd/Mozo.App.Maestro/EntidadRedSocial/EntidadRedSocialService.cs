@@ -1,4 +1,5 @@
-﻿using Mozo.Domain.Maestro;
+﻿using Mozo.App.Maestro.EntidadRedSocial.Contracts;
+using Mozo.Domain.Maestro;
 using Mozo.Infrastructure.Persistence;
 using Mozo.Infrastructure.Persistence.Builders;
 using Mozo.Shared.Services;
@@ -11,8 +12,8 @@ public interface IEntidadRedSocialService
     Task<int> InsertAsync(EntidadRedSocialEntity m);
     Task<int> UpdateByIdAsync(EntidadRedSocialEntity m);
     Task<int> DeleteByIdAsync(EntidadRedSocialFilter f);
-    Task<EntidadRedSocialEntity?> SelByIdAsync(EntidadRedSocialFilter f);
-    Task<IReadOnlyList<EntidadRedSocialEntity>> SelAllAsync(EntidadRedSocialFilter f);
+    Task<EntidadRedSocialEditResponse?> SelByIdAsync(EntidadRedSocialFilter f);
+    Task<IReadOnlyList<EntidadRedSocialListItem>> SelAllAsync(EntidadRedSocialFilter f);
 }
 
 public sealed class EntidadRedSocialService : IEntidadRedSocialService
@@ -52,12 +53,12 @@ public sealed class EntidadRedSocialService : IEntidadRedSocialService
             p => p.Add("CoEntidadRedSocial", f.CoEntidadRedSocial, DbType.Int32)
                   .AddUserDelete(_user.CoUsuarioRequired));
 
-    public Task<EntidadRedSocialEntity?> SelByIdAsync(EntidadRedSocialFilter f) =>
-        _database.FirstAsync<EntidadRedSocialEntity>(EntidadRedSocialDbObjects.SelById,
+    public Task<EntidadRedSocialEditResponse?> SelByIdAsync(EntidadRedSocialFilter f) =>
+        _database.FirstAsync<EntidadRedSocialEditResponse>(EntidadRedSocialDbObjects.SelById,
             p => p.Add("CoEntidadRedSocial", f.CoEntidadRedSocial, DbType.Int32));
 
-    public Task<IReadOnlyList<EntidadRedSocialEntity>> SelAllAsync(EntidadRedSocialFilter f) =>
-        _database.ListAsync<EntidadRedSocialEntity>(EntidadRedSocialDbObjects.SelAll,
+    public Task<IReadOnlyList<EntidadRedSocialListItem>> SelAllAsync(EntidadRedSocialFilter f) =>
+        _database.ListAsync<EntidadRedSocialListItem>(EntidadRedSocialDbObjects.SelAll,
             p => p
                 .Add("CoTipoRedSocial", f.CoTipoRedSocial, DbType.Int32)
                 .Add("CoEntidad", f.CoEntidad, DbType.Int32)

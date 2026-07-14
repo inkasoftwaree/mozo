@@ -131,7 +131,7 @@ builder.Services.AddOutputCache(options =>
 {
     // Sin filtro — 1 sola entrada en caché
     options.AddPolicy("pais", p => p.Expire(TimeSpan.FromHours(24)).Tag("pais"));
-    options.AddPolicy("empresa", p => p.Expire(TimeSpan.FromMinutes(60)).Tag("empresa"));
+    options.AddPolicy("empresa", p => p.Expire(TimeSpan.FromHours(24)).Tag("empresa"));
     options.AddPolicy("modulo", p => p.Expire(TimeSpan.FromHours(24)).Tag("modulo"));
 
     // Con filtro — varía por querystring

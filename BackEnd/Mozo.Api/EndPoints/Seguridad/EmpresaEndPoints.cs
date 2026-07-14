@@ -27,7 +27,7 @@ public sealed partial class EmpresaEndPoints : IEndpoint
         g.WithSecurity();
 
         g.MapPost("/", InsertAsync)
-             .WithResponsesValue<int>(StatusCodes.Status200OK)
+             .WithResponsesValue<int>(StatusCodes.Status201Created)
              .WithDescription("Insertar una Empresa");
 
         g.MapPut("/", UpdateByIdAsync)
@@ -51,10 +51,9 @@ public sealed partial class EmpresaEndPoints : IEndpoint
             .WithDescription("Obtener todas las Empresas");
 
         g.MapGet("/active", SelAllActiveAsync)
-            .CacheOutput(x => x.Expire(TimeSpan.FromHours(24)).Tag(CacheTag))
+            .CacheOutput(CacheTag)
             .WithResponses<IEnumerable<EmpresaOption>>(StatusCodes.Status200OK)
-            .WithDescription("Obtener todas las Empresas activas")
-            .CacheOutput(CacheTag);
+            .WithDescription("Obtener todas las Empresas activas");
     }
 
 }

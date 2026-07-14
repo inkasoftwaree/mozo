@@ -25,7 +25,7 @@ public sealed partial class EmpresaModuloEndPoints : IEndpoint
         g.WithSecurity();
 
         g.MapPost("/", InsertAsync)
-             .WithResponsesValue<int>(StatusCodes.Status200OK)
+             .WithResponsesValue<int>(StatusCodes.Status201Created)
              .WithDescription("Insertar una EmpresaModulo");
 
 

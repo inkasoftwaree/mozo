@@ -1,6 +1,6 @@
-﻿using Mozo.Shared.Contract;
+using Mozo.Shared.Contract;
 
-namespace Mozo.App.Maestro.TipoParticular;
+namespace Mozo.App.Maestro.TipoParticular.Contracts;
 
 public record TipoParticularFilter : BaseFilter
 {
@@ -9,5 +9,4 @@ public record TipoParticularFilter : BaseFilter
     public int? CoGrupoPadre { get; set; }
     public int? CoTipoParticularPadre { get; set; }
     public int? CoTipoParticular { get; set; }
-
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.OutputCaching;
 using Mozo.Api.Abstractions;
 using Mozo.App.Maestro.PersonaNatural;
+using Mozo.App.Maestro.PersonaNatural.Contracts;
 using Mozo.Domain.Maestro;
 using Mozo.Shared.Exceptions;
 
@@ -69,7 +70,7 @@ public partial class PersonaNaturalEndPoints
             [AsParameters] PersonaNaturalFilter f,
             IPersonaNaturalService IPersona)
     {
-        IEnumerable<PersonaNaturalEntity> r = await IPersona.SelAllActiveAsync(f);
+        IReadOnlyList<PersonaNaturalOption> r = await IPersona.SelAllActiveAsync(f);
         return Results.Ok(r);
     }
 
@@ -79,7 +80,7 @@ public partial class PersonaNaturalEndPoints
           [AsParameters] PersonaNaturalFilter f,
         IPersonaNaturalService IPersona)
     {
-        PersonaNaturalEntity? i = await IPersona.SelByIdAsync(f);
+        PersonaNaturalEditResponse? i = await IPersona.SelByIdAsync(f);
         if (i == null)
             return TypedResults.NotFound();
         return Results.Ok(i);

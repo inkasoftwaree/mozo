@@ -1,4 +1,5 @@
-﻿using Mozo.Domain.Maestro;
+﻿using Mozo.App.Maestro.EntidadDireccion.Contracts;
+using Mozo.Domain.Maestro;
 using Mozo.Infrastructure.Persistence;
 using Mozo.Infrastructure.Persistence.Builders;
 using Mozo.Shared.Services;
@@ -14,9 +15,9 @@ public interface IEntidadDireccionService
     Task<int> UpdateStateByIdAsync(EntidadDireccionEntity m);
     Task<int> UpdateDefaultAsync(EntidadDireccionEntity m);
     Task<int> DeleteByIdAsync(EntidadDireccionFilter f);
-    Task<EntidadDireccionEntity?> SelByIdAsync(EntidadDireccionFilter f);
-    Task<IReadOnlyList<EntidadDireccionEntity>> SelAllAsync(EntidadDireccionFilter f);
-    Task<IReadOnlyList<EntidadDireccionEntity>> SelAllActiveAsync(EntidadDireccionFilter f);
+    Task<EntidadDireccionEditResponse?> SelByIdAsync(EntidadDireccionFilter f);
+    Task<IReadOnlyList<EntidadDireccionListItem>> SelAllAsync(EntidadDireccionFilter f);
+    Task<IReadOnlyList<EntidadDireccionListItem>> SelAllActiveAsync(EntidadDireccionFilter f);
 
 }
 
@@ -72,16 +73,16 @@ public sealed class EntidadDireccionService : IEntidadDireccionService
             p => p.Add("CoEntidadDireccion", f.CoEntidadDireccion, DbType.Int32)
                   .AddUserDelete(_user.CoUsuarioRequired));
 
-    public Task<EntidadDireccionEntity?> SelByIdAsync(EntidadDireccionFilter f) =>
-        _database.FirstAsync<EntidadDireccionEntity>(EntidadDireccionDbObjects.SelById,
+    public Task<EntidadDireccionEditResponse?> SelByIdAsync(EntidadDireccionFilter f) =>
+        _database.FirstAsync<EntidadDireccionEditResponse>(EntidadDireccionDbObjects.SelById,
             p => p.Add("CoEntidadDireccion", f.CoEntidadDireccion, DbType.Int32));
 
-    public Task<IReadOnlyList<EntidadDireccionEntity>> SelAllAsync(EntidadDireccionFilter f) =>
-        _database.ListAsync<EntidadDireccionEntity>(EntidadDireccionDbObjects.SelAll,
+    public Task<IReadOnlyList<EntidadDireccionListItem>> SelAllAsync(EntidadDireccionFilter f) =>
+        _database.ListAsync<EntidadDireccionListItem>(EntidadDireccionDbObjects.SelAll,
             p => p.Add("CoEntidad", f.CoEntidad, DbType.Int32));
 
-    public Task<IReadOnlyList<EntidadDireccionEntity>> SelAllActiveAsync(EntidadDireccionFilter f) =>
-        _database.ListAsync<EntidadDireccionEntity>(EntidadDireccionDbObjects.SelAllActive,
+    public Task<IReadOnlyList<EntidadDireccionListItem>> SelAllActiveAsync(EntidadDireccionFilter f) =>
+        _database.ListAsync<EntidadDireccionListItem>(EntidadDireccionDbObjects.SelAllActive,
             p => p.Add("CoEntidad", f.CoEntidad, DbType.Int32));
 
     public Task<int> UpdateStateByIdAsync(EntidadDireccionEntity m) =>

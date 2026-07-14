@@ -1,5 +1,6 @@
 ﻿using Mozo.Api.Abstractions;
 using Mozo.App.Maestro.EntidadDireccion;
+using Mozo.App.Maestro.EntidadDireccion.Contracts;
 using Mozo.Domain.Maestro;
 
 namespace Mozo.Api.Maestro;
@@ -21,7 +22,7 @@ public sealed partial class EntidadDireccionEndPoints : IEndpoint
         g.WithSecurity();
 
         g.MapPost("/", InsertAsync)
-         .WithResponsesValue<int>(StatusCodes.Status200OK)
+         .WithResponsesValue<int>(StatusCodes.Status201Created)
          .WithDescription("Insertar una Dirección");
 
         g.MapPut("/", UpdateByIdAsync)
@@ -45,16 +46,16 @@ public sealed partial class EntidadDireccionEndPoints : IEndpoint
              .WithDescription("Eliminar una  Dirección");
 
         g.MapGet("/", SelByIdAsync)
-            .WithResponses<EntidadDireccionEntity>(StatusCodes.Status200OK)
+            .WithResponses<EntidadDireccionEditResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .WithDescription("Obtener una Dirección");
 
         g.MapGet("/all", SelAllAsync)
-          .WithResponses<IEnumerable<EntidadDireccionEntity>>(StatusCodes.Status200OK)
+          .WithResponses<IEnumerable<EntidadDireccionListItem>>(StatusCodes.Status200OK)
           .WithDescription("Obtener todas las Dirección");
 
         g.MapGet("/active", SelAllActiveAsync)
-     .WithResponses<IEnumerable<EntidadDireccionEntity>>(StatusCodes.Status200OK)
+     .WithResponses<IEnumerable<EntidadDireccionListItem>>(StatusCodes.Status200OK)
      .WithDescription("Obtener todas las Dirección activas");
     }
 }
@@ -115,7 +116,7 @@ public partial class EntidadDireccionEndPoints
             IEntidadDireccionService IEntidadDireccion
        )
     {
-        IEnumerable<EntidadDireccionEntity> r = await IEntidadDireccion.SelAllAsync(f);
+        IReadOnlyList<EntidadDireccionListItem> r = await IEntidadDireccion.SelAllAsync(f);
         return Results.Ok(r);
     }
 
@@ -125,7 +126,7 @@ public partial class EntidadDireccionEndPoints
         IEntidadDireccionService IEntidadDireccion
    )
     {
-        IEnumerable<EntidadDireccionEntity> r = await IEntidadDireccion.SelAllActiveAsync(f);
+        IReadOnlyList<EntidadDireccionListItem> r = await IEntidadDireccion.SelAllActiveAsync(f);
         return Results.Ok(r);
     }
 
@@ -136,7 +137,7 @@ public partial class EntidadDireccionEndPoints
         IEntidadDireccionService IEntidadDireccion
     )
     {
-        EntidadDireccionEntity? i = await IEntidadDireccion.SelByIdAsync(f);
+        EntidadDireccionEditResponse? i = await IEntidadDireccion.SelByIdAsync(f);
         if (i == null)
             return Results.NotFound();
         return Results.Ok(i);

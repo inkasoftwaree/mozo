@@ -1,8 +1,8 @@
-﻿using Mozo.Shared.Contract;
+using Mozo.Shared.Contract;
 
-namespace Mozo.App.Maestro.EntidadRol;
+namespace Mozo.App.Maestro.EntidadRol.Contracts;
 
-public record EntidadRolFilter : BaseFilter //PersonaTipoFilter>
+public record EntidadRolFilter : BaseFilter
 {
     public int? CoModulo { get; set; }
     public int? CoEntidad { get; set; }

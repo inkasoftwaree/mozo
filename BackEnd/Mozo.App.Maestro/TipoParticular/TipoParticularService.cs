@@ -1,4 +1,5 @@
-﻿using Mozo.Domain.Maestro;
+﻿using Mozo.App.Maestro.TipoParticular.Contracts;
+using Mozo.Domain.Maestro;
 using Mozo.Infrastructure.Persistence;
 using Mozo.Infrastructure.Persistence.Builders;
 using Mozo.Shared.Models;
@@ -15,15 +16,15 @@ public interface ITipoParticularService
     Task<int> UpdateDefaultAsync(TipoParticularEntity c);
     Task<int> DeleteByIdAsync(TipoParticularFilter f);
     Task<int> SelOrderNextAsync(TipoParticularFilter f);
-    Task<TipoParticularEntity?> SelByIdAsync(TipoParticularFilter f);
-    Task<TipoParticularEntity?> SelByIdGroupAsync(TipoParticularFilter f);
-    Task<TipoParticularEntity?> SelDefaultAsync(TipoParticularFilter f);
+    Task<TipoParticularEditResponse?> SelByIdAsync(TipoParticularFilter f);
+    Task<TipoParticularEditResponse?> SelByIdGroupAsync(TipoParticularFilter f);
+    Task<TipoParticularEditResponse?> SelDefaultAsync(TipoParticularFilter f);
     Task<PagedResult<TipoParticularListItem>> SelAllAsync(TipoParticularFilter f);
     Task<PagedResult<TipoParticularListItem>> SelAllChildrenAsync(TipoParticularFilter f);
-    Task<IEnumerable<TipoParticularEntity>> SelAllActiveGroupsByModuleAsync(TipoParticularFilter f);
-    Task<IEnumerable<TipoParticularEntity>> SelAllActiveAsync(TipoParticularFilter f);
-    Task<IEnumerable<TipoParticularEntity>> SelAllActiveChildrenAsync(TipoParticularFilter f);
-    Task<IEnumerable<TipoParticularEntity>> SelAllActiveFatherAndChildrenAsync(TipoParticularFilter f);
+    Task<IEnumerable<TipoParticularOption>> SelAllActiveGroupsByModuleAsync(TipoParticularFilter f);
+    Task<IEnumerable<TipoParticularOption>> SelAllActiveAsync(TipoParticularFilter f);
+    Task<IEnumerable<TipoParticularOption>> SelAllActiveChildrenAsync(TipoParticularFilter f);
+    Task<IEnumerable<TipoParticularOption>> SelAllActiveFatherAndChildrenAsync(TipoParticularFilter f);
 }
 
 public sealed class TipoParticularService : ITipoParticularService
@@ -94,19 +95,19 @@ public sealed class TipoParticularService : ITipoParticularService
                 .Add("CoGrupo", f.CoGrupo, DbType.Int32)
                 .Add("CoTipoParticularPadre", f.CoTipoParticularPadre, DbType.Int32));
 
-    public Task<TipoParticularEntity?> SelByIdAsync(TipoParticularFilter f) =>
-        _database.FirstAsync<TipoParticularEntity>(TipoParticularDbObjects.SelById,
+    public Task<TipoParticularEditResponse?> SelByIdAsync(TipoParticularFilter f) =>
+        _database.FirstAsync<TipoParticularEditResponse>(TipoParticularDbObjects.SelById,
             p => p
                 .AddEmpresa(_user.CoEmpresaRequired)
                 .Add("CoGrupo", f.CoGrupo, DbType.Int32)
                 .Add("CoTipoParticular", f.CoTipoParticular, DbType.Int32));
 
-    public Task<TipoParticularEntity?> SelByIdGroupAsync(TipoParticularFilter f) =>
-        _database.FirstAsync<TipoParticularEntity>(TipoParticularDbObjects.SelByIdGroup,
+    public Task<TipoParticularEditResponse?> SelByIdGroupAsync(TipoParticularFilter f) =>
+        _database.FirstAsync<TipoParticularEditResponse>(TipoParticularDbObjects.SelByIdGroup,
             p => p.Add("CoGrupo", f.CoGrupo, DbType.Int32));
 
-    public Task<TipoParticularEntity?> SelDefaultAsync(TipoParticularFilter f) =>
-        _database.FirstAsync<TipoParticularEntity>(TipoParticularDbObjects.SelDefault,
+    public Task<TipoParticularEditResponse?> SelDefaultAsync(TipoParticularFilter f) =>
+        _database.FirstAsync<TipoParticularEditResponse>(TipoParticularDbObjects.SelDefault,
             p => p
                 .AddEmpresa(_user.CoEmpresaRequired)
                 .Add("CoGrupo", f.CoGrupo, DbType.Int32));
@@ -157,9 +158,9 @@ public sealed class TipoParticularService : ITipoParticularService
     }
 
 
-    public async Task<IEnumerable<TipoParticularEntity>> SelAllActiveGroupsByModuleAsync(TipoParticularFilter f)
+    public async Task<IEnumerable<TipoParticularOption>> SelAllActiveGroupsByModuleAsync(TipoParticularFilter f)
     {
-        IEnumerable<TipoParticularEntity> r = await _database.ListAsync<TipoParticularEntity>(TipoParticularDbObjects.SelAllActiveGroupsByModulo,
+        IEnumerable<TipoParticularOption> r = await _database.ListAsync<TipoParticularOption>(TipoParticularDbObjects.SelAllActiveGroupsByModulo,
             p => p
                 .AddEmpresa(_user.CoEmpresaRequired)
                 .Add("CoModulo", f.CoModulo, DbType.Int32));
@@ -168,9 +169,9 @@ public sealed class TipoParticularService : ITipoParticularService
     }
 
 
-    public async Task<IEnumerable<TipoParticularEntity>> SelAllActiveAsync(TipoParticularFilter f)
+    public async Task<IEnumerable<TipoParticularOption>> SelAllActiveAsync(TipoParticularFilter f)
     {
-        IEnumerable<TipoParticularEntity> r = await _database.ListAsync<TipoParticularEntity>(TipoParticularDbObjects.SelAllActive,
+        IEnumerable<TipoParticularOption> r = await _database.ListAsync<TipoParticularOption>(TipoParticularDbObjects.SelAllActive,
             p => p
                .AddEmpresa(_user.CoEmpresaRequired)
                 .Add("CoGrupo", f.CoGrupo, DbType.Int32)
@@ -180,9 +181,9 @@ public sealed class TipoParticularService : ITipoParticularService
     }
 
 
-    public async Task<IEnumerable<TipoParticularEntity>> SelAllActiveChildrenAsync(TipoParticularFilter f)
+    public async Task<IEnumerable<TipoParticularOption>> SelAllActiveChildrenAsync(TipoParticularFilter f)
     {
-        IEnumerable<TipoParticularEntity> r = await _database.ListAsync<TipoParticularEntity>(TipoParticularDbObjects.SelAllActiveChildren,
+        IEnumerable<TipoParticularOption> r = await _database.ListAsync<TipoParticularOption>(TipoParticularDbObjects.SelAllActiveChildren,
             p => p
                .AddEmpresa(_user.CoEmpresaRequired)
                 .Add("CoGrupo", f.CoGrupo, DbType.Int32)
@@ -193,9 +194,9 @@ public sealed class TipoParticularService : ITipoParticularService
     }
 
 
-    public async Task<IEnumerable<TipoParticularEntity>> SelAllActiveFatherAndChildrenAsync(TipoParticularFilter f)
+    public async Task<IEnumerable<TipoParticularOption>> SelAllActiveFatherAndChildrenAsync(TipoParticularFilter f)
     {
-        IEnumerable<TipoParticularEntity> r = await _database.ListAsync<TipoParticularEntity>(TipoParticularDbObjects.SelAllActiveFatherAndChildren,
+        IEnumerable<TipoParticularOption> r = await _database.ListAsync<TipoParticularOption>(TipoParticularDbObjects.SelAllActiveFatherAndChildren,
             p => p
                 .AddEmpresa(_user.CoEmpresaRequired)
                 .Add("CoGrupo", f.CoGrupo, DbType.Int32)

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
 using Mozo.Api.Abstractions;
 using Mozo.App.Maestro.TipoGeneral;
+using Mozo.App.Maestro.TipoGeneral.Contracts;
 using Mozo.Domain.Maestro;
 
 namespace Mozo.Api.Maestro;
@@ -37,19 +38,19 @@ public sealed partial class TipoGeneralEndPoints : IEndpoint
         g.WithSecurity();
 
         g.MapGet("/", SelByIdAsync)
-          .WithResponses<TipoGeneralEntity>(StatusCodes.Status200OK)
+          .WithResponses<TipoGeneralEditResponse>(StatusCodes.Status200OK)
          .Produces(StatusCodes.Status404NotFound)
          .WithDescription("Obtener una Tipo General")
        ;
 
         g.MapGet("/active", SelAllActiveAsync)
-          .WithResponses<IEnumerable<TipoGeneralEntity>>(StatusCodes.Status200OK)
+          .WithResponses<IEnumerable<TipoGeneralOption>>(StatusCodes.Status200OK)
           .Produces(StatusCodes.Status404NotFound)
           .WithDescription("Obtener todos los Tipo General activos")
           .CacheOutput(CacheTag);
 
         g.MapGet("/modulos/active", SelAllActiveByModuleAsync)
-          .WithResponses<IEnumerable<TipoGeneralEntity>>(StatusCodes.Status200OK)
+          .WithResponses<IEnumerable<TipoGeneralOption>>(StatusCodes.Status200OK)
           .Produces(StatusCodes.Status404NotFound)
           .WithDescription("Obtener todos los Tipo General activos del Módulo")
          .CacheOutput(CacheTag);
@@ -64,7 +65,7 @@ public partial class TipoGeneralEndPoints
         [AsParameters]  TipoGeneralFilter f,
         ITipoGeneralService ITipoGeneral)
     {
-        TipoGeneralEntity? i = await ITipoGeneral.SelByIdAsync(f);
+        TipoGeneralEditResponse? i = await ITipoGeneral.SelByIdAsync(f);
         if (i == null)
             return Results.NotFound();
         return Results.Ok(i);
@@ -75,7 +76,7 @@ public partial class TipoGeneralEndPoints
         ITipoGeneralService ITipoGeneral
         )
     {     
-        IEnumerable<TipoGeneralEntity> r = await ITipoGeneral.SelAllActiveAsync(f);
+        IEnumerable<TipoGeneralOption> r = await ITipoGeneral.SelAllActiveAsync(f);
         return Results.Ok(r.OrderBy(x => x.NuOrden));
     }
 
@@ -84,7 +85,7 @@ public partial class TipoGeneralEndPoints
             [AsParameters] TipoGeneralFilter f,
             ITipoGeneralService ITipoGeneral)
     {       
-        IEnumerable<TipoGeneralEntity> r = await ITipoGeneral.SelAllActiveByModuleAsync(f);
+        IEnumerable<TipoGeneralOption> r = await ITipoGeneral.SelAllActiveByModuleAsync(f);
         return Results.Ok(r.OrderBy(x => x.NuOrden));
     }
 

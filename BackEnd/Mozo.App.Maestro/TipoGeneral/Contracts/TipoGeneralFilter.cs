@@ -1,11 +1,10 @@
-﻿using Mozo.Shared.Contract;
+using Mozo.Shared.Contract;
 
-namespace Mozo.App.Maestro.TipoGeneral;
+namespace Mozo.App.Maestro.TipoGeneral.Contracts;
 
 public record TipoGeneralFilter : BaseFilter
 {
     public int? CoGrupo { get; set; }
     public int? CoModulo { get; set; }
     public int? CoTipoGeneral { get; set; }
-
 }

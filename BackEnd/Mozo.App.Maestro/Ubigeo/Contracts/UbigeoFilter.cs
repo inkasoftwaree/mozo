@@ -1,5 +1,6 @@
-﻿using Mozo.Shared.Contract;
-namespace Mozo.App.Maestro.Ubigeo;
+using Mozo.Shared.Contract;
+
+namespace Mozo.App.Maestro.Ubigeo.Contracts;
 
 public record UbigeoFilter : BaseFilter
 {

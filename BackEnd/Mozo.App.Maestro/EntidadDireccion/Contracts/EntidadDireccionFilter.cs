@@ -1,6 +1,6 @@
-﻿using Mozo.Shared.Contract;
+using Mozo.Shared.Contract;
 
-namespace Mozo.App.Maestro.EntidadDireccion;
+namespace Mozo.App.Maestro.EntidadDireccion.Contracts;
 
 public record EntidadDireccionFilter : BaseFilter
 {

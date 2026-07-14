@@ -1,6 +1,6 @@
-﻿using Mozo.Shared.Contract;
+using Mozo.Shared.Contract;
 
-namespace Mozo.App.Maestro.PersonaJuridica;
+namespace Mozo.App.Maestro.PersonaJuridica.Contracts;
 
 public record PersonaJuridicaFilter : BaseFilter
 {

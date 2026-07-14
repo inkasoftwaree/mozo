@@ -1,11 +1,11 @@
-﻿using Mozo.Domain.Maestro;
+﻿using Mozo.App.Maestro.Pais.Contracts;
 using Mozo.Infrastructure.Persistence;
 
 namespace Mozo.App.Maestro.Pais;
 
 public interface IPaisService
 {
-    Task<IEnumerable<PaisEntity>> SelAllActiveAsync();
+    Task<IEnumerable<PaisOption>> SelAllActiveAsync();
 }
 
 public sealed class PaisService : IPaisService
@@ -17,9 +17,9 @@ public sealed class PaisService : IPaisService
         _database = database;
     }
 
-    public async Task<IEnumerable<PaisEntity>> SelAllActiveAsync()
+    public async Task<IEnumerable<PaisOption>> SelAllActiveAsync()
     {
-        IEnumerable<PaisEntity> r = await _database.ListAsync<PaisEntity, MonedaEntity, PaisEntity>(
+        IEnumerable<PaisOption> r = await _database.ListAsync<PaisOption, MonedaOption, PaisOption>(
             PaisDbObjects.SelAllActive,
             map: (pais, moneda) =>
             {
@@ -31,6 +31,4 @@ public sealed class PaisService : IPaisService
 
         return r.OrderBy(x => x.NoPais);
     }
-
-
 }

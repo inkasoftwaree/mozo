@@ -1,4 +1,5 @@
-﻿using Mozo.Domain.Maestro;
+﻿using Mozo.App.Maestro.EntidadRol.Contracts;
+using Mozo.Domain.Maestro;
 using Mozo.Infrastructure.Persistence;
 using Mozo.Infrastructure.Persistence.Builders;
 using Mozo.Shared.Services;
@@ -10,9 +11,9 @@ public interface IEntidadRolService
 {
     Task<int> InsertAsync(EntidadRolEntity c);
     Task<int> UpdateByIdAsync(EntidadRolEntity c);
-    Task<IEnumerable<EntidadRolEntity>> SelAllActiveByPersonAsync(EntidadRolFilter c);
-    Task<IEnumerable<EntidadRolEntity>> SelAllActiveByModuleAndPersonAsync(EntidadRolFilter c);
-    Task<IEnumerable<EntidadRolEntity>> SelAllActiveAsync(EntidadRolFilter c);
+    Task<IReadOnlyList<EntidadRolOption>> SelAllActiveByPersonAsync(EntidadRolFilter c);
+    Task<IReadOnlyList<EntidadRolOption>> SelAllActiveByModuleAndPersonAsync(EntidadRolFilter c);
+    Task<IReadOnlyList<EntidadRolOption>> SelAllActiveAsync(EntidadRolFilter c);
 }
 
 public sealed class EntidadRolService : IEntidadRolService
@@ -42,22 +43,20 @@ public sealed class EntidadRolService : IEntidadRolService
                 .Add("CoRolNegocio", c.CoRolNegocio, DbType.Int32)
                 .AddUserUpdate(_user.CoUsuarioRequired));
 
-    public async Task<IEnumerable<EntidadRolEntity>> SelAllActiveByPersonAsync(EntidadRolFilter c) =>
-        await _database.ListAsync<EntidadRolEntity>(EntidadRolDbObjects.SelAllActiveByPersona,
+    public Task<IReadOnlyList<EntidadRolOption>> SelAllActiveByPersonAsync(EntidadRolFilter c) =>
+        _database.ListAsync<EntidadRolOption>(EntidadRolDbObjects.SelAllActiveByPersona,
             p => p
                 .AddEmpresa(_user.CoEmpresaRequired)
                 .Add("CoEntidad", c.CoEntidad, DbType.Int32));
 
-    public async Task<IEnumerable<EntidadRolEntity>> SelAllActiveByModuleAndPersonAsync(EntidadRolFilter c) =>
-        await _database.ListAsync<EntidadRolEntity>(EntidadRolDbObjects.SelAllActiveByModuloPersona,
+    public Task<IReadOnlyList<EntidadRolOption>> SelAllActiveByModuleAndPersonAsync(EntidadRolFilter c) =>
+        _database.ListAsync<EntidadRolOption>(EntidadRolDbObjects.SelAllActiveByModuloPersona,
             p => p
                 .AddEmpresa(_user.CoEmpresaRequired)
                 .Add("CoModulo", c.CoModulo, DbType.Int32)
                 .Add("CoEntidad", c.CoEntidad, DbType.Int32));
 
-    public async Task<IEnumerable<EntidadRolEntity>> SelAllActiveAsync(EntidadRolFilter c) =>
-        await _database.ListAsync<EntidadRolEntity>(EntidadRolDbObjects.SelAllActive,
-            p => p.AddEmpresa(_user.CoEmpresaRequired)
-            );
-
+    public Task<IReadOnlyList<EntidadRolOption>> SelAllActiveAsync(EntidadRolFilter c) =>
+        _database.ListAsync<EntidadRolOption>(EntidadRolDbObjects.SelAllActive,
+            p => p.AddEmpresa(_user.CoEmpresaRequired));
 }

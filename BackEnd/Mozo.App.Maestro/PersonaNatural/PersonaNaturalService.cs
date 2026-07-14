@@ -1,4 +1,5 @@
-﻿using Mozo.Domain.Maestro;
+﻿using Mozo.App.Maestro.PersonaNatural.Contracts;
+using Mozo.Domain.Maestro;
 using Mozo.Infrastructure.Persistence;
 using Mozo.Infrastructure.Persistence.Builders;
 using Mozo.Shared.Models;
@@ -11,9 +12,9 @@ public interface IPersonaNaturalService
 {
     Task<int> InsertAsync(PersonaNaturalEntity m);
     Task<int> UpdateByIdAsync(PersonaNaturalEntity m);
-    Task<PersonaNaturalEntity?> SelByIdAsync(PersonaNaturalFilter f);
+    Task<PersonaNaturalEditResponse?> SelByIdAsync(PersonaNaturalFilter f);
     Task<PagedResult<PersonaNaturalListItem>> SelAllAsync(PersonaNaturalFilter f);
-    Task<IReadOnlyList<PersonaNaturalEntity>> SelAllActiveAsync(PersonaNaturalFilter f);
+    Task<IReadOnlyList<PersonaNaturalOption>> SelAllActiveAsync(PersonaNaturalFilter f);
 }
 
 public sealed class PersonaNaturalService : IPersonaNaturalService
@@ -53,8 +54,8 @@ public sealed class PersonaNaturalService : IPersonaNaturalService
                 .Add("CoProfesion", m.CoProfesion, DbType.Int32)
                 .AddUserUpdate(_user.CoUsuarioRequired));
 
-    public Task<PersonaNaturalEntity?> SelByIdAsync(PersonaNaturalFilter f) =>
-        _database.FirstAsync<PersonaNaturalEntity>(PersonaNaturalDbObjects.SelById,
+    public Task<PersonaNaturalEditResponse?> SelByIdAsync(PersonaNaturalFilter f) =>
+        _database.FirstAsync<PersonaNaturalEditResponse>(PersonaNaturalDbObjects.SelById,
             p => p.Add("CoEntidad", f.CoEntidad));
 
     public async Task<PagedResult<PersonaNaturalListItem>> SelAllAsync(PersonaNaturalFilter f)
@@ -78,8 +79,8 @@ public sealed class PersonaNaturalService : IPersonaNaturalService
     }
 
 
-    public Task<IReadOnlyList<PersonaNaturalEntity>> SelAllActiveAsync(PersonaNaturalFilter f) =>
-        _database.ListAsync<PersonaNaturalEntity>(PersonaNaturalDbObjects.SelAllActive,
+    public Task<IReadOnlyList<PersonaNaturalOption>> SelAllActiveAsync(PersonaNaturalFilter f) =>
+        _database.ListAsync<PersonaNaturalOption>(PersonaNaturalDbObjects.SelAllActive,
             p => p.AddEmpresa(_user.CoEmpresaRequired)
                   .Add("CoModulo", f.CoModulo, DbType.String)
                   .Add("CoRolNegocio", f.CoRolNegocio, DbType.String)

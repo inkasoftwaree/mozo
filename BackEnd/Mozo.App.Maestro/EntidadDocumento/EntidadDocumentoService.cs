@@ -1,4 +1,5 @@
-﻿using Mozo.Domain.Maestro;
+﻿using Mozo.App.Maestro.EntidadDocumento.Contracts;
+using Mozo.Domain.Maestro;
 using Mozo.Infrastructure.Persistence;
 using Mozo.Infrastructure.Persistence.Builders;
 using Mozo.Shared.Services;
@@ -12,8 +13,8 @@ public interface IEntidadDocumentoService
     Task<int> InsertAsync(EntidadDocumentoEntity m);
     Task<int> UpdateByIdAsync(EntidadDocumentoEntity m);
     Task<int> DeleteByIdAsync(EntidadDocumentoFilter f);
-    Task<EntidadDocumentoEntity?> SelByIdAsync(EntidadDocumentoFilter f);
-    Task<IReadOnlyList<EntidadDocumentoEntity>> SelAllAsync(EntidadDocumentoFilter f);
+    Task<EntidadDocumentoEditResponse?> SelByIdAsync(EntidadDocumentoFilter f);
+    Task<IReadOnlyList<EntidadDocumentoListItem>> SelAllAsync(EntidadDocumentoFilter f);
     Task<int> UpdateDefaultAsync(EntidadDocumentoEntity m);
 }
 
@@ -48,12 +49,12 @@ public sealed class EntidadDocumentoService : IEntidadDocumentoService
             p => p.Add("CoEntidadDocumento", f.CoEntidadDocumento, DbType.Int32)
                   .AddUserDelete(_user.CoUsuarioRequired));
 
-    public Task<EntidadDocumentoEntity?> SelByIdAsync(EntidadDocumentoFilter f) =>
-        _database.FirstAsync<EntidadDocumentoEntity>(EntidadDocumentoDbObjects.SelById,
+    public Task<EntidadDocumentoEditResponse?> SelByIdAsync(EntidadDocumentoFilter f) =>
+        _database.FirstAsync<EntidadDocumentoEditResponse>(EntidadDocumentoDbObjects.SelById,
             p => p.Add("CoEntidadDocumento", f.CoEntidadDocumento, DbType.Int32));
 
-    public Task<IReadOnlyList<EntidadDocumentoEntity>> SelAllAsync(EntidadDocumentoFilter f) =>
-        _database.ListAsync<EntidadDocumentoEntity>(EntidadDocumentoDbObjects.SelAll,
+    public Task<IReadOnlyList<EntidadDocumentoListItem>> SelAllAsync(EntidadDocumentoFilter f) =>
+        _database.ListAsync<EntidadDocumentoListItem>(EntidadDocumentoDbObjects.SelAll,
             p => p.Add("CoEntidad", f.CoEntidad, DbType.Int32));
 
     public Task<int> UpdateDefaultAsync(EntidadDocumentoEntity m) =>
