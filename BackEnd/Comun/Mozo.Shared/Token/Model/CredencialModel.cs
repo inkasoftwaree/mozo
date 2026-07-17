@@ -33,6 +33,8 @@ public class GlobalCredencialModel
     public int? FlSuperAdmin { get; set; }
 
     public int? FlRequiereSeleccionEmpresa { get; set; }
+
+    public SuscripcionEstadoModel? Suscripcion { get; set; }
 }
 
 //[Serializable]

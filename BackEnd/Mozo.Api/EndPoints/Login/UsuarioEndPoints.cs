@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Mozo.Api.Abstractions;
 using Mozo.App.Login.Ingreso;
+using Mozo.App.Login.Suscripcion;
 using Mozo.App.Login.Usuario;
 using Mozo.App.Login.Usuario.Contracts;
 using Mozo.Domain.Seguridad;
@@ -55,6 +56,7 @@ public partial class UsuarioEndPoints
      IJwtService jwtService,
      IUsuarioService IUsuario,
      IIngresoService IIngreso,
+     ISuscripcionService ISuscripcion,
      ILoggerFactory loggerFactory,
      UserContext user)
     {
@@ -101,11 +103,15 @@ public partial class UsuarioEndPoints
 
         string token = jwtService.GenerateToken(credential);
 
+        SuscripcionEstadoModel? suscripcion =
+            await ISuscripcion.EstadoByEmpresaAsync(f.CoEmpresa!.Value, usuario.CoUsuario!.Value);
+
         return Results.Ok(new GlobalCredencialModel
         {
             Credencial = credential,
             NoToken = token,
-            NoTokenRefresh = refreshToken
+            NoTokenRefresh = refreshToken,
+            Suscripcion = suscripcion
         });
     }
 
@@ -117,6 +123,7 @@ public partial class UsuarioEndPoints
         IJwtService jwtService,
         IUsuarioService IUsuario,
         IIngresoService IIngreso,
+        ISuscripcionService ISuscripcion,
         ILoggerFactory loggerFactory
     )
     {
@@ -185,12 +192,16 @@ public partial class UsuarioEndPoints
                 };
                 string token = jwtService.GenerateToken(credential);
 
+                SuscripcionEstadoModel? suscripcion =
+                    await ISuscripcion.EstadoByEmpresaAsync(empresa.CoEmpresa!.Value, usuario.CoUsuario!.Value);
+
                 GlobalCredencialModel globalCredencial = new()
                 {
                     Credencial = credential,
                     NoToken = token,
                     NoTokenRefresh = noTokenRefresh,
-                    FlRequiereSeleccionEmpresa = 0
+                    FlRequiereSeleccionEmpresa = 0,
+                    Suscripcion = suscripcion
                 };
 
                 logger.LogInformation(
