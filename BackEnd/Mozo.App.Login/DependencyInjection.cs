@@ -6,6 +6,7 @@ using Mozo.App.Login.Modulo;
 using Mozo.App.Login.ModuloUsuario;
 using Mozo.App.Login.Pagina;
 using Mozo.App.Login.PerfilPagina;
+using Mozo.App.Login.Suscripcion;
 using Mozo.App.Login.Usuario;
 
 namespace Mozo.App.Login;
@@ -22,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<IPaginaService, PaginaService>();
         services.AddScoped<IModuloUsuarioService, ModuloUsuarioService>();
         services.AddScoped<IPerfilPaginaService, PerfilPaginaService>();
+        services.AddScoped<ISuscripcionService, SuscripcionService>();
 
         return services;
     }
