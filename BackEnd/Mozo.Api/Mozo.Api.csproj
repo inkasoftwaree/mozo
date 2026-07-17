@@ -60,6 +60,7 @@
 		<ProjectReference Include="..\Mozo.App.Login\Mozo.App.Login.csproj" />
 		<ProjectReference Include="..\Mozo.App.Maestro\Mozo.App.Maestro.csproj" />
 		<ProjectReference Include="..\Mozo.App.Seguridad\Mozo.App.Seguridad.csproj" />
+		<ProjectReference Include="..\Mozo.App.Suscripcion\Mozo.App.Suscripcion.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

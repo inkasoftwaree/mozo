@@ -15,5 +15,10 @@ public static class EmpresaDbObjects
     public static readonly DbObject SelAllActive =
         new(Schema, "fn_empresa_sel_all_active", DbExecutionType.Select, DbReturnType.List);
 
+    public static readonly DbObject InsertAll =
+        new(Schema, "fn_empresa_insert_all", DbExecutionType.Select, DbReturnType.Single);
+
+    public static readonly DbObject UpdateAll =
+      new(Schema, "fn_empresa_update_all_by_id", DbExecutionType.Select, DbReturnType.Scalar);
 
 }

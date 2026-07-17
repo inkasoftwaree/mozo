@@ -11,6 +11,7 @@ using Mozo.App.Catalogo;
 using Mozo.App.Login;
 using Mozo.App.Maestro;
 using Mozo.App.Seguridad;
+using Mozo.App.Suscripcion;
 using Mozo.Infrastructure.Persistence;
 using Mozo.Shared.Exceptions;
 using Mozo.Shared.Services;
@@ -193,6 +194,7 @@ builder.Services.AddSeguridad();
 builder.Services.AddMaestro();
 builder.Services.AddLogin();
 builder.Services.AddCatalogo();
+builder.Services.AddSuscripcion();
 
 
 // ===== Configuración =====

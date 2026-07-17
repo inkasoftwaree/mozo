@@ -26,9 +26,14 @@ public sealed partial class EmpresaEndPoints : IEndpoint
     {
         g.WithSecurity();
 
-        g.MapPost("/", InsertAsync)
+        g.MapPost("/", InsertAllAsync)
              .WithResponsesValue<int>(StatusCodes.Status201Created)
              .WithDescription("Insertar una Empresa");
+
+        g.MapPost("/registro", InsertAllAsync)
+             .AllowAnonymous()
+             .WithResponses<EmpresaInsertAllResponse>(StatusCodes.Status201Created)
+             .WithDescription("Registrar una Empresa nueva con documentos, direcciones, redes sociales, módulos y usuario administrador");
 
         g.MapPut("/", UpdateByIdAsync)
              .WithResponsesValue<int>(StatusCodes.Status200OK)
@@ -61,24 +66,39 @@ public sealed partial class EmpresaEndPoints : IEndpoint
 
 public sealed partial class EmpresaEndPoints
 {
+    //private static async Task<IResult>
+    //     InsertAsync(
+    //         EmpresaEntity m,
+    //         IOutputCacheStore cacheStore,
+    //         IEmpresaBusiness IEmpresa
+    //  )
+    //{
+    //    m.CoEmpresa = await IEmpresa.InsertAsync(m);
+    //    await cacheStore.InvalidateCacheAsync(CacheTag);
+    //    return Results.Created($"/{m.CoEmpresa}", m.CoEmpresa);
+    //}
+
+
     private static async Task<IResult>
-         InsertAsync(
-             EmpresaEntity m,
-             IOutputCacheStore cacheStore,
-             IEmpresaBusiness IEmpresa
+        InsertAllAsync(
+            EmpresaInsertAllRequest r,
+            IOutputCacheStore cacheStore,
+            IEmpresaService IEmpresa
       )
     {
-        m.CoEmpresa = await IEmpresa.InsertAsync(m);
-        await cacheStore.InvalidateCacheAsync(CacheTag);
-        return Results.Created($"/{m.CoEmpresa}", m.CoEmpresa);
-    }
+        EmpresaInsertAllResponse? result = await IEmpresa.InsertAllAsync(r);
+        if (result is null)
+            return Results.Problem("No se pudo registrar la empresa.");
 
+        await cacheStore.InvalidateCacheAsync(CacheTag);
+        return Results.Created($"/{result.CoEmpresa}", result);
+    }
 
     private static async Task<IResult>
         UpdateByIdAsync(
             EmpresaEntity m,
             IOutputCacheStore cacheStore,
-            IEmpresaBusiness IEmpresa
+            IEmpresaService IEmpresa
     )
     {
         int filas = await IEmpresa.UpdateByIdAsync(m);

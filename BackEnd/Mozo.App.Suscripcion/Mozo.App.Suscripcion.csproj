@@ -7,13 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Empresa\EmpresaBusiness.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Comun\Mozo.Domain\Mozo.Domain.csproj" />
     <ProjectReference Include="..\Comun\Mozo.Infrastructure\Mozo.Infrastructure.csproj" />
-    <ProjectReference Include="..\Mozo.App.Maestro\Mozo.App.Maestro.csproj" />
+    <ProjectReference Include="..\Comun\Mozo.Shared\Mozo.Shared.csproj" />
   </ItemGroup>
 
 </Project>

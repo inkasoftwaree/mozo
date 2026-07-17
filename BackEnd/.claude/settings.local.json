@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:claude.ai)",
+      "mcp__claude-in-chrome__navigate",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "PowerShell(cd E:\\\\Desarrollo\\\\Mozo\\\\BackEnd\\\\Mozo.Api; $env:ASPNETCORE_ENVIRONMENT=\"Development\"; dotnet run --no-launch-profile --no-build 2>&1)",
+      "Bash(dotnet build *)"
+    ]
+  }
+}

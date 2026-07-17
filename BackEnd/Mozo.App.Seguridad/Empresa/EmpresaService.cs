@@ -2,6 +2,7 @@ using Mozo.App.Seguridad.Empresa.Contracts;
 using Mozo.Domain.Seguridad;
 using Mozo.Infrastructure.Persistence;
 using Mozo.Infrastructure.Persistence.Builders;
+using Mozo.Shared.Cripto;
 using Mozo.Shared.Models;
 using Mozo.Shared.Services;
 using System.Data;
@@ -10,6 +11,8 @@ namespace Mozo.App.Seguridad.Empresa;
 
 public interface IEmpresaService
 {
+
+    Task<EmpresaInsertAllResponse?> InsertAllAsync(EmpresaInsertAllRequest r);
     Task<int> InsertAsync(EmpresaEntity m);
     Task<int> UpdateByIdAsync(EmpresaEntity m);
     Task<int> UpdateStateByIdAsync(EmpresaEntity m);
@@ -28,6 +31,44 @@ public sealed class EmpresaService : IEmpresaService
         _database = database;
         _user = user;
     }
+
+    // Registro/onboarding. El orden de los .Add debe respetar la firma de
+    // fn_empresa_insert_all (el binder de Postgres es POSICIONAL). Los módulos ya no
+    // se pasan sueltos: fn_suscripcion_insert los proyecta desde el plan (trfplanmodulo).
+    public Task<EmpresaInsertAllResponse?> InsertAllAsync(EmpresaInsertAllRequest r)
+    {
+        List<EmpresaInsertAllDocumento> documentos = r.Documentos ?? [];
+        List<EmpresaInsertAllRedSocial> redes = r.RedesSociales ?? [];
+
+        return _database.FirstAsync<EmpresaInsertAllResponse>(EmpresaDbObjects.InsertAll,
+            p => p.Add("NoRazonSocial", r.NoRazonSocial, DbType.String)
+                  .Add("NoComercial", r.NoComercial, DbType.String)
+                  .Add("CoRubro", r.CoRubro, DbType.Int32)
+                  .Add("NoMision", r.NoMision, DbType.String)
+                  .Add("NoVision", r.NoVision, DbType.String)
+                  .Add("TxQuienSoy", r.TxQuienSoy, DbType.String)
+                  .Add("CoPais", r.CoPais, DbType.Int32)
+                  .Add("CoMoneda", r.CoMoneda, DbType.Int32)
+                  .Add("CoIdioma", r.CoIdioma, DbType.Int32)
+                  .AddArray("DocumentosCodigo", documentos.Select(d => (long)d.CoDocumentoIdentidad).ToArray())
+                  .AddArray("DocumentosNumero", documentos.Select(d => d.NuDocumento ?? "").ToArray())
+                  .AddArray("Direcciones", (r.Direcciones ?? []).ToArray())
+                  .AddArray("TipoRedSocial", redes.Select(x => (long)x.CoTipoRedSocial).ToArray())
+                  .AddArray("RedSocial", redes.Select(x => x.NoRedSocial ?? "").ToArray())
+                  // suscripción (reemplaza Modulos)
+                  .Add("CoPlan", r.CoPlan, DbType.Int32)
+                  .Add("CoPlanPrecio", r.CoPlanPrecio, DbType.Int32)
+                  .Add("CoEstado", r.CoEstado, DbType.Int32)
+                  .Add("FlAutoRenovar", r.FlAutoRenovar, DbType.Int32)
+                  .Add("AdminNoPersona", r.AdminNoPersona, DbType.String)
+                  .Add("AdminApellidoP", r.AdminApellidoP, DbType.String)
+                  .Add("AdminApellidoM", r.AdminApellidoM, DbType.String)
+                  .Add("AdminNoUsuario", r.AdminNoUsuario, DbType.String)
+                  .Add("AdminNoClave", ClaveHelper.Hash(r.AdminNoClave!), DbType.String)
+                  .Add("CoUsuCre", 0, DbType.Int32));
+    }
+
+
 
     public Task<int> InsertAsync(EmpresaEntity m) =>
        _database.ScalarAsync<int>(EmpresaDbObjects.Insert,

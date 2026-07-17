@@ -30,6 +30,8 @@ public class GlobalCredencialModel
     public string? NoToken { get; set; }
     public string? NoTokenRefresh { get; set; }
 
+    public int? FlSuperAdmin { get; set; }
+
     public int? FlRequiereSeleccionEmpresa { get; set; }
 }
 

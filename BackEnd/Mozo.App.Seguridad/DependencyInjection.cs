@@ -24,7 +24,7 @@ public static class DependencyInjection
         services.AddScoped<IModuloUsuarioService, ModuloUsuarioService>();
         services.AddScoped<IEmpresaModuloService, EmpresaModuloService>();
         services.AddScoped<IEmpresaService, EmpresaService>();
-        services.AddScoped<IEmpresaBusiness, EmpresaBusiness>();
+        //services.AddScoped<IEmpresaBusiness, EmpresaBusiness>();
 
         return services;
     }

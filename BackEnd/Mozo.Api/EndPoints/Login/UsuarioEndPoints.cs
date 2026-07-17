@@ -95,8 +95,9 @@ public partial class UsuarioEndPoints
             CoEntidad = usuario.CoEntidad,
             CoUsuario = usuario.CoUsuario,
             NoUsuario = usuario.NoUsuario,
-            CoIngreso = ingreso.CoIngreso
-        };
+            CoIngreso = ingreso.CoIngreso,
+            FlSuperAdmin = usuario.FlSuperAdmin
+        }; 
 
         string token = jwtService.GenerateToken(credential);
 
@@ -179,7 +180,8 @@ public partial class UsuarioEndPoints
                     CoUsuario = usuario.CoUsuario,
                     NoUsuario = usuario.NoUsuario,
                     NoNombreCompleto = usuario.NoEntidad,
-                    CoIngreso = ingresoNew.CoIngreso
+                    CoIngreso = ingresoNew.CoIngreso,
+                    FlSuperAdmin = usuario.FlSuperAdmin
                 };
                 string token = jwtService.GenerateToken(credential);
 
@@ -192,7 +194,7 @@ public partial class UsuarioEndPoints
                 };
 
                 logger.LogInformation(
-                 "[SECURITY] LOGIN_SUCCESS | Usuario: {Usuario} | Empresa: {CoEmpresa} |  Ingreso: {CoIngreso} | IP: {IP} | Agent: {Agent}",
+                 "[SECURITY] LOGIN_SUCCESS | Usuario: {Usuario} | Empresa: {CoEmpresa} | Ingreso: {CoIngreso} | IP: {IP} | Agent: {Agent}",
                      usuario.NoUsuario,
                      empresa.CoEmpresa,
                      ingresoNew.CoIngreso,
@@ -201,32 +203,26 @@ public partial class UsuarioEndPoints
 
                 return Results.Ok(globalCredencial);
 
-
             default:
-                List<GlobalCredentialEmpresaModel> empresaLst = empresas
-                 .Select(e => new GlobalCredentialEmpresaModel
-                 {
-                     CoEmpresa = e.CoEmpresa,
-                     NoRazonSocial = e.NoRazonSocial
-                 })
-                 .ToList();
-
-
-                CredencialModel credentialMayor1 = new()
-                {
-                    CoEntidad = usuario.CoEntidad,
-                    CoUsuario = usuario.CoUsuario,
-                    NoUsuario = usuario.NoUsuario,
-                    NoNombreCompleto = usuario.NoEntidad,
-                };
-
                 GlobalCredencialModel globalCredencialMayor1 = new()
                 {
-                    //Credencial = credentialMayor1,
-                    NoToken = jwtService.GenerateAuthenticationToken(credentialMayor1),
-                    EmpresaLst = empresaLst,
+                    
+                    NoToken = jwtService.GenerateAuthenticationToken(
+                                                                    new()
+                                                                        {
+                                                                            CoEntidad = usuario.CoEntidad,
+                                                                            CoUsuario = usuario.CoUsuario,
+                                                                            NoUsuario = usuario.NoUsuario,
+                                                                            NoNombreCompleto = usuario.NoEntidad,
+                                                                        }
+                    ),
+                    EmpresaLst = empresas.Select(e => new GlobalCredentialEmpresaModel
+                                                     {
+                                                         CoEmpresa = e.CoEmpresa,
+                                                         NoRazonSocial = e.NoRazonSocial
+                                                     }
+                                                ).ToList(),
                     FlRequiereSeleccionEmpresa = 1
-
                 };
 
                 logger.LogInformation(

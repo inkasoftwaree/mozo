@@ -29,6 +29,8 @@ public partial class EmpresaEntity : BaseEntity
 public partial class EmpresaEntity
 {
     public EntidadEntity? Entidad { get; set; }
+
+    public UsuarioEntity? Usuario { get; set; }
     public PersonaJuridicaEntity? PersonaJuridica { get; set; }
     public List<EmpresaModuloEntity>? EmpresaModuloLst { get; set; }
     public List<HorarioEntity>? HorarioCol { get; set; }

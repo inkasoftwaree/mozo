@@ -9,9 +9,11 @@ public partial class UsuarioEntity : BaseEntity
     public int? CoEntidad { get; set; }
     public string? NoUsuario { get; set; }
     public string? NoClave { get; set; }
-
+    public DateTime? FeCaduda { get; set; }    
     public int? FlSuperAdmin { get; set; }
 }
+
+
 
 
 //public partial class UsuarioEntity

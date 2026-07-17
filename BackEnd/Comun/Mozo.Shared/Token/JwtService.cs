@@ -15,10 +15,10 @@ public interface IJwtService
     string GenerateAuthenticationToken(CredencialModel credential);
     string GenerateRefreshToken();
     DateTime GetRefreshTokenExpiration();
-
     string? GetUserIp();
     string GetUserAgent();
 }
+
 public sealed class JwtService : IJwtService
 {
     private readonly JwtKeyProvider _keys;
@@ -44,8 +44,6 @@ public sealed class JwtService : IJwtService
         ? userAgent[..99]
         : userAgent;
     }
-
-
 
     public string GenerateRefreshToken()
     {
