@@ -31,6 +31,8 @@ public class GlobalCredencialModel
     public string? NoTokenRefresh { get; set; }
 
     public int? FlRequiereSeleccionEmpresa { get; set; }
+
+    public SuscripcionEstadoModel? Suscripcion { get; set; }
 }
 
 //[Serializable]
