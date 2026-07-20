@@ -13,6 +13,11 @@ public static class NotificacionDbObjects
 
     public static DbObject Insert => _std.Insert;
 
+    // fn_notificacion_delete_by_id(p_conotificacion, p_cousueli) RETURNS boolean.
+    // Borrado MANUAL para corregir un registro emitido por error; no hay
+    // limpieza automatica por antiguedad en este esquema.
+    public static DbObject DeleteById => _std.DeleteById;
+
     public static readonly DbObject CountNoLeidas =
         new(Schema, "fn_notificacion_count_no_leidas", DbExecutionType.Select, DbReturnType.Scalar);
 

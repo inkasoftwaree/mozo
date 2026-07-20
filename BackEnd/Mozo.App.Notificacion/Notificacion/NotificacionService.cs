@@ -23,6 +23,12 @@ public interface INotificacionService
 
     /// <summary>Marca todas como leidas para el usuario autenticado.</summary>
     Task<int> MarcarTodoLeidoAsync();
+
+    /// <summary>
+    /// Borra una notificacion (uso manual: corregir un registro emitido por
+    /// error). No existe limpieza automatica por antiguedad en este esquema.
+    /// </summary>
+    Task<int> DeleteByIdAsync(NotificacionFilter f);
 }
 
 public sealed class NotificacionService : INotificacionService
@@ -91,4 +97,11 @@ public sealed class NotificacionService : INotificacionService
             p => p
                 .AddEmpresa(_user.CoEmpresaRequired)
                 .Add("CoUsuario", _user.CoUsuarioRequired, DbType.Int32));
+
+    // fn_notificacion_delete_by_id(p_conotificacion, p_cousueli) RETURNS boolean
+    public Task<int> DeleteByIdAsync(NotificacionFilter f) =>
+        _database.ScalarAsync<int>(NotificacionDbObjects.DeleteById,
+            p => p
+                .Add("CoNotificacion", f.CoNotificacion, DbType.Int64)
+                .AddUserDelete(_user.CoUsuarioRequired));
 }

@@ -33,6 +33,11 @@ public sealed partial class NotificacionEndPoints : IEndpoint
         g.MapPatch("/read-all", MarcarTodoLeidoAsync)
             .WithResponsesValue<int>(StatusCodes.Status200OK)
             .WithDescription("Marcar todas como leidas");
+
+        g.MapDelete("/", DeleteByIdAsync)
+            .WithResponsesValue<int>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .WithDescription("Eliminar una notificacion (corregir un registro emitido por error)");
     }
 }
 
@@ -67,5 +72,14 @@ public partial class NotificacionEndPoints
             INotificacionService INotif)
     {
         return Results.Ok(await INotif.MarcarTodoLeidoAsync());
+    }
+
+    private static async Task<IResult>
+        DeleteByIdAsync(
+            [AsParameters] NotificacionFilter f,
+            INotificacionService INotif)
+    {
+        int filas = await INotif.DeleteByIdAsync(f);
+        return filas > 0 ? Results.Ok(filas) : Results.NotFound();
     }
 }
