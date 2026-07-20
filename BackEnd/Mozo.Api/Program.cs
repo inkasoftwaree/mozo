@@ -10,6 +10,7 @@ using Mozo.Api.Helper;
 using Mozo.App.Catalogo;
 using Mozo.App.Login;
 using Mozo.App.Maestro;
+using Mozo.App.Notificacion;
 using Mozo.App.Seguridad;
 using Mozo.App.Suscripcion;
 using Mozo.Infrastructure.Persistence;
@@ -195,6 +196,7 @@ builder.Services.AddMaestro();
 builder.Services.AddLogin();
 builder.Services.AddCatalogo();
 builder.Services.AddSuscripcion();
+builder.Services.AddNotificacion();
 
 
 // ===== Configuración =====
